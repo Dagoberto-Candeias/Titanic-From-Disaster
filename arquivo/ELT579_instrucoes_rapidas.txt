@@ -1,0 +1,5 @@
+Arquivos gerados:
+- Script anotado: /mnt/data/ELT579_118550_Titanic_Anotado.py
+- Relatório Word: /mnt/data/ELT579_118550_Relatorio_Anotado.docx
+
+Execute o script anotado no Spyder (deve ter mesmo comportamento). Caso queira rodar no Colab, carregue train.csv e test.csv e execute o .py ou cole o conteúdo em uma célula.

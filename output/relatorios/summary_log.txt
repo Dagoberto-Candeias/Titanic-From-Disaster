@@ -1,0 +1,7 @@
+=== EXECUTION SUMMARY ===
+Total Time: 15485.77 seconds
+Best Model: Bagging
+Best Accuracy: 0.8533
+Number of Features: 19
+Files Generated: output/submission_titanic_final.csv, output/relatorios/RELATORIO_FINAL_TITANIC.md, output/relatorios/RELATORIO_FINAL_TITANIC.docx, output/relatorios/RELATORIO_FINAL_TITANIC.pdf, output/graficos/*.png
+Timestamp: 2025-11-22T20:45:22.235309

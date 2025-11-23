@@ -1,0 +1,132 @@
+# 🚢 Titanic ML - Versão Completa (CORRIGIDA)
+**Autor:** Dagoberto Candeias | **Matrícula:** 118550 | **UFV - ELT 579**
+
+# 1. INSTALAÇÃO
+%%capture
+!pip install pandas numpy matplotlib seaborn scikit-learn xgboost lightgbm imbalanced-learn python-docx
+
+# 2. UPLOAD DOS ARQUIVOS
+from google.colab import files
+print("📤 Faça upload de 3 arquivos:")
+print("1. train.csv")
+print("2. test.csv")
+print("3. ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio.py\n")
+uploaded = files.upload()
+
+# 3. VERIFICAR ARQUIVOS
+import os
+for f in ['train.csv', 'test.csv', 'ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio.py']:
+    if os.path.exists(f):
+        print(f"✅ {f}: {os.path.getsize(f):,} bytes")
+    else:
+        print(f"❌ {f}: NÃO ENCONTRADO")
+
+# 4. EXECUTAR SCRIPT COMPLETO
+print("🚀 EXECUTANDO ANÁLISE COMPLETA...")
+print("⏱️ Tempo estimado: 15-20 minutos\n")
+%run ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio.py
+
+# 5. VERIFICAR RESULTADOS
+import os
+def listar(pasta, n=0):
+    ind = "  "*n
+    if os.path.exists(pasta):
+        for i in sorted(os.listdir(pasta)):
+            p = os.path.join(pasta, i)
+            if os.path.isdir(p):
+                print(f"{ind}📂 {i}/")
+                listar(p, n+1)
+            else:
+                print(f"{ind}📄 {i} ({os.path.getsize(p):,} bytes)")
+
+print("📁 ARQUIVOS GERADOS:\n")
+print("output/")
+listar("output", 1)
+
+# 6. VISUALIZAR GRÁFICOS
+from IPython.display import Image, display
+import os
+
+graficos = [
+    'output/graficos/01_eda_completa.png',
+    'output/graficos/02_comparacao_modelos.png',
+    'output/graficos/03_matriz_confusao.png'
+]
+
+for g in graficos:
+    if os.path.exists(g):
+        print(f"\n📊 {g}")
+        display(Image(filename=g, width=900))
+
+# 7. VISUALIZAR RELATÓRIO
+from IPython.display import Markdown
+import os
+
+md = 'output/relatorios/RELATORIO_FINAL_TITANIC.md'
+if os.path.exists(md):
+    with open(md, 'r', encoding='utf-8') as f:
+        display(Markdown(f.read()))
+else:
+    print("❌ Relatório não encontrado")
+
+# 8. VISUALIZAR TABELA (CORRIGIDO)
+import pandas as pd
+import os
+
+csv = 'output/relatorios/resultados_modelos.csv'
+if os.path.exists(csv):
+    df = pd.read_csv(csv)
+    # ✅ CORRIGIDO: Usar nomes em inglês
+    display(df.style.background_gradient(subset=['Mean_Accuracy'], cmap='RdYlGn'))
+    print(f"\n🏆 Melhor: {df.iloc[0]['Model']} - {df.iloc[0]['Mean_Accuracy']:.4f}")
+
+# 9. DOWNLOAD ZIP COMPLETO
+from google.colab import files
+import shutil
+
+print("📦 Criando ZIP...")
+shutil.make_archive('titanic_resultados', 'zip', 'output')
+print("⬇️ Baixando...")
+files.download('titanic_resultados.zip')
+print("✅ Concluído!")
+
+# 10. RESUMO FINAL (CORRIGIDO)
+import os, pandas as pd
+
+print("="*80)
+print("📊 RESUMO FINAL")
+print("="*80)
+
+arquivos = [
+    'output/submission_titanic_final.csv',
+    'output/graficos/01_eda_completa.png',
+    'output/graficos/02_comparacao_modelos.png',
+    'output/graficos/03_matriz_confusao.png',
+    'output/relatorios/RELATORIO_FINAL_TITANIC.md',
+    'output/relatorios/RELATORIO_FINAL_TITANIC.docx',
+    'output/relatorios/resultados_modelos.csv'
+]
+
+print("\n📁 ARQUIVOS:\n")
+total = 0
+for a in arquivos:
+    if os.path.exists(a):
+        t = os.path.getsize(a)
+        total += t
+        print(f"✅ {a}: {t:,} bytes")
+    else:
+        print(f"❌ {a}: NÃO ENCONTRADO")
+
+print(f"\n📊 Total: {total:,} bytes ({total/1024/1024:.2f} MB)")
+
+if os.path.exists('output/relatorios/resultados_modelos.csv'):
+    df = pd.read_csv('output/relatorios/resultados_modelos.csv')
+    print(f"\n🏆 RESULTADOS:")
+    print(f"   • Modelos testados: {len(df)}")
+    # ✅ CORRIGIDO: Usar nomes em inglês
+    print(f"   • Melhor: {df.iloc[0]['Model']}")
+    print(f"   • Acurácia: {df.iloc[0]['Mean_Accuracy']:.4f}")
+
+print("\n" + "="*80)
+print("✅ ANÁLISE COMPLETA FINALIZADA!")
+print("="*80)

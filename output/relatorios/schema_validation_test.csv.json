@@ -1,0 +1,48 @@
+{
+  "dataset_name": "test.csv",
+  "timestamp": "2025-11-22T16:27:06.740612",
+  "total_rows": 418,
+  "total_columns": 11,
+  "expected_columns": [
+    "PassengerId",
+    "Pclass",
+    "Name",
+    "Sex",
+    "Age",
+    "SibSp",
+    "Parch",
+    "Ticket",
+    "Fare",
+    "Cabin",
+    "Embarked"
+  ],
+  "actual_columns": [
+    "PassengerId",
+    "Pclass",
+    "Name",
+    "Sex",
+    "Age",
+    "SibSp",
+    "Parch",
+    "Ticket",
+    "Fare",
+    "Cabin",
+    "Embarked"
+  ],
+  "missing_columns": [],
+  "extra_columns": [],
+  "is_valid": true,
+  "data_types": {
+    "PassengerId": "int64",
+    "Pclass": "int64",
+    "Name": "object",
+    "Sex": "object",
+    "Age": "float64",
+    "SibSp": "int64",
+    "Parch": "int64",
+    "Ticket": "object",
+    "Fare": "float64",
+    "Cabin": "object",
+    "Embarked": "object"
+  }
+}
