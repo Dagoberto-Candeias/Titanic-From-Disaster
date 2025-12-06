@@ -6,6 +6,7 @@
 # =============================================================================
 
 # Importações da biblioteca padrão
+import argparse
 import hashlib
 import json
 import logging
@@ -13,11 +14,14 @@ import logging.config
 import multiprocessing
 import os
 import pickle
+import sys
 import warnings
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime
 
 # Importações de terceiros
+import matplotlib
+matplotlib.use('Agg')  # Set backend for headless environments
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -43,7 +47,11 @@ from sklearn.ensemble import (
     RandomForestClassifier,
     VotingClassifier,
 )
-from sklearn.linear_model import LogisticRegression, RidgeClassifier, SGDClassifier
+from sklearn.linear_model import (
+    LogisticRegression,
+    RidgeClassifier,
+    SGDClassifier,
+)
 from sklearn.metrics import (
     ConfusionMatrixDisplay,
     confusion_matrix,
@@ -56,6 +64,11 @@ from sklearn.naive_bayes import BernoulliNB, GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC, LinearSVC
 from sklearn.tree import DecisionTreeClassifier
+
+from sklearn.preprocessing import OneHotEncoder, StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.calibration import CalibrationDisplay
+from sklearn.model_selection import train_test_split
 
 # Importações opcionais de terceiros com verificações de disponibilidade
 try:
@@ -100,7 +113,12 @@ except ImportError:
     SHAP_AVAILABLE = False
     shap = None
 
-
+try:
+    import plotly
+    PLOTLY_AVAILABLE = True
+except ImportError:
+    PLOTLY_AVAILABLE = False
+    plotly = None
 
 try:
     import optuna
@@ -111,14 +129,24 @@ except ImportError:
     OPTUNA_AVAILABLE = False
     optuna = None
 
+try:
+    import kaleido
+    KALEIDO_AVAILABLE = True
+except ImportError:
+    KALEIDO_AVAILABLE = False
+    kaleido = None
 
-
-
+# Fix for module import path (after absolute imports, before relative)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Imports do pipeline Titanic
 from titanic_pipeline.preprocessing import (
-    parallel_feature_engineering,
     kfold_target_encode,
+    create_family_features,
+    extract_title,
+    extract_deck,
+    extract_ticket_prefix,
+    create_feature_pipeline, # Adicionado para usar o pipeline modular
 )
 from titanic_pipeline.core.preprocessing import (
     preprocess_data as modular_preprocess_data
@@ -252,7 +280,8 @@ try:
     logger.info("✅ AdvancedFeatureEngineer imported successfully from features.py")
 except ImportError as e:
     logger.warning(
-        f"⚠️  Failed to import AdvancedFeatureEngineer: {e}. Using fallback implementation."
+        f"⚠️  Failed to import AdvancedFeatureEngineer: {e}. "
+        "Using fallback implementation."
     )
 
     class AdvancedFeatureEngineer:
@@ -265,16 +294,22 @@ except ImportError as e:
             self, df: pd.DataFrame, is_training: bool = True
         ) -> pd.DataFrame:
             """Create advanced features using mock implementation."""
-            logger.warning("   Using MOCK create_advanced_features with parallel processing.")
+            logger.warning(
+                "   Using MOCK create_advanced_features with sequential processing."
+            )
             df = df.copy()
-            # Use parallel feature engineering for heavy operations
-            df = parallel_feature_engineering(df, is_training)
+            # Apply feature engineering functions sequentially
+            df = create_family_features(df)
+            df = extract_title(df)
+            df = extract_deck(df)
+            df = extract_ticket_prefix(df)
             # Interações
             df["AgeClass"] = df["Age"] * df["Pclass"]
-            df["FarePerPerson"] = df["Fare"] / (df["SibSp"] + df["Parch"] + 1).replace(
-                0, 1
-            )
-            df["Title_Interactions"] = df["Title_Group"] + "_" + df["Sex"]
+            df["FarePerPerson"] = df["Fare"] / (
+                df["SibSp"] + df["Parch"] + 1
+            ).replace(0, 1)
+            if "Title" in df.columns:
+                df["Title_Interactions"] = df["Title"] + "_" + df["Sex"]
             # Bins avançados
             df["feat_AgeBin"] = pd.cut(
                 df["Age"],
@@ -302,9 +337,9 @@ except ImportError as e:
             df["feat_Embarked_missing"] = df["Embarked"].isnull().astype(int)
             df["feat_Fare_missing"] = df["Fare"].isnull().astype(int)
             # Target Encoding (se treino)
-            if is_training:
-                df["feat_Title_Group_te"] = kfold_target_encode(
-                    df, "Title_Group", "Survived", suffix="_te"
+            if is_training and "Survived" in df.columns:
+                df["feat_Title_te"] = kfold_target_encode(
+                    df, "Title", "Survived", suffix="_te"
                 )
                 ticket_prefix_series = df["Ticket"].str[:3]
                 ticket_prefix_series.name = "TicketPrefix"
@@ -321,7 +356,7 @@ except ImportError as e:
                 )
             else:
                 # Para teste, usar médias globais ou mapear de treino (simplificado)
-                df["feat_Title_Group_te"] = 0.5  # Placeholder
+                df["feat_Title_te"] = 0.5  # Placeholder
                 df["feat_TicketPrefix_te"] = 0.5
                 df["feat_Deck_te"] = 0.5
                 df["feat_Embarked_te"] = 0.5
@@ -359,106 +394,106 @@ def preprocess_data(train, test, feature_cols, apply_smote=False):
     return modular_preprocess_data(train, test, feature_cols, apply_smote, config=CONFIG)
 
 
-def check_library_availability():
-    """Check optional library availability, logging status and adjusting CONFIG when needed."""
-    logger.info("🔍 VERIFICANDO DISPONIBILIDADE DE BIBLIOTECAS...")
-
-    libs_status = {
-        "xgboost": XGB_AVAILABLE,
-        "lightgbm": LGBM_AVAILABLE,
-        "shap": SHAP_AVAILABLE,
-        "mlp": MLP_AVAILABLE,
-        "gp": GP_AVAILABLE,
-        "optuna": OPTUNA_AVAILABLE,
-        "calibrated": CALIBRATED_AVAILABLE,
-    }
-
-    pip_notes = {
-        "xgboost": "pip install xgboost>=1.6.0",
-        "lightgbm": "pip install lightgbm>=3.3.0",
-        "shap": "pip install shap>=0.41.0",
-        "mlp": "Disponível via scikit-learn>=1.0.0",
-        "gp": "Disponível via scikit-learn>=1.0.0",
-        "optuna": "pip install optuna>=3.0.0",
-        "calibrated": "Disponível via scikit-learn>=1.0.0",
-    }
-
-    libs_versions = {}
-    for lib in libs_status.keys():
-        try:
-            if lib == "xgboost" and XGB_AVAILABLE:
-                libs_versions[lib] = XGBClassifier.__version__
-            elif lib == "lightgbm" and LGBM_AVAILABLE:
-                libs_versions[lib] = LGBMClassifier.__version__
-            elif lib == "shap" and SHAP_AVAILABLE:
-                libs_versions[lib] = shap.__version__
-            elif lib == "optuna" and OPTUNA_AVAILABLE:
-                libs_versions[lib] = optuna.__version__
-            else:
-                libs_versions[lib] = "N/A"
-        except AttributeError:
-            libs_versions[lib] = "N/A"
-
-    critical_missing = []
-    optional_missing = []
-
-    for lib, available in libs_status.items():
-        version = libs_versions.get(lib, "N/A")
-        status = "✅ Disponível (v{})".format(version) if available else "❌ Não disponível"
-        logger.info(f"   {lib}: {status}")
-        if not available:
-            hint = pip_notes.get(lib, f"pip install {lib}")
-            logger.info(f"      Sugestão de instalação: {hint}")
-            if lib in ["xgboost", "lightgbm"]:
-                critical_missing.append(lib)
-            else:
-                optional_missing.append(lib)
-
-    if critical_missing:
-        logger.warning(
-            "   ⚠️  Bibliotecas críticas faltando: %s - habilitando FAST MODE" % ", ".join(critical_missing)
-        )
-        CONFIG["fast_mode"] = True
-        CONFIG["optuna_trials"] = 0
-        CONFIG["parallel_jobs"] = 1
-    elif optional_missing:
-        logger.info(
-            "   ℹ️  Bibliotecas opcionais ausentes: %s - utilizando fallbacks" % ", ".join(optional_missing)
-        )
-
-    return libs_status
-
-
 def main():
     """Main function that GUARANTEES the generation of all required files."""  # noqa
+    # Parse command-line arguments for config overrides
+    parser = argparse.ArgumentParser(
+        description="Titanic ML Pipeline - Enhanced with manual configuration",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python %(prog)s --fast_mode False --enhanced_balance True
+  python %(prog)s --config_file config.json --parallel_jobs 4
+  python %(prog)s --optuna_trials 100 --force_optimizations
+
+Optional dependencies can be installed with:
+  python requirements_suggestions.py --auto-install
+        """
+    )
+    parser.add_argument(
+        "--fast_mode", type=lambda x: str(x).lower() in ['true', '1', 'yes'],
+        default=None, help="Enable fast mode (skip heavy computations). Default: auto-detect"
+    )
+    parser.add_argument(
+        "--optuna_trials", type=int, default=None,
+        help="Number of Optuna hyperparameter optimization trials. Default: 50"
+    )
+    parser.add_argument(
+        "--parallel_jobs", type=int, default=None,
+        help="Number of parallel jobs for model training. Default: CPU cores - 1"
+    )
+    parser.add_argument(
+        "--cv_folds", type=int, default=None,
+        help="Number of cross-validation folds. Default: 5"
+    )
+    parser.add_argument(
+        "--force_optimizations", action="store_true",
+        help="Force optimizations even when fast_mode is enabled"
+    )
+    parser.add_argument(
+        "--debug_mode", type=lambda x: str(x).lower() in ['true', '1', 'yes'],
+        default=None, help="Enable debug mode with verbose logging. Default: False"
+    )
+    parser.add_argument(
+        "--enhanced_balance", type=lambda x: str(x).lower() in ['true', '1', 'yes'],
+        default=None, help="Enable enhanced class balancing (SMOTE if available). Default: False"
+    )
+    parser.add_argument(
+        "--config_file", type=str, default=None,
+        help="Path to JSON config file to override defaults"
+    )
+    parser.add_argument(
+        "--check_dependencies", action="store_true",
+        help="Check and suggest optional dependencies installation"
+    )
+    args = parser.parse_args()
+
+    # Apply overrides to CONFIG
+    if args.fast_mode is not None:
+        CONFIG["fast_mode"] = args.fast_mode
+    if args.optuna_trials is not None:
+        CONFIG["optuna_trials"] = args.optuna_trials
+    if args.parallel_jobs is not None:
+        CONFIG["parallel_jobs"] = args.parallel_jobs
+    if args.cv_folds is not None:
+        CONFIG["cv_folds"] = args.cv_folds
+    if args.debug_mode is not None:
+        CONFIG["debug_mode"] = args.debug_mode
+    if args.enhanced_balance is not None:
+        CONFIG["enhanced_balance"] = args.enhanced_balance
+    if args.force_optimizations:
+        CONFIG["fast_mode"] = False  # Override fast mode if forced
+
     script_start_time = datetime.now()
     logger.info("=" * 80)
     logger.info("TITANIC - OPTIMIZED PARALLEL ANALYSIS")
     logger.info("=" * 80)
 
     # 14. Check library availability and set fast mode (Item 14) - Refined settings
-    critical_libs = [XGB_AVAILABLE, LGBM_AVAILABLE]  # Core models
+    critical_libs = [XGB_AVAILABLE, LGBM_AVAILABLE]
     optional_libs = [SHAP_AVAILABLE, OPTUNA_AVAILABLE]  # Nice-to-have
 
     if not all(critical_libs):
         CONFIG["fast_mode"] = True  # noqa
         logger.info(
-            "⚡ FAST MODE ENABLED - Missing critical libs (XGBoost/LightGBM), limiting features"
+            "⚡ FAST MODE ENABLED - Missing critical libs (XGBoost/LightGBM), "
+            "limiting features"
         )
         CONFIG["optuna_trials"] = 0  # Disable Optuna # noqa
         CONFIG["parallel_jobs"] = 1  # noqa
     elif not all(optional_libs):
-        logger.info("⚠️  Optional libs missing (SHAP/Optuna), using fallbacks")
+        logger.info(
+            "⚠️  Optional libs missing (SHAP/Optuna), using fallbacks"
+        )
         CONFIG["optuna_trials"] = min(
             CONFIG.get("optuna_trials", 50), 20
         )  # Reduce but don't disable # noqa
     if CONFIG.get("fast_mode", False):
         logger.info("⚡ FAST MODE ENABLED - Skipping heavy computations")
-        CONFIG["optuna_trials"] = min(CONFIG.get("optuna_trials", 50), 10)  # noqa
+        CONFIG["optuna_trials"] = min(
+            CONFIG.get("optuna_trials", 50), 10
+        )  # noqa
         CONFIG["parallel_jobs"] = 1  # noqa
-
-    # Check library availability
-    check_library_availability()
 
     try:
         # 1. Create necessary directories
@@ -490,15 +525,52 @@ def main():
         config_with_meta["timestamp"] = datetime.now().isoformat()
         config_with_meta["data_hash"] = data_hash
         with open("output/relatorios/config_used.json", "w") as f:
-            json.dump(config_with_meta, f, indent=2, default=str)
+            json.dump(
+                config_with_meta, f, indent=2, default=str
+            )
         logger.info("   ✅ Config salvo em output/relatorios/config_used.json")
 
         validate_data_schema(train, EXPECTED_TRAIN_COLUMNS, "train.csv")
         validate_data_schema(test, EXPECTED_TEST_COLUMNS, "test.csv")
 
+        # Automatic class balancing detection
+        class_counts = train["Survived"].value_counts()
+        majority_class = class_counts.max()
+        minority_class = class_counts.min()
+        class_ratio = majority_class / minority_class
+        apply_smote = class_ratio > 1.5
+
+        if apply_smote:
+            logger.info(
+                f"🔄 DETECTADO DESBALANCEAMENTO DE CLASSES: "
+                f"Razão {class_ratio:.2f} > 1.5 (Maioria: {majority_class}, "
+                f"Minoria: {minority_class}). Ativando balanceamento automático."
+            )
+            CONFIG["enhanced_balance"] = True
+        else:
+            logger.info(
+                f"✅ Classes balanceadas: Razão {class_ratio:.2f} <= 1.5. "
+                f"Balanceamento não necessário."
+            )
+
+        # Save balancing stats
+        os.makedirs("output/changelog", exist_ok=True)
+        balancing_stats = {
+            "class_counts": class_counts.to_dict(),
+            "class_ratio": class_ratio,
+            "apply_smote": apply_smote,
+            "detection_threshold": 1.5,
+            "timestamp": datetime.now().isoformat(),
+        }
+        with open("output/changelog/balancing_stats.json", "w") as f:
+            json.dump(balancing_stats, f, indent=2)
+        logger.info("   📝 Estatísticas de balanceamento salvas")
+
         elapsed = datetime.now() - start_time
         logger.info(
-            f"   ✅ Dados carregados e validados: Train={train.shape}, Test={test.shape} em {elapsed.total_seconds():.2f}s"
+            f"   ✅ Dados carregados e validados: "
+            f"Train={train.shape}, Test={test.shape} em "
+            f"{elapsed.total_seconds():.2f}s"
         )
 
         logger.info("🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...")  # noqa
@@ -560,7 +632,8 @@ def main():
 
         elapsed = datetime.now() - start_time
         logger.info(
-            f"   ✅ Features avançadas criadas: {train.shape[1]} colunas em {elapsed.total_seconds():.2f}s"
+            f"   ✅ Features avançadas criadas: {train.shape[1]} colunas em "
+            f"{elapsed.total_seconds():.2f}s"
         )
 
         # Process test data similarly
@@ -590,7 +663,9 @@ def main():
             logger.info("   💾 Features de teste processadas e cached")
 
         test_elapsed = datetime.now() - test_start_time
-        logger.info(f"   ✅ Teste processado em {test_elapsed.total_seconds():.2f}s")
+        logger.info(
+            f"   ✅ Teste processado em {test_elapsed.total_seconds():.2f}s"
+        )
 
         if CONFIG.get("feature_selection", False):
             logger.info("🎯 SELECIONANDO FEATURES...")  # noqa
@@ -620,7 +695,8 @@ def main():
 
             feature_cols = [col for col in selected_features if col in feature_cols_all]
             logger.info(
-                f"   ✅ Selecionadas {len(feature_cols)}/{len(feature_cols_all)} features"
+                f"   ✅ Selecionadas {len(feature_cols)}/{len(feature_cols_all)} "
+                "features"
             )
 
             feature_cols = ensure_feature_cols_intersection(
@@ -671,10 +747,13 @@ def main():
             passed_count = sum(1 for k in keys_evaluated if smoke_results.get(k, False))
             total_tests = len(keys_evaluated)
             if passed_count >= max(3, total_tests - 1):
-                logger.info(f"   ✅ Smoke tests passed: {passed_count}/{total_tests}")
+                logger.info(
+                    f"   ✅ Smoke tests passed: {passed_count}/{total_tests}"
+                )
             else:
                 logger.warning(
-                    f"   ⚠️  Smoke tests partial: {passed_count}/{total_tests} - Details: {smoke_results.get('details', 'N/A')}"
+                    f"   ⚠️  Smoke tests partial: {passed_count}/{total_tests} - "
+                    f"Details: {smoke_results.get('details', 'N/A')}"
                 )
         except ImportError:
             logger.warning(
@@ -683,12 +762,15 @@ def main():
         except Exception as e:
             logger.error(f"   ❌ Erro nos smoke tests: {e}")
         elapsed = datetime.now() - start_time
-        logger.info(f"   Smoke tests concluídos em {elapsed.total_seconds():.2f}s")
+        logger.info(
+            f"   Smoke tests concluídos em {elapsed.total_seconds():.2f}s"
+        )
 
         if CONFIG.get("run_smoke_tests", False):
             unit_results = run_unit_tests()
             logger.info(
-                f"Unit tests: {sum(unit_results.values())}/{len(unit_results)} passed - {unit_results}"
+                f"Unit tests: {sum(unit_results.values())}/{len(unit_results)} "
+                f"passed - {unit_results}"
             )
 
         # Run Integration Tests
@@ -702,11 +784,20 @@ def main():
             passed_integration = sum(integration_results.values())
             total_integration = len(integration_results)
             if passed_integration == total_integration:
-                logger.info(f"   ✅ Integration tests passed: {passed_integration}/{total_integration}")
+                logger.info(
+                    f"   ✅ Integration tests passed: "
+                    f"{passed_integration}/{total_integration}"
+                )
             else:
-                logger.warning(f"   ⚠️  Integration tests partial: {passed_integration}/{total_integration}")
+                logger.warning(
+                    f"   ⚠️  Integration tests partial: "
+                    f"{passed_integration}/{total_integration}"
+                )
             integration_elapsed = datetime.now() - integration_start
-            logger.info(f"   Integration tests concluídos em {integration_elapsed.total_seconds():.2f}s")
+            logger.info(
+                f"   Integration tests concluídos em "
+                f"{integration_elapsed.total_seconds():.2f}s"
+            )
 
         logger.info("📈 GERANDO GRÁFICO EDA...")  # noqa
         start_time = datetime.now()
@@ -763,7 +854,8 @@ def main():
 
         elapsed = datetime.now() - start_time
         logger.info(
-            f"   ✅ Gráfico EDA salvo: output/graficos/01_eda_completa.png em {elapsed.total_seconds():.2f}s"
+            f"   ✅ Gráfico EDA salvo: output/graficos/01_eda_completa.png em "
+            f"{elapsed.total_seconds():.2f}s"
         )
 
         logger.info("🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...")  # noqa
@@ -774,21 +866,21 @@ def main():
 
         y_train = train["Survived"]
 
+        # Proper preprocessing to ensure consistent number of features
+        # Utiliza a função modular create_feature_pipeline para construir o pré-processador
+        preprocessor = create_feature_pipeline(
+            df=train,
+            feature_cols=feature_cols,
+            random_state=CONFIG["random_state"]
+        )
+        # Fit and transform
+        X_train_processed = preprocessor.fit_transform(train[feature_cols])
+        X_test_processed = preprocessor.transform(test[feature_cols])
+
         if cached_results is not None and not CONFIG["debug_mode"]:
             resultados = cached_results
             logger.info("Resultados dos modelos carregados do cache")
         else:
-            train[feature_cols]
-
-            X_train_processed, X_test_processed, y_train, preprocessor = (
-                modular_preprocess_data(
-                    train,
-                    test,
-                    feature_cols,
-                    apply_smote=CONFIG.get("enhanced_balance", False),
-                    config=CONFIG,
-                )
-            )
             modelos = get_base_models(CONFIG)
             if hasattr(X_train_processed, "toarray"):
                 X_train_np = X_train_processed.toarray()
@@ -845,8 +937,9 @@ def main():
                 )
 
             logger.info(
-                f"   🚀 Iniciando treinamento paralelo com {CONFIG['parallel_jobs']} jobs..."  # noqa
-            )
+                f"   🚀 Iniciando treinamento paralelo com "
+                f"{CONFIG['parallel_jobs']} jobs..."
+            )  # noqa
 
             resultados = {}
 
@@ -868,7 +961,7 @@ def main():
                     try:
                         result = future.result()
                         resultados[model_name] = result
-                        logger.info(f"   ✅ {model_name} concluído")
+                        logger.info("   ✅ %s concluído" % model_name)
                     except Exception as e:  # noqa
                         logger.error(f"   ❌ {model_name} falhou: {e}")
                         resultados[model_name] = {
@@ -884,7 +977,8 @@ def main():
 
         elapsed = datetime.now() - start_time
         logger.info(
-            f"Modelos treinados: {len(resultados)} modelos em {elapsed.total_seconds():.2f}s"
+            f"Modelos treinados: {len(resultados)} modelos em "
+            f"{elapsed.total_seconds():.2f}s"
         )
         # Model definitions are already handled above in parallel processing
         # Now prepare for ensemble and final predictions
@@ -896,7 +990,9 @@ def main():
                 try:
                     optuna.logging.set_verbosity(optuna.logging.WARNING)
                 except Exception as e:
-                    logger.warning(f"Could not set optuna logging verbosity: {e}")
+                    logger.warning(
+                        f"Could not set optuna logging verbosity: {e}"
+                    )
 
                 logger.info("🔥 OTIMIZANDO HIPERPARÂMETROS COM OPTUNA...")
                 optuna_start_time = datetime.now()
@@ -932,12 +1028,14 @@ def main():
                         df = study.trials_dataframe()
                         os.makedirs("output/relatorios", exist_ok=True)
                         df.to_csv(
-                            f"output/optuna_trials_{model_name.replace(' ', '_')}.csv",
+                            f"output/optuna_trials_"
+                            f"{model_name.replace(' ', '_')}.csv",
                             index=False,
                         )
 
                         logger.info(
-                            f"   Melhor resultado para {model_name}: Acurácia = {study.best_value:.4f}"
+                            f"   Melhor resultado para {model_name}: "
+                            f"Acurácia = {study.best_value:.4f}"
                         )
                         logger.info(f"   Melhores parâmetros: {study.best_params}")
 
@@ -945,7 +1043,8 @@ def main():
 
                         os.makedirs("output/relatorios", exist_ok=True)
                         with open(
-                            f"output/best_params_{model_name.replace(' ', '_')}.json",
+                            f"output/best_params_"
+                            f"{model_name.replace(' ', '_')}.json",
                             "w",
                         ) as f:
                             json.dump(best_params, f, indent=2)
@@ -989,22 +1088,26 @@ def main():
                         try:
                             fig = vis.plot_optimization_history(study)
                             fig.write_image(
-                                f"output/graficos/optuna_history_{model_name.replace(' ', '_')}.png",
+                                f"output/graficos/optuna_history_"
+                                f"{model_name.replace(' ', '_')}.png",
                                 engine="kaleido"
                             )
                             fig = vis.plot_param_importances(study)
                             fig.write_image(
-                                f"output/graficos/optuna_importance_{model_name.replace(' ', '_')}.png",
+                                f"output/graficos/optuna_importance_"
+                                f"{model_name.replace(' ', '_')}.png",
                                 engine="kaleido"
                             )
                         except Exception as e:
                             logger.warning(
-                                f"   Não foi possível gerar gráficos do Optuna para {model_name}: {e}"
+                                f"   Não foi possível gerar gráficos do Optuna para "
+                                f"{model_name}: {e}"
                             )
 
                 optuna_elapsed = datetime.now() - optuna_start_time
                 logger.info(
-                    f"   ✅ Otimização concluída em {optuna_elapsed.total_seconds():.2f}s"
+                    f"   ✅ Otimização concluída em "
+                    f"{optuna_elapsed.total_seconds():.2f}s"
                 )
             except Exception as e:
                 logger.error(f"❌ Erro na otimização Optuna: {e}", exc_info=True)
@@ -1031,8 +1134,14 @@ def main():
 
         for name, perf in top_models:
             if "trained_model" in perf and perf["trained_model"] is not None:
-                ensemble_models.append((name, perf["trained_model"]))
-            ensemble_weights.append(perf["mean_score"])
+                # Only include models that support predict_proba for soft voting
+                if hasattr(perf["trained_model"], 'predict_proba'):
+                    ensemble_models.append((name, perf["trained_model"]))
+                    ensemble_weights.append(perf["mean_score"])
+                else:
+                    logger.warning(f"Excluding {name} from ensemble (no predict_proba support)")
+            else:
+                ensemble_weights.append(perf["mean_score"])  # Still include in weights for consistency, but not in ensemble
         
         if ensemble_models:
             # Create voting classifier
@@ -1040,10 +1149,8 @@ def main():
                 estimators=ensemble_models, voting="soft", weights=ensemble_weights
             )
             # Prepare data for fitting ensemble
-            X_train_ensemble = train[feature_cols]
-            X_train_ensemble = pd.get_dummies(X_train_ensemble, drop_first=True)
-            X_train_ensemble = X_train_ensemble.fillna(0)
-            y_train_ensemble = train["Survived"]
+            X_train_ensemble = X_train_processed
+            y_train_ensemble = y_train
 
             ensemble.fit(X_train_ensemble, y_train_ensemble)
 
@@ -1119,6 +1226,7 @@ def main():
                         for k, v in resultados.items()
                         if not k.endswith("_Calibrated")
                         and v.get("trained_model") is not None
+                        and hasattr(v["trained_model"], 'predict_proba')
                     ],
                     key=lambda x: x[1]["mean_score"],
                     reverse=True,
@@ -1127,7 +1235,7 @@ def main():
                     ("Ensemble_Stacking", resultados.get("Ensemble_Stacking")),
                 ]
                 for model_name, perf in top_models_for_calibration:
-                    if perf and perf.get("trained_model") is not None:
+                    if perf and perf.get("trained_model") is not None and hasattr(perf["trained_model"], 'predict_proba'):
                         original_model = perf["trained_model"]
                         calibrated_model = CalibratedClassifierCV(
                             original_model, method="isotonic", cv=3
@@ -1286,20 +1394,18 @@ def main():
             top_3_models = sorted(
                 valid_results.items(), key=lambda x: x[1]["mean_score"], reverse=True
             )[:3]
-            # preprocess_data returns: X_train_processed, X_test_processed, y_train, preprocessor
-            X_train_shap, _, y_train, preprocessor_shap = preprocess_data(
-                train, test, feature_cols
-            )
-            if hasattr(X_train_shap, "toarray"):
-                X_train_shap = X_train_shap.toarray()
-            X_train_shap = np.asarray(X_train_shap, dtype=float)
-            feature_names_out = preprocessor_shap.get_feature_names_out()
+            
+            # Usar os dados já processados e o preprocessor ajustado para consistência
+            X_train_shap = X_train_processed
+            feature_names_out = preprocessor.get_feature_names_out()
+
             X_train_shap_df = pd.DataFrame(X_train_shap, columns=feature_names_out)
+            
             shap_sample_size = min(100, len(X_train_shap_df))
-            X_shap_sample = X_train_shap_df.sample(
+            X_shap_sample_df = X_train_shap_df.sample(
                 shap_sample_size, random_state=CONFIG["random_state"]
             )
-            X_shap_sample_values = X_shap_sample.values.astype(float)
+            X_shap_sample_values = X_shap_sample_df.values.astype(float)
 
             for model_name, perf in top_3_models:
                 model = perf.get("trained_model")
@@ -1331,7 +1437,7 @@ def main():
                     plt.figure()
                     shap.summary_plot(
                         shap_plot_values,
-                        X_shap_sample,
+                        X_shap_sample_df,
                         feature_names=feature_names_out,
                         show=False,
                     )
@@ -1447,16 +1553,24 @@ def main():
         if final_model is None:
             raise ValueError("Nenhum modelo disponível para gerar predições")
 
-        X_test_pred = test[feature_cols]
-        X_test_pred = pd.get_dummies(X_test_pred, drop_first=True)
+        # A predição já foi feita com X_test_processed, que foi transformado pelo preprocessor
+        predictions = final_model.predict(X_test_processed)
 
-        train_cols = pd.get_dummies(train[feature_cols], drop_first=True).columns
-        X_test_pred = X_test_pred.reindex(columns=train_cols, fill_value=0)
-        X_test_pred = X_test_pred.fillna(0)
+        # Criar o DataFrame de submissão
+        submission = pd.DataFrame(
+            {"PassengerId": test["PassengerId"], "Survived": predictions.astype(int)}
+        )
+        submission_path = "output/submission_titanic_final.csv"
+        submission.to_csv(submission_path, index=False)
+        logger.info(f"   ✅ Submission gerada e salva em: {submission_path}")
 
-        predictions = final_model.predict(X_test_pred)
-
-        improved_generate_submission(final_model, test, feature_cols, train)
+        # A função `improved_generate_submission` foi integrada aqui para usar o X_test_processed
+        # e o preprocessor já ajustado, eliminando a necessidade de reprocessar os dados
+        # manualmente com get_dummies.
+        #
+        # A chamada original era:
+        # improved_generate_submission(final_model, test, feature_cols, train)
+        #
 
         elapsed = datetime.now() - start_time
         logger.info(
@@ -1467,7 +1581,7 @@ def main():
             datetime.now() - script_start_time
         )  # Corrected start time reference
         save_timing_report(script_total_time, resultados)
-        modular_generate_reports(resultados, feature_cols, script_total_time)
+        modular_generate_reports(resultados, feature_cols, X_train_processed, y_train)
 
         modular_generate_changelog_and_manifest(
             feature_cols, resultados, script_total_time
@@ -1518,117 +1632,6 @@ def main():
         return False
 
 
-def generate_calibration_plots(X_train, y_train):
-    """
-    Gera e salva gráficos de calibração para comparar um modelo antes e depois da calibração.
-    """
-    print("\nGENERATING CALIBRATION PLOTS...")
-    from sklearn.calibration import CalibratedClassifierCV, CalibrationDisplay
-    from sklearn.model_selection import train_test_split
-
-    # Usar um subconjunto dos dados para plotagem mais rápida, se necessário
-    if len(y_train) > 2000:
-        X_train, _, y_train, _ = train_test_split(
-            X_train, y_train, train_size=2000, stratify=y_train, random_state=42
-        )
-
-    X_train_cal, X_val_cal, y_train_cal, y_val_cal = train_test_split(
-        X_train, y_train, test_size=0.5, stratify=y_train, random_state=42
-    )
-
-    svc_uncalibrated = SVC(probability=True, random_state=42, kernel="rbf", C=1.0)
-    svc_calibrated = CalibratedClassifierCV(
-        SVC(probability=True, random_state=42, kernel="rbf", C=1.0),
-        method="isotonic",
-        cv=3,  # Usar menos folds para a plotagem
-    )
-
-    models_to_plot = {
-        "SVC (Não Calibrado)": svc_uncalibrated,
-        "SVC (Calibrado)": svc_calibrated,
-    }
-
-    fig, ax = plt.subplots(figsize=(10, 8))
-
-    for name, model in models_to_plot.items():
-        model.fit(X_train_cal, y_train_cal)
-        CalibrationDisplay.from_estimator(
-            model,
-            X_val_cal,
-            y_val_cal,
-            n_bins=10,
-            name=name,
-            ax=ax,
-        )
-
-    ax.set_title(
-        "Gráfico de Calibração: SVC vs. SVC Calibrado", fontsize=14, fontweight="bold"
-    )
-    plt.savefig("output/graficos/09_calibration_plot.png", dpi=300, bbox_inches="tight")
-    plt.close()
-    print(
-        "   ✅ Gráfico de calibração salvo em: output/graficos/09_calibration_plot.png"
-    )
-
-
-def generate_feature_correlation_heatmap(train, feature_cols):
-    """Gera heatmap de correlação das features."""  # noqa
-    logger.info("🔥 GERANDO HEATMAP DE CORRELAÇÃO DE FEATURES...")  # noqa
-    corr_matrix = train[feature_cols].corr()
-    plt.figure(figsize=(14, 10))
-    sns.heatmap(corr_matrix, annot=False, cmap="coolwarm", center=0)
-    plt.title("Feature Correlation Heatmap")
-    plt.tight_layout()
-    plt.savefig(
-        "output/graficos/09_feature_correlation_heatmap.png",
-        dpi=300,
-        bbox_inches="tight",
-    )
-    plt.close()
-    logger.info(
-        "   ✅ Heatmap salvo em output/graficos/09_feature_correlation_heatmap.png"
-    )
-
-
-def run_smoke_tests(train, test, feature_cols):
-    """Executa testes smoke básicos."""  # noqa
-    logger.info("🧪 EXECUTANDO SMOKE TESTS...")
-    results = {
-        "data_load": True,
-        "feature_count": len(feature_cols) >= 20,
-        "cv_score": False,
-        "submission_generation": False,
-    }
-
-    # Test CV score
-    try:  # noqa
-        model = RandomForestClassifier(n_estimators=10, random_state=42)
-        X = train[feature_cols].fillna(0)
-        # Basic preprocessing: one-hot encode categorical columns to ensure numerical input
-        categorical_cols = X.select_dtypes(include=['object', 'category']).columns
-        if len(categorical_cols) > 0:
-            X = pd.get_dummies(X, columns=categorical_cols, drop_first=True)
-        y = train["Survived"]
-        scores = cross_val_score(model, X, y, cv=3)
-        results["cv_score"] = scores.mean() > 0.7
-        logger.info(f"Smoke test CV score: {scores.mean():.4f}")
-    except Exception as e:
-        logger.error(f"Smoke test CV falhou: {e}")
-
-    try:
-        train = pd.read_csv("train.csv")
-        test = pd.read_csv("test.csv")
-        assert len(train) > 0, "Train data is empty"
-        assert len(test) > 0, "Test data is empty"
-        assert "Survived" in train.columns, "Survived column missing in train"
-        assert "PassengerId" in test.columns, "PassengerId column missing in test"
-        logger.info("✅ Data load test passed")
-        return True
-    except Exception as e:
-        logger.error(f"❌ Data load test failed: {e}")
-        return False
-
-
 def run_unit_tests():
     """Executa testes unitários básicos."""  # noqa
     logger.info("🧪 EXECUTANDO UNIT TESTS...")
@@ -1651,7 +1654,7 @@ def run_unit_tests():
     try:
         train = pd.DataFrame({"A": [1, 2, 3], "B": [4, 5, 6], "Survived": [0, 1, 0]})
         test = pd.DataFrame({"A": [1, 2], "B": [4, 5]})
-        X_train, X_test, y_train, preprocessor = preprocess_data(
+        X_train, X_test, y_train, preprocessor = modular_preprocess_data(
             train, test, ["A", "B"]
         )
         results["preprocess_data"] = X_train.shape[0] == 3 and X_test.shape[0] == 2
@@ -1670,33 +1673,6 @@ def run_unit_tests():
         logger.error(f"Unit test train_single_model falhou: {e}")
 
     return results
-
-
-def run_integration_tests(train, test, feature_cols):
-    """Executa testes de integração."""  # noqa
-    logger.info("🧪 EXECUTANDO INTEGRATION TESTS...")
-    results = {"full_pipeline": False}
-
-    try:  # noqa
-        # Simulate full pipeline
-        X_train, X_test, y_train, preprocessor = preprocess_data(
-            train, test, feature_cols
-        )
-        result = modular_train_single_model(
-            "Integration",
-            RandomForestClassifier(n_estimators=10, random_state=42),
-            X_train,
-            y_train,
-            cv_folds=2,
-        )
-        results["full_pipeline"] = result["mean_score"] > 0.5
-    except Exception as e:
-        logger.error(f"Integration test falhou: {e}")
-
-    return results
-
-
-
 
 
 # =============================================================================

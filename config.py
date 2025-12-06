@@ -11,10 +11,8 @@ import logging
 CONFIG = {
     "debug_mode": False,
     "random_state": 42,
-    "parallel_jobs": max(1, multiprocessing.cpu_count() - 1),
-    # Increased to use more cores
+    "parallel_jobs": 1,
     "cv_folds": 15,
-    "random_state": 42,
     "cache_enabled": True,  # Enabled for better performance
     "fast_mode": False,
     "feature_selection": True,  # Enable feature selection
@@ -35,6 +33,7 @@ CONFIG = {
     "randomized_n_iter": 100,  # Iterations for RandomizedSearchCV fallback
     "report_include_images": True,  # Include images in reports
     "selection_threshold": 0.01,  # Threshold for feature selection
+    "selection_model": "RandomForest",  # Model for feature selection
     "te_prior": 10,  # Prior for target encoding smoothing
 }
 
@@ -46,7 +45,7 @@ MODEL_CONFIGS = {
         "min_samples_split": 5,
         "min_samples_leaf": 2,
         "random_state": CONFIG["random_state"],
-        "n_jobs": -1,
+        "n_jobs": 1,
     },
     "XGBoost": {
         "n_estimators": 800,

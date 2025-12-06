@@ -1,5 +1,5 @@
 {
-  "total_time_seconds": 15485.773481,
-  "models_trained": 29,
-  "timestamp": "2025-11-22T20:45:12.456978"
+  "total_time_seconds": 120.5,
+  "models_trained": 2,
+  "best_model": "RandomForest"
 }

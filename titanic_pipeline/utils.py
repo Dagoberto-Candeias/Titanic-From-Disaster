@@ -19,9 +19,11 @@ import pickle
 import hashlib
 import logging
 import random
-import json
-from typing import Any, Callable, Iterable, List, Optional, Tuple
+from typing import Any, Callable, Iterable, List, Optional
+import pandas as pd
 import numpy as np
+import multiprocessing
+
 
 logger = logging.getLogger(__name__)
 
@@ -37,17 +39,17 @@ try:
 except Exception:
     JOBLIB_AVAILABLE = False
 
-# multiprocessing fallback
-import multiprocessing
 
 def get_cache_key(data_hash: str, operation: str) -> str:
     """
     Generate a stable cache key based on data hash and operation.
-    Note: intentionally does NOT include timestamp to allow cache reuse across runs
-    for the same data.
+
+    Note: intentionally does NOT include timestamp to allow cache reuse
+    across runs for the same data.
     """
     key = hashlib.md5(f"{data_hash}_{operation}".encode()).hexdigest()
     return key
+
 
 def robust_pickle_dump(obj: Any, path: str) -> None:
     """Safely dump an object to a pickle file, creating directories if needed."""
@@ -67,8 +69,9 @@ def robust_pickle_load(path: str) -> Optional[Any]:
         logger.info(f"✅ Loaded pickle: {path}")
         return obj
     except Exception as e:
-        logger.warning(f"⚠️  Could not load pickle {path}: {e}")
-        return None
+        logger.warning(f"⚠️ Could not load pickle {path}: {e}")
+    return None
+
 
 def safe_check_is_fitted(estimator: Any, X_sample=None) -> bool:
     """
@@ -98,6 +101,7 @@ def safe_check_is_fitted(estimator: Any, X_sample=None) -> bool:
             return True
     return False
 
+
 def safe_parallel_map(func: Callable, iterable: Iterable, max_workers: Optional[int] = None, use_joblib: bool = True):
     """
     Execute func over iterable in parallel with joblib or ProcessPoolExecutor fallback.
@@ -112,7 +116,9 @@ def safe_parallel_map(func: Callable, iterable: Iterable, max_workers: Optional[
             results = Parallel(n_jobs=max_workers)(delayed(func)(item) for item in iterable)
             return results
         except Exception as e:
-            logger.warning(f"⚠️ joblib parallel failed, falling back to sequential. Error: {e}")
+            logger.warning(
+                f"⚠️ joblib parallel failed, falling back to sequential. Error: {e}"
+            )
 
     # Fallback to sequential map
     results = []
@@ -124,6 +130,7 @@ def safe_parallel_map(func: Callable, iterable: Iterable, max_workers: Optional[
             results.append(None)
     return results
 
+
 def ensure_feature_cols_intersection(train_cols: Iterable[str], test_cols: Iterable[str], feature_cols: Iterable[str]) -> List[str]:
     """
     Ensure feature_cols are present in both train and test.
@@ -134,8 +141,12 @@ def ensure_feature_cols_intersection(train_cols: Iterable[str], test_cols: Itera
     final = [c for c in feature_cols if c in train_set and c in test_set]
     missing = [c for c in feature_cols if c not in final]
     if missing:
-        logger.warning(f"⚠️ The following feature_cols were removed because missing in train/test: {missing}")
+        logger.warning(
+            f"⚠️ The following feature_cols were removed because missing "
+            f"in train/test: {missing}"
+        )
     return final
+
 
 def is_tree_model(estimator: Any) -> bool:
     """Simple heuristic to check if estimator is tree-based (so TreeExplainer can be used)."""
@@ -144,6 +155,7 @@ def is_tree_model(estimator: Any) -> bool:
         return any(k in cls_name for k in ("xgb", "lgbm", "randomforest", "extratrees", "lightgbm", "catboost", "decisiontree"))
     except Exception:
         return False
+
 
 def set_global_seeds(seed: int):
     """Set seeds for reproducibility across random, numpy and os where applicable."""
@@ -155,3 +167,44 @@ def set_global_seeds(seed: int):
     except Exception:
         pass
     logger.info(f"🔒 Global seeds set to {seed}")
+
+def optimize_memory_usage(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
+    """
+    Itera sobre todas as colunas de um dataframe e modifica o tipo de dado
+    para reduzir o uso de memória.
+    """
+    start_mem = df.memory_usage(deep=deep).sum() / 1024**2
+    logger.info(f"Uso de memória do dataframe é {start_mem:.2f} MB")
+
+    for col in df.columns:
+        col_type = df[col].dtype
+
+        if col_type != object and col_type.name != 'category' and 'datetime' not in str(col_type):
+            c_min = df[col].min()
+            c_max = df[col].max()
+            if str(col_type)[:3] == 'int':
+                if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                    df[col] = df[col].astype(np.int8)
+                elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:
+                    df[col] = df[col].astype(np.int16)
+                elif c_min > np.iinfo(np.int32).min and c_max < np.iinfo(np.int32).max:
+                    df[col] = df[col].astype(np.int32)
+                elif c_min > np.iinfo(np.int64).min and c_max < np.iinfo(np.int64).max:
+                    df[col] = df[col].astype(np.int64)
+            else:  # Handles float types, including those that were int but became
+                   # float due to NaNs
+                if c_min > np.finfo(np.float32).min and c_max < np.finfo(np.float32).max:
+                    df[col] = df[col].astype(np.float32)
+                else:
+                    df[col] = df[col].astype(np.float64)
+        elif col_type == 'object':
+            # Convert to category only if cardinality is low enough
+            if len(df[col].unique()) / len(df[col]) < 0.5:
+                df[col] = df[col].astype('category')
+
+    end_mem = df.memory_usage(deep=deep).sum() / 1024**2
+    logger.info(f"Uso de memória após otimização: {end_mem:.2f} MB")
+    logger.info(
+        f"Redução de {100 * (start_mem - end_mem) / start_mem:.1f}%"
+    )
+    return df

@@ -1,24 +1,31 @@
-import logging
-import pandas as pd
-import numpy as np
-from typing import Tuple, List, Optional, Union
-from sklearn.experimental import enable_iterative_imputer
-from sklearn.compose import ColumnTransformer
-from sklearn.impute import SimpleImputer, KNNImputer, IterativeImputer
-from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, StandardScaler
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import KFold, StratifiedKFold
 import json
+import logging
 import os
-from concurrent.futures import ProcessPoolExecutor, as_completed
+
+import numpy as np
+import pandas as pd
+from sklearn.experimental import enable_iterative_imputer  # noqa: F401
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import IterativeImputer, KNNImputer, SimpleImputer
+from sklearn.model_selection import KFold, StratifiedKFold
+from sklearn.preprocessing import (
+    OneHotEncoder,
+    OrdinalEncoder,
+    StandardScaler,
+)
+from sklearn.pipeline import Pipeline
+from typing import Callable, List, Optional, Tuple, Union
 
 from titanic_pipeline.utils import set_global_seeds
+
+from config import CONFIG
+
 
 logger = logging.getLogger(__name__)
 
 # Ensure output directories exist
-os.makedirs('output/reports', exist_ok=True)
-os.makedirs('output/cache', exist_ok=True)
+os.makedirs("output/reports", exist_ok=True)
+os.makedirs("output/cache", exist_ok=True)
 
 def create_feature_pipeline(
     df: pd.DataFrame,
@@ -31,24 +38,26 @@ def create_feature_pipeline(
     random_state: int = 42
 ) -> ColumnTransformer:
     """
-    Cria um pipeline de pré-processamento completo para variáveis numéricas e categóricas.
-    Detecta colunas numéricas e categóricas automaticamente e aplica imputação e codificação
-    apropriadas.
+    Cria um pipeline de pré-processamento completo para variáveis numéricas e
+    categóricas. Detecta colunas numéricas e categóricas automaticamente e
+    aplica imputação e codificação apropriadas.
 
-    Creates a complete preprocessing pipeline for numerical and categorical variables.
-    Automatically detects numerical and categorical columns and applies appropriate
-    imputation and encoding.
+    Creates a complete preprocessing pipeline for numerical and categorical
+    variables. Automatically detects numerical and categorical columns and
+    applies appropriate imputation and encoding.
 
     Parameters:
     -----------
     numerical_imputer : str, default='simple'
-        Tipo de imputador para variáveis numéricas: 'simple' (SimpleImputer com média),
-        'knn' (KNNImputer), 'iterative' (IterativeImputer).
+        Tipo de imputador para variáveis numéricas: 'simple'
+        (SimpleImputer com média), 'knn' (KNNImputer), 'iterative'
+        (IterativeImputer).
     categorical_encoder : str, default='onehot'
-        Tipo de codificador para variáveis categóricas: 'onehot' (OneHotEncoder),
-        'ordinal' (OrdinalEncoder).
+        Tipo de codificador para variáveis categóricas: 'onehot'
+        (OneHotEncoder), 'ordinal' (OrdinalEncoder).
     scaler : bool, default=True
-        Se deve aplicar StandardScaler às variáveis numéricas após imputação.
+        Se deve aplicar StandardScaler às variáveis numéricas após
+        imputação.
     knn_neighbors : int, default=5
         Número de vizinhos para KNNImputer.
     iterative_max_iter : int, default=10
@@ -78,9 +87,14 @@ def create_feature_pipeline(
         if col in always_numerical:
             numerical_features.append(col)
         # Colunas sempre categóricas
-        elif (df[col].dtype == 'object' or
-              col in ["Sex", "Embarked", "Title", "Title_Group", "Deck", "TicketPrefix"] or
-              col.startswith('feat_') and ('Bin' in col or 'Category' in col or 'missing' in col)):
+        elif (
+            df[col].dtype == 'object' or
+            col in ["Sex", "Embarked", "Title", "Title_Group", "Deck", "TicketPrefix"] or
+            (
+                col.startswith('feat_') and
+                ('Bin' in col or 'Category' in col or 'missing' in col)
+            )
+        ):
             categorical_features.append(col)
         # Outras colunas: verificar se são numéricas ou têm poucos valores únicos
         elif df[col].dtype in ['int64', 'float64'] or df[col].nunique() >= 10:
@@ -88,8 +102,12 @@ def create_feature_pipeline(
         else:
             categorical_features.append(col)
 
-    logger.info(f"Features numéricas: {numerical_features}")
-    logger.info(f"Features categóricas: {categorical_features}")
+    logger.info(
+        f"Features numéricas: {numerical_features}"
+    )
+    logger.info(
+        f"Features categóricas: {categorical_features}"
+    )
 
     # Imputadores numéricos
     if numerical_imputer == 'simple':
@@ -102,12 +120,19 @@ def create_feature_pipeline(
             num_imputer = SimpleImputer(strategy='mean')
     elif numerical_imputer == 'iterative':
         try:
-            num_imputer = IterativeImputer(max_iter=iterative_max_iter, random_state=random_state)
+            num_imputer = IterativeImputer(
+                max_iter=iterative_max_iter, random_state=random_state
+            )
         except ImportError:
-            logger.warning("IterativeImputer não disponível. Usando SimpleImputer.")
+            logger.warning(
+                "IterativeImputer não disponível. Usando SimpleImputer."
+            )
             num_imputer = SimpleImputer(strategy='mean')
     else:
-        raise ValueError(f"numerical_imputer deve ser 'simple', 'knn' ou 'iterative'. Recebido: {numerical_imputer}")
+        raise ValueError(
+            "numerical_imputer deve ser 'simple', 'knn' ou 'iterative'. "
+            f"Recebido: {numerical_imputer}"
+        )
 
     # Pipeline numérico
     num_pipeline = Pipeline([
@@ -122,7 +147,10 @@ def create_feature_pipeline(
     elif categorical_encoder == 'ordinal':
         cat_encoder = OrdinalEncoder(handle_unknown='use_encoded_value', unknown_value=-1)
     else:
-        raise ValueError(f"categorical_encoder deve ser 'onehot' ou 'ordinal'. Recebido: {categorical_encoder}")
+        raise ValueError(
+            "categorical_encoder deve ser 'onehot' ou 'ordinal'. "
+            f"Recebido: {categorical_encoder}"
+        )
 
     # Pipeline categórico (apenas codificação, sem imputação aqui - será tratada separadamente)
     cat_pipeline = Pipeline([
@@ -141,6 +169,8 @@ def create_feature_pipeline(
     logger.info("Pipeline de pré-processamento criado com sucesso.")
     return preprocessor
 
+
+
 def advanced_missing_imputation(
     df: pd.DataFrame,
     strategy: str = 'auto',
@@ -148,17 +178,20 @@ def advanced_missing_imputation(
 ) -> Tuple[pd.DataFrame, Optional[pd.DataFrame]]:
     """
     Realiza imputação automática de valores ausentes com relatório opcional.
-    Aplica imputadores adequados conforme o tipo de coluna e gera relatório de missing values.
+    Aplica imputadores adequados conforme o tipo de coluna e gera relatório
+    de missing values.
     
     Performs automatic imputation of missing values with optional reporting.
-    Applies appropriate imputers based on column type and generates a missing values report.
+    Applies appropriate imputers based on column type and generates a missing
+    values report.
     
     Parameters:
     -----------
     df : pd.DataFrame
         DataFrame com valores ausentes.
     strategy : str, default='auto'
-        Estratégia de imputação: 'simple' (média/modo), 'knn', 'iterative', ou 'auto' (detecta melhor).
+        Estratégia de imputação: 'simple' (média/modo), 'knn', 'iterative',
+        ou 'auto' (detecta melhor).
     report : bool, default=True
         Se deve gerar e salvar relatório de missing values.
     
@@ -170,7 +203,8 @@ def advanced_missing_imputation(
     Notes:
     ------
     - Salva relatório em output/reports/missing_report.csv se report=True.
-    - Usa SimpleImputer por padrão para categóricas (strategy='constant', fill_value='missing').
+    - Usa SimpleImputer por padrão para categóricas (strategy='constant',
+      fill_value='missing').
     """
     set_global_seeds(42)
     df_imputed = df.copy()
@@ -184,19 +218,29 @@ def advanced_missing_imputation(
             'missing_count': missing_before,
             'missing_percentage': missing_pct
         })
-        logger.info(f"Relatório de missing values gerado. Colunas com >0% ausentes: {len(missing_report[missing_report['missing_percentage'] > 0])}")
+        missing_count = len(
+            missing_report[missing_report['missing_percentage'] > 0]
+        )
+        logger.info(
+            f"Relatório de missing values gerado. Colunas com >0% "
+            f"ausentes: {missing_count}"
+        )
     
     # Imputação numérica
     num_cols = df.select_dtypes(include=[np.number]).columns
     if len(num_cols) > 0 and df[num_cols].isnull().any().any():
         if strategy == 'auto':
             # Escolhe baseado no % de missing
-            if df[num_cols].isnull().sum().sum() / (len(df) * len(num_cols)) < 0.5:
+            if (
+                df[num_cols].isnull().sum().sum()
+                / (len(df) * len(num_cols))
+                < 0.5
+            ):
                 imputer = SimpleImputer(strategy='mean')
             else:
                 try:
                     imputer = KNNImputer(n_neighbors=5)
-                except:
+                except ImportError:
                     imputer = SimpleImputer(strategy='mean')
         else:
             # Implementar baseado em strategy
@@ -213,13 +257,15 @@ def advanced_missing_imputation(
                     imputer = IterativeImputer(random_state=42)
                 except ImportError:
                     imputer = SimpleImputer(strategy='mean')
-        
+
         df_imputed[num_cols] = pd.DataFrame(
             imputer.fit_transform(df[num_cols]),
             columns=num_cols,
             index=df.index
         )
-        logger.info(f"Imputação numérica aplicada em {len(num_cols)} colunas.")
+        logger.info(
+            f"Imputação numérica aplicada em {len(num_cols)} colunas."
+        )
     
     # Imputação categórica
     cat_cols = df.select_dtypes(include=['object', 'category']).columns
@@ -230,7 +276,9 @@ def advanced_missing_imputation(
             columns=cat_cols,
             index=df.index
         )
-        logger.info(f"Imputação categórica aplicada em {len(cat_cols)} colunas.")
+        logger.info(
+            f"Imputação categórica aplicada em {len(cat_cols)} colunas."
+        )
     
     if report:
         missing_after = df_imputed.isnull().sum()
@@ -254,16 +302,17 @@ def get_title(name: str) -> str:
     str
         Extracted title or 'Other' if not found.
     """
+    titles = {
+        'Mr': 'Mr', 'Mrs': 'Mrs', 'Miss': 'Miss', 'Master': 'Master',
+        'Don': 'Mr', 'Rev': 'Mr', 'Dr': 'Mr', 'Mme': 'Mrs', 'Ms': 'Miss',
+        'Major': 'Mr', 'Lady': 'Mrs', 'Sir': 'Mr', 'Mlle': 'Miss',
+        'Col': 'Mr', 'Capt': 'Mr', 'the Countess': 'Mrs', 'Jonkheer': 'Mr',
+        'Dona': 'Mrs'
+    }
     try:
         if ',' not in name or '.' not in name:
             return 'Other'
         title = name.split(',')[1].split('.')[0].strip()
-        titles = {
-            'Mr': 'Mr', 'Mrs': 'Mrs', 'Miss': 'Miss', 'Master': 'Master',
-            'Don': 'Mr', 'Rev': 'Mr', 'Dr': 'Mr', 'Mme': 'Mrs', 'Ms': 'Miss',
-            'Major': 'Mr', 'Lady': 'Mrs', 'Sir': 'Mr', 'Mlle': 'Miss', 'Col': 'Mr',
-            'Capt': 'Mr', 'the Countess': 'Mrs', 'Jonkheer': 'Mr', 'Dona': 'Mrs'
-        }
         return titles.get(title, 'Other')
     except (IndexError, AttributeError):
         return 'Other'
@@ -339,10 +388,23 @@ def create_interactions(df: pd.DataFrame) -> pd.DataFrame:
 def create_bins(df: pd.DataFrame) -> pd.DataFrame:
     """Create binned features."""
     df = df.copy()
-    df['feat_AgeBin'] = pd.cut(df['Age'], bins=[0, 12, 18, 35, 60, 100], labels=['Child', 'Teen', 'Young', 'Adult', 'Senior']).astype(str)
-    df['feat_FareBin'] = pd.cut(df['Fare'], bins=[-1, 7.91, 14.45, 31, 1000], labels=['Low', 'Medium', 'High', 'Luxury']).astype(str)
-    df['feat_AgeCategory_v2'] = pd.cut(df['Age'], bins=[0, 18, 35, 60, 100], labels=['Minor', 'YoungAdult', 'Adult', 'Senior']).astype(str)
-    df['feat_FareCategory_v2'] = pd.cut(df['Fare'], bins=[-1, 10, 50, 1000], labels=['Cheap', 'Moderate', 'Expensive']).astype(str)
+    # Handle NaNs in pd.cut by using np.inf for upper bound
+    df['feat_AgeBin'] = pd.cut(
+        df['Age'], bins=[0, 12, 18, 35, 60, np.inf],
+        labels=['Child', 'Teen', 'Young', 'Adult', 'Senior']
+    ).astype('category')
+    df['feat_FareBin'] = pd.cut(
+        df['Fare'], bins=[-1, 7.91, 14.45, 31, np.inf],
+        labels=['Low', 'Medium', 'High', 'Luxury']
+    ).astype('category')
+    df['feat_AgeCategory_v2'] = pd.cut(
+        df['Age'], bins=[0, 18, 35, 60, np.inf],
+        labels=['Minor', 'YoungAdult', 'Adult', 'Senior']
+    ).astype('category')
+    df['feat_FareCategory_v2'] = pd.cut(
+        df['Fare'], bins=[-1, 10, 50, np.inf],
+        labels=['Cheap', 'Moderate', 'Expensive']
+    ).astype('category')
     logger.info("Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.")
     return df
 
@@ -372,14 +434,25 @@ def apply_target_encoding(train: pd.DataFrame, test: pd.DataFrame, target: str) 
             # Apply to test using saved map
             map_path = f"output/cache/te_maps_{col}.json"
             if os.path.exists(map_path):
-                with open(map_path, 'r') as f:
-                    te_map = json.load(f)
-                global_mean = te_map.pop('global_mean')
-                test[encoded_train.name] = test[col].map(te_map).fillna(global_mean)
+                try:
+                    with open(map_path, 'r') as f:
+                        te_map = json.load(f)
+                    global_mean = te_map.pop('global_mean')
+                    test[encoded_train.name] = test[col].map(te_map).fillna(global_mean)
+                except Exception as e:
+                    logger.warning(
+                        f"Erro ao carregar mapa de target encoding para {col}: {e}. "
+                        "Usando global mean."
+                    )
+                    global_mean = train[target].mean()
+                    test[encoded_train.name] = global_mean
             else:
                 global_mean = train[target].mean()
                 test[encoded_train.name] = global_mean
-                logger.warning(f"Mapa de target encoding não encontrado para {col}, usando global mean.")
+                logger.warning(
+                    f"Mapa de target encoding não encontrado para {col}, "
+                    "usando global mean."
+                )
 
     logger.info("Target encoding aplicado.")
     return train, test
@@ -394,10 +467,12 @@ def parallel_feature_engineering(
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Aplica engenharia de atributos de forma paralela ou sequencial.
-    Cria features básicas e opcionais pesadas (interações, bins, indicadores de missing).
+    Cria features básicas e opcionais pesadas (interações, bins,
+    indicadores de missing).
 
     Applies feature engineering in parallel or sequential mode.
-    Creates basic features and optional heavy ops (interactions, bins, missing indicators).
+    Creates basic features and optional heavy ops (interactions, bins,
+    missing indicators).
 
     Parameters:
     -----------
@@ -436,33 +511,76 @@ def parallel_feature_engineering(
 
     try:
         if use_parallel:
+            # Import inside function to avoid multiprocessing issues
             import multiprocessing
-            with ProcessPoolExecutor(max_workers=max(1, multiprocessing.cpu_count() - 1)) as executor:
+            from concurrent.futures import ProcessPoolExecutor
+            with ProcessPoolExecutor(
+                max_workers=max(1, multiprocessing.cpu_count() - 1)
+            ) as executor:
                 for func in feature_functions:
                     future = executor.submit(func, train)
                     try:
-                        train = future.result()
+                        result = future.result()
+                        if isinstance(result, pd.DataFrame):
+                            train = result
+                        else:
+                            logger.warning(
+                                f"Function {func.__name__} returned "
+                                "non-DataFrame, skipping."
+                            )
                     except Exception as e:
-                        logger.warning(f"Parallel failed for {func.__name__} on train: {e}. Fallback.")
-                        train = func(train)
+                        logger.warning(
+                            f"Parallel failed for {func.__name__} "
+                            f"on train: {e}. Fallback."
+                        )
+                        result = func(train)
+                        if isinstance(result, pd.DataFrame):
+                            train = result
                 for func in feature_functions:
                     future = executor.submit(func, test)
                     try:
-                        test = future.result()
+                        result = future.result()
+                        if isinstance(result, pd.DataFrame):
+                            test = result
+                        else:
+                            logger.warning(
+                                f"Function {func.__name__} returned "
+                                "non-DataFrame, skipping."
+                            )
                     except Exception as e:
-                        logger.warning(f"Parallel failed for {func.__name__} on test: {e}. Fallback.")
-                        test = func(test)
-            logger.info("Feature engineering aplicada em paralelo com ProcessPoolExecutor.")
+                        logger.warning(
+                            f"Parallel failed for {func.__name__} "
+                            f"on test: {e}. Fallback."
+                        )
+                        result = func(test)
+                        if isinstance(result, pd.DataFrame):
+                            test = result
+            logger.info(
+                "Feature engineering aplicada em paralelo com "
+                "ProcessPoolExecutor."
+            )
         else:
             for func in feature_functions:
-                train = func(train)
-                test = func(test)
-                logger.info(f"Feature engineering sequencial: {func.__name__}")
+                result_train = func(train)
+                if isinstance(result_train, pd.DataFrame):
+                    train = result_train
+                result_test = func(test)
+                if isinstance(result_test, pd.DataFrame):
+                    test = result_test
+                logger.info(
+                    f"Feature engineering sequencial: {func.__name__}"
+                )
     except Exception as e:
-        logger.warning(f"Paralelismo falhou: {e}. Usando sequencial.")
+        logger.warning(
+            f"Paralelismo falhou: {e}. Usando sequencial."
+        )
         for func in feature_functions:
-            train = func(train)
-            test = func(test)
+            result_train = func(train)
+            if isinstance(result_train, pd.DataFrame):
+                train = result_train
+            result_test = func(test)
+            if isinstance(result_test, pd.DataFrame):
+                test = result_test
 
     # Aplicar target encoding se for treino
     if is_training and 'Survived' in train.columns:
@@ -470,16 +588,73 @@ def parallel_feature_engineering(
         logger.info("Target encoding aplicado durante feature engineering.")
 
     # Garantir que colunas novas existam em ambos
-    new_cols = ['FamilySize', 'IsAlone', 'Title', 'Deck', 'TicketPrefix']
+    new_cols = [
+        'FamilySize', 'IsAlone', 'Title', 'Deck', 'TicketPrefix'
+    ]
     if include_heavy_ops:
-        new_cols.extend(['AgeClass', 'FarePerPerson', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing'])
+        new_cols.extend([
+            'AgeClass', 'FarePerPerson', 'Title_Interactions',
+            'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2',
+            'feat_FareCategory_v2', 'feat_Age_missing',
+            'feat_Cabin_missing', 'feat_Embarked_missing',
+            'feat_Fare_missing',
+        ])
     if is_training and 'Survived' in train.columns:
-        new_cols.extend(['feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te'])
+        new_cols.extend([
+            'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te',
+            'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te',
+        ])
     for col in new_cols:
         if col not in test.columns and col in train.columns:
-            test[col] = train[col].mode()[0] if train[col].dtype == 'object' else train[col].median()
+            test[col] = (
+                train[col].mode()[0]
+                if train[col].dtype == 'object'
+                else train[col].median()
+            )
 
-    logger.info(f"Feature engineering concluída. Novas features: {new_cols}")
+    # Apply feature selection if enabled
+    if (
+        CONFIG["feature_selection"] and is_training and
+        'Survived' in train.columns
+    ):
+        # Identify potential feature columns (exclude IDs, names, tickets,
+        # cabin, target)
+        exclude_cols = ['PassengerId', 'Name', 'Ticket', 'Cabin', 'Survived']
+        potential_features = [
+            col for col in train.columns
+            if col not in exclude_cols
+        ]
+        selected_features = select_features_via_model(
+            train[potential_features + ['Survived']],
+            'Survived',
+            potential_features,
+            model_type=CONFIG["selection_model"],
+            threshold=CONFIG["selection_threshold"],
+            random_state=CONFIG["random_state"]
+        )
+        # Filter train and test to selected features + essential columns
+        essential_train = ['PassengerId', 'Survived']
+        essential_test = ['PassengerId']
+        train_cols = (
+            [col for col in selected_features if col in train.columns] +
+            [col for col in essential_train if col in train.columns]
+        )
+        test_cols = (
+            [col for col in selected_features if col in test.columns] +
+            [col for col in essential_test if col in test.columns]
+        )
+        train = train[train_cols]
+        test = test[test_cols]
+        logger.info(
+            "Feature selection applied: {} features selected from {}."
+            .format(
+                len(selected_features), len(potential_features)
+            )
+        )
+
+    logger.info(
+        f"Feature engineering concluída. Novas features: {new_cols}"
+    )
     return train, test
 
 def kfold_target_encode(
@@ -492,8 +667,9 @@ def kfold_target_encode(
     seed: int = 42
 ) -> pd.Series:
     """
-    Codifica uma variável categórica utilizando Target Encoding com KFold e smoothing.
-    Encodes a categorical feature using KFold Target Encoding with smoothing to prevent leakage.
+    Codifica uma variável categórica utilizando Target Encoding com KFold e
+    smoothing. Encodes a categorical feature using KFold Target Encoding with
+    smoothing to prevent leakage.
 
     Parameters:
     -----------
@@ -524,7 +700,9 @@ def kfold_target_encode(
     else:
         col_name = col.name or 'unknown'
 
-    logger.info(f"Iniciando target encoding para coluna {col_name}")
+    logger.info(
+        f"Iniciando target encoding para coluna {col_name}"
+    )
 
     # Cálculo global mean para unseen
     global_mean = df[target].mean()
@@ -543,12 +721,16 @@ def kfold_target_encode(
 
     encoded = np.zeros(len(df))
 
-    for train_idx, val_idx in (kf.split(df, df[target]) if use_stratified else kf.split(df)):
+    for train_idx, val_idx in (
+        kf.split(df, df[target]) if use_stratified else kf.split(df)
+    ):
         train_fold = df.iloc[train_idx]
         val_fold = df.iloc[val_idx]
 
         # Mean por categoria no fold de treino
-        fold_means = train_fold.groupby(col_name)[target].agg(["mean", "count"])
+        fold_means = train_fold.groupby(col_name)[target].agg(
+            ["mean", "count"]
+        )
 
         # Aplicar smoothing
         smoothed_means = (
@@ -565,11 +747,124 @@ def kfold_target_encode(
     try:
         with open(map_path, 'w') as f:
             json.dump(te_map, f)
-        logger.info(f"Target encoding concluído e salvo em {map_path}")
+        logger.info(
+            f"Target encoding concluído e salvo em {map_path}"
+        )
     except Exception as e:
-        logger.warning(f"Não foi possível salvar o mapa de target encoding: {e}")
+        logger.warning(
+            f"Não foi possível salvar o mapa de target encoding: {e}"
+        )
 
     return pd.Series(encoded, index=df.index, name=f"feat_{col_name}{suffix}")
+
+
+def select_features_via_model(
+    train: pd.DataFrame,
+    target: str,
+    feature_cols: List[str],
+    model_type: str = 'RandomForest',
+    threshold: float = 0.01,
+    random_state: int = 42
+) -> List[str]:
+    """
+    Select features using model-based importance scores.
+
+    Fits a model (RandomForest or XGBoost) on the training data and selects
+    features with importance above the specified threshold.
+
+    Parameters:
+    -----------
+    train : pd.DataFrame
+        Training dataset.
+    target : str
+        Target column name.
+    feature_cols : List[str]
+        List of feature columns to consider.
+    model_type : str, default='RandomForest'
+        Model to use for feature selection ('RandomForest' or 'XGBoost').
+    threshold : float, default=0.01
+        Minimum importance threshold for feature selection.
+    random_state : int, default=42
+        Random state for reproducibility.
+
+    Returns:
+    --------
+    List[str]
+        Selected feature columns.
+
+    Raises:
+    -------
+    ValueError
+        If model_type is not supported or no features are selected.
+    """
+    from sklearn.ensemble import RandomForestClassifier
+
+    # Prepare data
+    X = train[feature_cols]
+    y = train[target]
+
+    # Select model
+    if model_type == 'RandomForest':
+        model = RandomForestClassifier(
+            n_estimators=100,
+            random_state=random_state,
+            n_jobs=-1
+        )
+    elif model_type == 'XGBoost':
+        try:
+            from xgboost import XGBClassifier
+            model = XGBClassifier(
+                n_estimators=100,
+                random_state=random_state,
+                n_jobs=-1,
+                verbosity=0
+            )
+        except ImportError:
+            logger.warning(
+                "XGBoost not available, using RandomForest."
+            )
+            model = RandomForestClassifier(
+                n_estimators=100,
+                random_state=random_state,
+                n_jobs=-1
+            )
+    else:
+        raise ValueError(
+            f"Unsupported model_type: {model_type}. Use "
+            "'RandomForest' or 'XGBoost'."
+        )
+
+    # Fit model
+    model.fit(X, y)
+
+    # Get feature importances
+    if hasattr(model, 'feature_importances_'):
+        importances = model.feature_importances_
+    else:
+        raise ValueError(
+            f"Model {model_type} does not have "
+            "feature_importances_ attribute."
+        )
+
+    # Create importance dict
+    importance_dict = dict(zip(feature_cols, importances))
+
+    # Select features above threshold
+    selected_features = [feat for feat, imp in importance_dict.items() if imp > threshold]
+
+    if len(selected_features) == 0:
+        logger.warning(
+            f"No features selected with threshold {threshold}. "
+            "Using all features."
+        )
+        selected_features = feature_cols
+
+    logger.info(
+        f"Feature selection with {model_type}: "
+        f"{len(selected_features)}/{len(feature_cols)} features "
+        f"selected (threshold={threshold})"
+    )
+    return selected_features
 
 
 def build_feature_set(
@@ -612,5 +907,282 @@ def build_feature_set(
     # Ordenar
     feature_cols = sorted(common_cols.tolist())
     
-    logger.info(f"Feature set construído: {len(feature_cols)} features.")
+    logger.info(
+        f"Feature set construído: {len(feature_cols)} features."
+    )
     return feature_cols
+
+
+class AdvancedFeatureEngineer:
+    """
+    Advanced Feature Engineering class for Titanic dataset.
+
+    Encapsulates all feature engineering steps including family features,
+    title extraction, deck extraction, interactions, bins, missing indicators,
+    and target encoding. Provides options for parallel processing and
+    configurable heavy operations.
+
+    Parameters:
+    -----------
+    use_parallel : bool, default=True
+        Whether to use parallel processing for feature engineering.
+    include_heavy_ops : bool, default=True
+        Whether to include heavy operations (interactions, bins, missing indicators).
+    is_training : bool, default=True
+        Whether this is training data (affects target encoding).
+    target_col : str, default='Survived'
+        Name of the target column for target encoding.
+    random_state : int, default=42
+        Random state for reproducibility.
+    """
+
+    def __init__(
+        self,
+        use_parallel: bool = True,
+        include_heavy_ops: bool = True,
+        is_training: bool = True,
+        target_col: str = 'Survived',
+        random_state: int = 42
+    ):
+        self.use_parallel = use_parallel
+        self.include_heavy_ops = include_heavy_ops
+        self.is_training = is_training
+        self.target_col = target_col
+        self.random_state = random_state
+
+        # Set global seeds for reproducibility
+        set_global_seeds(random_state)
+
+        logger.info(
+            f"AdvancedFeatureEngineer initialized: parallel={use_parallel}, "
+            f"heavy_ops={include_heavy_ops}, training={is_training}"
+        )
+
+    def fit_transform(
+        self,
+        train: pd.DataFrame,
+        test: pd.DataFrame
+    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        Apply all feature engineering steps to train and test datasets.
+
+        Parameters:
+        -----------
+        train : pd.DataFrame
+            Training dataset.
+        test : pd.DataFrame
+            Test dataset.
+
+        Returns:
+        --------
+        Tuple[pd.DataFrame, pd.DataFrame]
+            Processed train and test datasets.
+        """
+        logger.info("Starting advanced feature engineering...")
+
+        # Make copies to avoid modifying originals
+        train_processed = train.copy()
+        test_processed = test.copy()
+
+        # List of basic feature engineering functions
+        basic_functions = [
+            self._create_family_features,
+            self._extract_title,
+            self._extract_deck,
+            self._extract_ticket_prefix
+        ]
+
+        # Add heavy operations if enabled
+        if self.include_heavy_ops:
+            basic_functions.extend([
+                self._create_interactions,
+                self._create_bins,
+                self._create_missing_indicators
+            ])
+
+        # Apply feature engineering
+        if self.use_parallel:
+            train_processed, test_processed = self._apply_parallel(
+                train_processed, test_processed, basic_functions
+            )
+        else:
+            train_processed, test_processed = self._apply_sequential(
+                train_processed, test_processed, basic_functions
+            )
+
+        # Apply target encoding if training and target column exists
+        if self.is_training and self.target_col in train_processed.columns:
+            train_processed, test_processed = self._apply_target_encoding(
+                train_processed, test_processed
+            )
+
+        # Ensure consistency between train and test columns
+        train_processed, test_processed = self._ensure_column_consistency(
+            train_processed, test_processed
+        )
+
+        logger.info("Advanced feature engineering completed.")
+        return train_processed, test_processed
+
+    def _create_family_features(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Create family-related features."""
+        return create_family_features(df)
+
+    def _extract_title(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Extract title from passenger names."""
+        return extract_title(df)
+
+    def _extract_deck(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Extract deck from cabin information."""
+        return extract_deck(df)
+
+    def _extract_ticket_prefix(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Extract ticket prefix."""
+        return extract_ticket_prefix(df)
+
+    def _create_interactions(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Create interaction features."""
+        return create_interactions(df)
+
+    def _create_bins(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Create binned features."""
+        return create_bins(df)
+
+    def _create_missing_indicators(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Create missing value indicators."""
+        return create_missing_indicators(df)
+
+    def _apply_target_encoding(
+        self,
+        train: pd.DataFrame,
+        test: pd.DataFrame
+    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """Apply target encoding to categorical features."""
+        return apply_target_encoding(train, test, self.target_col)
+
+    def _apply_parallel(
+        self,
+        train: pd.DataFrame,
+        test: pd.DataFrame,
+        functions: List[Callable]
+    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """Apply feature engineering functions in parallel."""
+        try:
+            import multiprocessing
+            from concurrent.futures import ProcessPoolExecutor
+
+            with ProcessPoolExecutor(
+                max_workers=max(1, multiprocessing.cpu_count() - 1)
+            ) as executor:
+                # Apply to train
+                for func in functions:
+                    future = executor.submit(func, train)
+                    try:
+                        result = future.result()
+                        if isinstance(result, pd.DataFrame):
+                            train = result
+                        else:
+                            logger.warning(
+                                f"Function {func.__name__} returned "
+                                "non-DataFrame, skipping."
+                            )
+                    except Exception as e:
+                        logger.warning(
+                            f"Parallel failed for {func.__name__} "
+                            f"on train: {e}. Fallback to sequential."
+                        )
+                        result = func(train)
+                        if isinstance(result, pd.DataFrame):
+                            train = result
+
+                # Apply to test
+                for func in functions:
+                    future = executor.submit(func, test)
+                    try:
+                        result = future.result()
+                        if isinstance(result, pd.DataFrame):
+                            test = result
+                        else:
+                            logger.warning(
+                                f"Function {func.__name__} returned "
+                                "non-DataFrame, skipping."
+                            )
+                    except Exception as e:
+                        logger.warning(
+                            f"Parallel failed for {func.__name__} "
+                            f"on test: {e}. Fallback to sequential."
+                        )
+                        result = func(test)
+                        if isinstance(result, pd.DataFrame):
+                            test = result
+
+            logger.info("Feature engineering applied in parallel.")
+        except Exception as e:
+            logger.warning(
+                f"Parallel processing failed: {e}. Using sequential."
+            )
+            train, test = self._apply_sequential(train, test, functions)
+
+        return train, test
+
+    def _apply_sequential(
+        self,
+        train: pd.DataFrame,
+        test: pd.DataFrame,
+        functions: List[Callable]
+    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """Apply feature engineering functions sequentially."""
+        for func in functions:
+            try:
+                result_train = func(train)
+                if isinstance(result_train, pd.DataFrame):
+                    train = result_train
+
+                result_test = func(test)
+                if isinstance(result_test, pd.DataFrame):
+                    test = result_test
+
+                logger.info(f"Applied {func.__name__} sequentially.")
+            except Exception as e:
+                logger.warning(
+                    f"Failed to apply {func.__name__}: {e}. Skipping."
+                )
+
+        return train, test
+
+    def _ensure_column_consistency(
+        self,
+        train: pd.DataFrame,
+        test: pd.DataFrame
+    ) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """Ensure train and test have consistent columns."""
+        # Get all possible new columns
+        new_cols = [
+            'FamilySize', 'IsAlone', 'Title', 'Deck', 'TicketPrefix'
+        ]
+
+        if self.include_heavy_ops:
+            new_cols.extend([
+                'AgeClass', 'FarePerPerson', 'Title_Interactions',
+                'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2',
+                'feat_FareCategory_v2', 'feat_Age_missing',
+                'feat_Cabin_missing', 'feat_Embarked_missing',
+                'feat_Fare_missing'
+            ])
+
+        if self.is_training and self.target_col in train.columns:
+            new_cols.extend([
+                'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te',
+                'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te'
+            ])
+
+        # Add missing columns to test with appropriate defaults
+        for col in new_cols:
+            if col not in test.columns and col in train.columns:
+                if train[col].dtype == 'object' or train[col].dtype.name == 'category':
+                    test[col] = train[col].mode()[0] if not train[col].mode().empty else 'Unknown'
+                else:
+                    test[col] = train[col].median() if not train[col].isna().all() else 0
+
+        logger.info("Column consistency ensured between train and test.")
+        return train, test

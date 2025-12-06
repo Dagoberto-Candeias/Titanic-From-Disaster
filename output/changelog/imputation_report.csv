@@ -1,5 +1,0 @@
-column,total_missing,pct_missing,imputation_method,mean_diff_pct
-Age,0,0.0,conditional_median,0.0
-Fare,0,0.0,group_median,0.0
-Embarked,0,0.0,mode,N/A
-Cabin,687,77.10437710437711,flag_only,N/A

@@ -1,1003 +1,653 @@
 """
-Reporting module for Titanic ML Pipeline.
-Contains functions for generating reports (MD, DOCX, PDF) and submission files.
+Reporting manager for Titanic ML Pipeline.
 """
 
 import logging
-import os
-from datetime import datetime
-from typing import Any, Dict, List, Tuple, Optional
-import json
-
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
-import seaborn as sns
-import textwrap
-from docx import Document
-from docx.shared import Inches
-from reportlab.lib.pagesizes import letter
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Image
-from sklearn.metrics import roc_curve, auc
-from sklearn.model_selection import cross_val_predict
-from sklearn.inspection import permutation_importance
-
-try:
-    from sklearn.calibration import CalibrationDisplay
-
-    CALIBRATED_AVAILABLE = True
-except ImportError:
-    CALIBRATED_AVAILABLE = False
-    CalibrationDisplay = None
-
-try:
-    import shap
-
-    SHAP_AVAILABLE = True
-except ImportError:
-    SHAP_AVAILABLE = False
-    shap = None
+import datetime
+from typing import Dict, Any, List
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
-# Default configurations (can be overridden)
-DEFAULT_REPORT_CONFIG = {
-    "generate_md": True,
-    "generate_docx": True,
-    "generate_pdf": True,
-    "include_table_images": True,
-    "include_calibration_plots": True,
-    "include_feature_importance": True,
-    "include_shap_comparison": True,
-}
-
-
-def generate_reports(
-    resultados: Dict[str, Any], feature_cols: List[str], elapsed_time: datetime
-) -> None:
-    """
-    Gera todos os relatórios (MD, DOCX, PDF) em um só lugar.
-
-    Args:
-        resultados: Dicionário com resultados dos modelos (nome -> métricas e modelo treinado).
-        feature_cols: Lista de features usadas.
-        elapsed_time: Tempo total de execução.
-
-    Returns:
-        None: Salva arquivos em output/relatorios/.
-    """
-    logger.info("GERANDO RELATÓRIOS FINAIS...")
-    logger.info("Incluindo gráficos e tabelas no relatório final...")
-    start_time = datetime.now()
-
-    if not resultados:
-        logger.warning("Nenhum resultado de modelo disponível para gerar relatórios.")
-        return
-
-    num_modelos = len([r for r in resultados.values() if r.get("mean_score", 0) > 0])
-    if num_modelos == 0:
-        logger.warning("Nenhum modelo treinado com sucesso. Relatório será limitado.")
-        melhor_nome = "N/A"
-        melhor_score = 0
-    else:
-        melhor_nome = max(resultados, key=lambda k: resultados[k].get("mean_score", 0))
-        melhor_score = resultados[melhor_nome].get("mean_score", 0)
-
-    report_content = f"""# ELT579 118550 - Relatório Titanic (Detalhado e Completo)
-
-## 1. Introdução
-
-Este relatório individual apresenta uma análise abrangente e aprimorada do conjunto de dados Titanic, desenvolvida como resposta aos requisitos da Semana 1 da disciplina ELT 579 - Aprendizado de Máquina. O trabalho foi realizado por Dagoberto Candeias de Moraes (matrícula 118550) e foca em melhorias significativas sobre o script baseline fornecido (Script_semana1(Original Titanic).py), visando elevar a precisão das predições de sobrevivência dos passageiros.
-
-O Titanic dataset é um clássico problema de classificação binária, com 891 amostras de treino e 418 de teste, \
-contendo 12 features originais como idade, classe social, sexo e tarifa. O desafio envolve lidar com valores \
-ausentes, desbalanceamento de classes e não-linearidades. Este relatório documenta as modificações implementadas, \
-explicações técnicas acessíveis tanto para leigos quanto para o professor, comparações com o original, \
-resultados obtidos (incluindo submissão no Kaggle) e visualizações para facilitar a compreensão.
-
-Por que isso é importante? O script original alcançava ~77% de acurácia com abordagens básicas. Minhas melhorias elevam isso para ~83-85%, demonstrando o impacto de técnicas avançadas como feature engineering e ensembles, essenciais em problemas reais de ML onde cada ponto percentual pode salvar vidas (ex.: detecção de fraudes ou diagnósticos médicos).
-
-[INSERIR PRINT DA TELA: Screenshot do ambiente de desenvolvimento com o script original vs. aprimorado, mostrando as pastas 'arquivo' e 'output'. Explicação: O print ilustra a organização do projeto, com o script original (básico, 200 linhas) ao lado do aprimorado (2.000+ linhas documentadas), destacando a pasta 'arquivo' com versões iterativas que guiaram o desenvolvimento.]
-
-## 2. Objetivo
-
-O objetivo principal é prever a sobrevivência (0 = não sobreviveu, 1 = sobreviveu) dos passageiros do RMS Titanic com base em features disponíveis, superando o baseline do professor. Especificamente:
-
-- Implementar modificações no script para melhorar a predição, visando score Kaggle > 0.80.
-- Gerar relatórios visuais e explicativos, comparando com o original.
-- Demonstrar compreensão de ML através de técnicas como feature engineering, balanceamento e ensembles.
-- Produzir submissão para Kaggle e documentar resultados reais.
-
-Isso atende à solicitação do professor de elaborar um relatório individual com implementações, prints, explicações (sem colar código bruto) e resultados no Kaggle, submetido em PDF via PVANet.
-
-Por que é importante? Em cenários reais, predições precisas podem otimizar recursos (ex.: priorizar resgates). Meu foco foi em robustez e interpretabilidade, tornando o modelo não só preciso, mas explicável.
-
-## 3. Metodologia
-
-Utilizei uma abordagem iterativa, analisando o script original, o notebook Colab e a pasta 'arquivo' (com versões evolutivas como ELT579_118550_Titanic_Anotado_Detalhado.py e titanic_profissionalizado_v3.4/). As modificações foram testadas passo a passo para garantir reprodutibilidade.
-
-### 3.1 Análise Inicial e Comparação com Original
-O script original (Script_semana1(Original Titanic).py) usa:
-- 8 features básicas (Pclass, Age, etc., com imputação simples por média).
-- 6 modelos (Logistic, NB, KNN, SVM, DT, RF) com CV de 10 folds.
-- Otimização via gp_minimize para RF.
-- Ensemble Voting simples.
-- Sem balanceamento, SHAP ou relatórios automáticos.
-- Acurácia CV: ~77.2%; sem submissão Kaggle documentada.
-
-Minhas melhorias:
-- **Por quê?** O original ignora interações complexas (ex.: mulheres de 1ª classe tinham prioridade) e desbalanceamento (62% não sobreviveram), levando a viés.
-
-[INSERIR PRINT DA TELA: Screenshot comparando features originais vs. novas, com tabela de 8 vs. 30 features. Explicação: O print mostra como expandi de features simples para avançadas, melhorando a captura de padrões históricos do Titanic.]
-
-### 3.2 Técnicas Implementadas
-1. **Carregamento e EDA (Análise Exploratória)**:
-   - Carreguei train.csv (891 amostras) e test.csv (418).
-   - EDA com 9 plots (sobrevivência por sexo/classe/idade, distribuições).
-   - Identifiquei 177 NaN em Age, 2 em Embarked, 86 em Cabin.
-   - **Por quê importante?** Revela padrões (mulheres/crianças priorizadas), guiando features. Para leigos: Como um "raio-X" dos dados.
-
-2. **Feature Engineering Avançado ({len(feature_cols)} features)**:
-   - Extração de títulos (Title_Group: Mr=Adult_Male, Miss=Young_Female) de Name.
-   - Deck de Cabin (A-G, U=desconhecido; DeckPriority para localização).
-   - Família: FamilySize, IsAlone, HasSiblings.
-   - Interações: AgeClass (idade x classe), FarePerPerson (tarifa por pessoa).
-   - Polinomiais: Age_squared, Fare_log (lida com skew).
-   - Target Encoding: Taxas de sobrevivência por grupo (ex.: Deck B=alta).
-   - Demográficas: IsChild (<12), Female_FirstClass.
-   - **Comparação:** Original tem 8 features fixas; eu criei {len(feature_cols)} dinâmicas, +{((len(feature_cols)-8)/8*100):.0f}% mais informação.
-   - **Por quê?** Features engenheiradas capturam contexto histórico (ex.: nobreza em decks altos), elevando acurácia em 6-8%.
-
-3. **Pré-processamento Robusto**:
-   - Imputação condicional: Age por Title/Pclass (ex.: Master=criança ~5 anos), Fare por Pclass/Embarked.
-   - ColumnTransformer: StandardScaler para numéricas, OneHotEncoder para categóricas (Sex, Embarked, Title_Group).
-   - **Por quê?** Original usa média global (viés); minha abordagem é contextual, reduzindo erro em 2-3%.
-
-4. **Balanceamento de Classes (SMOTE)**:
-   - Aplicado após pré-processamento: Oversampling da minoria (sobreviventes ~38%).
-   - **Por quê?** Dataset desbalanceado leva a modelos enviesados para maioria; SMOTE gera sintéticos, melhorando recall em 5%.
-
-5. **Modelagem e Validação ({num_modelos}+ modelos)**:
-   - Modelos: RF, GB, ExtraTrees, AdaBoost, Bagging, Logistic, SGD, Ridge, SVC, LinearSVC, KNN, NB, LDA, QDA, DT.
-   - Avançados: XGBoost, LightGBM (se instalados).
-   - Ensembles: Voting (soft) e Stacking (com Logistic final).
-   - Validação: StratifiedKFold({{CONFIG['cv_folds']}} folds), métricas: Accuracy, AUC, Precision, Recall, F1.
-   - Otimização: RandomizedSearchCV para top 3 (RF, XGBoost, LightGBM), 10 iterações.
-   - **Comparação:** Original testa 6; eu {num_modelos}+, com ensembles avançados (+{((num_modelos-6)/6*100):.0f}% opções).
-   - **Por quê?** Ensembles reduzem variância; otimização encontra hiperparâmetros ideais (ex.: n_estimators=200 para RF).
-
-6. **Interpretabilidade (SHAP)**:
-   - Análise no melhor modelo (sample de 100 para velocidade).
-   - Summary plot salva em shap_summary.png.
-   - **Por quê?** Explica "por quê" uma predição (ex.: alta tarifa aumenta chance), ausente no original.
-
-7. **Geração de Relatórios e Submissão**:
-   - Automática: MD, DOCX, PDF com tabelas/gráficos.
-   - Predições no test set; salva submission_titanic_final.csv.
-   - **Por quê?** Automatiza documentação, facilitando revisão.
-
-8. **Salvando o Pipeline Completo para Produção**:
-   - O melhor modelo é salvo junto com seu pré-processador em um único arquivo (`best_model_pipeline.pkl`).
-   - **Por quê é importante?** Isso garante **reprodutibilidade** e **consistência**. Para fazer uma predição em novos dados, é crucial que eles passem exatamente pelas mesmas etapas de transformação (imputação, scaling, encoding) usadas no treino. Salvar o pipeline completo evita o "training-serving skew" (diferenças entre treino e produção) e simplifica drasticamente a implantação, como demonstrado pelo script `predict.py`, que só precisa carregar um único arquivo.
-
-Todo o pipeline é integrado na função main(), executável em 15-30 min.
-
-[INSERIR PRINT DA TELA: Screenshot do Kaggle após submissão, mostrando score ~0.80. Explicação: O print prova o resultado real no Kaggle, comparando com baseline ~0.77, validando as melhorias.]
-
-## 4. Resultados
-
-O script aprimorado foi executado, gerando resultados superiores ao original. Acurácia CV subiu de ~77% para ~{melhor_score:.1%}, com score Kaggle de 0.803 (top 10%).
-
-### 4.1 Tabela de Resultados (Métricas CV - 5 Folds)
-
-| Modelo | Acurácia Média | Desvio | AUC | Precisão | Recall | F1-Score |
-|--------|----------------|--------|-----|----------|--------|----------|
-"""
-
-    top_5 = sorted(
-        resultados.items(), key=lambda x: x[1].get("mean_score", 0), reverse=True
-    )[:5]
-    table_rows = []
-    for i, (name, perf) in enumerate(top_5, 1):
-        mean_auc = perf.get("mean_auc", "N/A")
-        auc_str = f"{mean_auc:.4f}" if isinstance(mean_auc, (int, float)) else "N/A"
-        mean_precision = perf.get("mean_precision", "N/A")
-        precision_str = (
-            f"{mean_precision:.4f}"
-            if isinstance(mean_precision, (int, float))
-            else "N/A"
-        )
-        mean_recall = perf.get("mean_recall", "N/A")
-        recall_str = (
-            f"{mean_recall:.4f}" if isinstance(mean_recall, (int, float)) else "N/A"
-        )
-        mean_f1 = perf.get("mean_f1", "N/A")
-        f1_str = f"{mean_f1:.4f}" if isinstance(mean_f1, (int, float)) else "N/A"
-        table_rows.append(
-            f"| {i} | {name} | {perf.get('mean_score', 0):.4f} ± "
-            f"{perf.get('std_score', 0):.4f} | {auc_str} | {precision_str} | {recall_str} | {f1_str} |\n"
-        )
-    report_content += "".join(table_rows)
-
-    report_content += """
-
-### 4.2 Gráficos e Visualizações
-
-- **Análise Exploratória (01_eda_completa.png)**: Mostra que mulheres e crianças de 1ª classe sobreviveram mais.
-- **Comparação de Modelos (02_comparacao_modelos.png)**: Barras com erro mostrando {melhor_nome} liderando.
-- **Matriz de Confusão (03_matriz_confusao.png)**: Heatmap indicando erros do melhor modelo.
-- **Análise SHAP (06_shap_summary.png)**: Explica impacto de features (ex.: alta tarifa aumenta chance).
-
-## 5. Conclusão
-
-As modificações implementadas demonstraram impacto significativo: acurácia CV +{(melhor_score-0.77)*100:.1f}pp. Técnicas como feature engineering e ensembles foram cruciais para lidar com a complexidade do dataset. O trabalho atende integralmente aos requisitos da disciplina, produzindo um pipeline robusto e um relatório completo.
-
-### 5.1 Análise Comparativa de Interpretabilidade (SHAP)
-
-A análise SHAP comparativa (ver `08_shap_comparison.png`) revela como os melhores modelos (ex: RandomForest, XGBoost, LightGBM) interpretam as features. Embora geralmente concordem sobre as features mais importantes (como `Title_Group`, `Sex`, `Pclass`), podem existir diferenças sutis. Por exemplo, um modelo pode dar mais peso a `Fare_log` enquanto outro valoriza mais `Age`. Isso destaca a importância de usar ensembles, que combinam essas diferentes "visões" para criar uma predição mais robusta e generalizável.
-
-!Comparativo SHAP
-
-### 5.2 Limitações e Trabalhos Futuros
-
-**Limitações do Projeto:**
-*   **Tamanho do Dataset:** O conjunto de dados do Titanic é relativamente pequeno (891 amostras de treino), o que pode levar a overfitting e limitar a capacidade de generalização dos modelos mais complexos.
-*   **Qualidade dos Dados:** A grande quantidade de valores ausentes (especialmente em `Age` e `Cabin`) exige estratégias de imputação que, embora robustas, introduzem ruído e incerteza.
-*   **Análise SHAP:** A análise de interpretabilidade foi realizada em uma amostra dos dados para otimizar o tempo de execução. Uma análise no conjunto completo poderia revelar insights mais detalhados, mas a um custo computacional maior.
-
-**Sugestões para Trabalhos Futuros:**
-*   **Modelos de Deep Learning:** Explorar o uso de redes neurais (como MLPs mais complexos ou até redes tabulares especializadas) para capturar interações não-lineares de forma mais profunda.
-*   **AutoML:** Utilizar ferramentas de AutoML (como H2O.ai ou TPOT) para explorar automaticamente um espaço ainda maior de modelos e pré-processamentos.
-*   **Feature Selection Avançada:** Implementar algoritmos de seleção de features mais sofisticados, como Recursive Feature Elimination (RFE) ou seleção baseada em importância de permutação, para encontrar o subconjunto ótimo de features.
-*   **Validação Cruzada Aninhada (Nested Cross-Validation):** Para uma estimativa ainda mais robusta da performance do modelo e para otimização de hiperparâmetros, a validação cruzada aninhada seria o padrão-ouro.
-
-## Apêndice A: Novas Correções Aplicadas
-- Cache keys sem timestamp para reutilização.
-- SHAP fallback com KernelExplainer ou Permutation Importance.
-- Relatórios DOCX/PDF com tratamento de imagens ausentes.
-- Optuna com verbosidade reduzida e CSV de trials.
-- Ensemble Stacking com passthrough=True.
-- Smoke tests integrados ao main().
-
-## Apêndice B: Guia Técnico de Reprodutibilidade/Deploy
-1. Instale dependências: `pip install -r output/relatorios/requirements_detected.txt`.
-2. Rode o pipeline: `python ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio.py`.
-3. Gere submissão: Carregue `output/models/best_model_pipeline.pkl` em predict.py para novos dados.
-4. Submeta no Kaggle: Use submission_titanic_final.csv.
-
-## Apêndice C: Logs e Configurações do Sistema
-- Config usada: Veja output/relatorios/config_used.json.
-- Timing: Veja output/relatorios/timing_report.json.
-- Bibliotecas: Veja output/relatorios/libs_status.json.
-
-## 6. Checklist de Conteúdo do Relatório
-
-Para garantir que o relatório esteja completo e atenda aos requisitos da disciplina ELT 579, o seguinte checklist deve ser verificado:
-
-- [x] **Introdução**: Apresentação do problema, objetivos e importância (por que predições precisas salvam vidas).
-- [x] **Objetivo**: Descrição clara dos objetivos, incluindo melhoria sobre o baseline e submissão no Kaggle.
-- [x] **Metodologia**: Análise inicial, técnicas implementadas (feature engineering, pré-processamento, modelagem, balanceamento, otimização, interpretabilidade), explicações acessíveis para leigos e técnicos.
-- [x] **Resultados**: Tabelas de métricas CV, gráficos (EDA, comparação de modelos, matriz de confusão, ROC, SHAP), comparações com original, score Kaggle.
-- [x] **Discussão e Conclusão**: Interpretação dos resultados, limitações, futuras melhorias, atendimento aos requisitos.
-- [x] **Anexo**: Código exemplo (sem colar bruto), lista de arquivos gerados, prints (ambiente, Kaggle, gráficos).
-- [x] **Formatação**: Relatório em MD, DOCX e PDF, com tabelas, gráficos incorporados, citações de prints.
-- [x] **Comparação com Original**: Tabela destacando melhorias (features, modelos, acurácia, relatórios).
-- [x] **Submissão Kaggle**: Documentação do score real (~0.80), posição no leaderboard.
-- [x] **Interpretabilidade**: Explicação SHAP e importância de features.
-- [x] **Execução Completa**: Todos os arquivos gerados (CSV, PNGs, relatórios) sem erros.
-
-Este checklist garante que nenhuma informação essencial seja perdida, facilitando a revisão e submissão.
-
----
-"""
-
-    try:
-        # Wrap long paragraphs sensibly to satisfy linters while preserving
-        # markdown structure (headings, tables, lists, code blocks and images).
-        def _wrap_md_content(md_text: str, width: int = 100) -> str:
-            parts = []
-            for para in md_text.split("\n\n"):
-                stripped = para.lstrip()
-                if not para.strip():
-                    parts.append("")
-                    continue
-                # Preserve structural markdown lines as-is
-                if stripped.startswith(("#", "|", "!", "```", "-", "*", ">", "[")):
-                    parts.append(para)
-                else:
-                    lines = []
-                    for line in para.split("\n"):
-                        if line.strip().startswith(
-                            ("#", "|", "!", "```", "-", "*", ">", "[")
-                        ):
-                            lines.append(line)
-                        else:
-                            lines.append(textwrap.fill(line, width=width))
-                    parts.append("\n".join(lines))
-            return "\n\n".join(parts)
-
-        report_wrapped = _wrap_md_content(report_content, width=100)
-        os.makedirs("output/relatorios", exist_ok=True)
-        with open(
-            "output/relatorios/RELATORIO_FINAL_TITANIC.md", "w", encoding="utf-8"
-        ) as f:
-            f.write(report_wrapped)
-        logger.info(
-            "Relatório Markdown gerado com sucesso: output/relatorios/RELATORIO_FINAL_TITANIC.md"
-        )
-    except Exception as e:
-        logger.error(f"❌ Erro ao gerar relatório Markdown: {e}", exc_info=True)
-
-    # DOCX Generation with enhanced error handling
-    try:
-        doc = Document()
-        table = None
-        header = None
-        in_table = False
-
-        for line in report_content.split("\n"):
-            line = line.strip()
-            if not line:
-                if in_table:
-                    in_table = False
-                    # Finalize table if open
-                    if table:
-                        del table
-                    if header:
-                        del header
-                doc.add_paragraph("")
-                continue
-
-            if line.startswith("# "):
-                if in_table:
-                    in_table = False
-                    if table:
-                        del table
-                    if header:
-                        del header
-                doc.add_heading(line[2:], level=1)
-            elif line.startswith("## "):
-                if in_table:
-                    in_table = False
-                    if table:
-                        del table
-                    if header:
-                        del header
-                doc.add_heading(line[3:], level=2)
-            elif line.startswith("### "):
-                if in_table:
-                    in_table = False
-                    if table:
-                        del table
-                    if header:
-                        del header
-                doc.add_heading(line[4:], level=3)
-            elif line.startswith("|") and "---" in line:
-                # Table header row
-                if not in_table:
-                    header_row = [
-                        cell.strip()
-                        for cell in line.strip("|").split("|")
-                        if cell.strip()
-                    ]
-                    if len(header_row) > 1:
-                        table = doc.add_table(rows=1, cols=len(header_row))
-                        hdr_cells = table.rows[0].cells
-                        for i, h in enumerate(header_row):
-                            hdr_cells[i].text = h
-                            if hdr_cells[i].paragraphs:
-                                hdr_cells[i].paragraphs[0].runs[0].bold = True
-                        in_table = True
-                        header = header_row
-                continue
-            elif line.startswith("|") and in_table:
-                # Table data row - improved: pad or truncate to match header
-                cells = [
-                    cell.strip() for cell in line.strip("|").split("|") if cell.strip()
-                ]
-                if cells:  # Only add if non-empty
-                    row_cells = table.add_row().cells
-                    num_cols = len(header)
-                    for i, c in enumerate(cells):
-                        if i < num_cols:
-                            row_cells[i].text = c
-                        else:
-                            # Truncate extra cells
-                            break
-                    # Pad missing cells with empty
-                    for i in range(len(cells), num_cols):
-                        row_cells[i].text = ""
-                continue
-            else:
-                if in_table:
-                    in_table = False
-                    if table:
-                        del table
-                    if header:
-                        del header
-                doc.add_paragraph(line)
-
-        # Add images with enhanced error handling and fallback
-        images_to_add = [
-            ("output/graficos/01_eda_completa.png", "EDA Completa"),
-            ("output/graficos/02_comparacao_modelos.png", "Comparação de Modelos"),
-            ("output/graficos/03_matriz_confusao.png", "Matriz de Confusão"),
-            ("output/graficos/07_roc_curves.png", "Curvas ROC"),
-            (
-                "output/graficos/09_feature_correlation_heatmap.png",
-                "Heatmap de Correlação de Features",
-            ),
-            (
-                "output/graficos/10_model_performance_timeline.png",
-                "Timeline de Performance dos Modelos",
-            ),
-        ]
-        for img_path, caption in images_to_add:
-            try:
-                if os.path.exists(img_path):
-                    doc.add_paragraph(f"Figura: {caption}")
-                    doc.add_picture(img_path, width=Inches(6))
-                    logger.debug(f"Imagem adicionada ao DOCX: {img_path}")
-                else:
-                    doc.add_paragraph(f"Figura não disponível: {caption} ({img_path})")
-                    logger.warning(f"Imagem não encontrada para DOCX: {img_path}")
-            except Exception as img_e:
-                doc.add_paragraph(
-                    f"Figura não disponível: {caption} (Erro: {str(img_e)})"
-                )
-                logger.error(f"Erro ao adicionar imagem ao DOCX: {img_e}")
-
-        doc.save("output/relatorios/RELATORIO_FINAL_TITANIC.docx")
-        logger.info(
-            "Relatório DOCX gerado com sucesso: output/relatorios/RELATORIO_FINAL_TITANIC.docx"
-        )
-    except ImportError:
-        logger.warning("python-docx não disponível. Pulando geração DOCX.")
-    except Exception as e:
-        logger.error(f"❌ Falha ao gerar relatório DOCX: {e}", exc_info=True)
-
-    # PDF Generation with enhanced error handling
-    try:
-        doc = SimpleDocTemplate(
-            "output/relatorios/RELATORIO_FINAL_TITANIC.pdf", pagesize=letter
-        )
-        styles = getSampleStyleSheet()
-        story = []
-
-        for line in report_content.split("\n"):
-            line_stripped = line.strip()
-            if not line_stripped:
-                story.append(Spacer(1, 12))
-                continue
-
-            if line_stripped.startswith("# "):
-                story.append(Paragraph(line_stripped[2:], styles["Heading1"]))
-            elif line_stripped.startswith("## "):
-                story.append(Paragraph(line_stripped[3:], styles["Heading2"]))
-            elif line_stripped.startswith("### "):
-                story.append(Paragraph(line_stripped[4:], styles["Heading3"]))
-            elif line_stripped.startswith("|") and "---" in line_stripped:
-                # Skip table headers for now, as PDF table handling is complex; use simple paragraphs
-                story.append(
-                    Paragraph(
-                        "Tabela de Resultados (ver MD para detalhes)", styles["Normal"]
-                    )
-                )
-            else:
-                # Wrap long lines
-                wrapped_line = textwrap.fill(line_stripped, width=80)
-                story.append(Paragraph(wrapped_line, styles["BodyText"]))
-            story.append(Spacer(1, 6))
-
-        # Enhanced image addition for PDF with fallback Paragraph
-        images_to_add_pdf = [
-            ("output/graficos/01_eda_completa.png", "EDA Completa"),
-            ("output/graficos/02_comparacao_modelos.png", "Comparação de Modelos"),
-            ("output/graficos/03_matriz_confusao.png", "Matriz de Confusão"),
-            ("output/graficos/07_roc_curves.png", "Curvas ROC"),
-            (
-                "output/graficos/09_feature_correlation_heatmap.png",
-                "Heatmap de Correlação de Features",
-            ),
-            (
-                "output/graficos/10_model_performance_timeline.png",
-                "Timeline de Performance dos Modelos",
-            ),
-        ]
-        for img_path, caption in images_to_add_pdf:
-            try:
-                if os.path.exists(img_path):
-                    img = Image(img_path, width=400, height=300)
-                    story.append(Paragraph(f"Figura: {caption}", styles["Normal"]))
-                    story.append(img)
-                    story.append(Spacer(1, 12))
-                    logger.debug(f"Imagem adicionada ao PDF: {img_path}")
-                else:
-                    fallback_para = Paragraph(
-                        f"Figura não disponível: {caption} ({img_path})",
-                        styles["Normal"],
-                    )
-                    story.append(fallback_para)
-                    story.append(Spacer(1, 12))
-                    logger.warning(f"Imagem não encontrada para PDF: {img_path}")
-            except Exception as img_e:
-                fallback_para = Paragraph(
-                    f"Figura não disponível: {caption} (Erro: {str(img_e)})",
-                    styles["Normal"],
-                )
-                story.append(fallback_para)
-                story.append(Spacer(1, 12))
-                logger.error(f"Erro ao adicionar imagem {img_path} ao PDF: {img_e}")
-
-        doc.build(story)
-        logger.info(
-            "Relatório PDF gerado com sucesso: output/relatorios/RELATORIO_FINAL_TITANIC.pdf"
-        )
-    except ImportError:
-        logger.warning("reportlab não disponível. Pulando geração PDF.")
-    except Exception as e:
-        logger.error(f"❌ Falha ao gerar relatório PDF: {e}", exc_info=True)
-
-    # Generate summary_log.txt
-    try:
-        summary_log_path = "output/relatorios/summary_log.txt"
-        with open(summary_log_path, "w", encoding="utf-8") as f:
-            f.write("=== EXECUTION SUMMARY ===\n")
-            f.write(f"Total Time: {elapsed_time.total_seconds():.2f} seconds\n")
-            if resultados:
-                best_name = max(
-                    resultados, key=lambda k: resultados[k].get("mean_score", 0)
-                )
-                best_score = resultados[best_name].get("mean_score", 0)
-                f.write(f"Best Model: {best_name}\n")
-                f.write(f"Best Accuracy: {best_score:.4f}\n")
-            else:
-                f.write("Best Model: N/A\n")
-                f.write("Best Accuracy: N/A\n")
-            f.write(f"Number of Features: {len(feature_cols)}\n")
-            files_generated = [
-                "output/submission_titanic_final.csv",
-                "output/relatorios/RELATORIO_FINAL_TITANIC.md",
-                "output/relatorios/RELATORIO_FINAL_TITANIC.docx",
-                "output/relatorios/RELATORIO_FINAL_TITANIC.pdf",
-                "output/graficos/*.png",
+
+class ReportingManager:
+    """Manages report generation and output."""
+
+    def __init__(self, config: Dict[str, Any]):
+        self.config = config
+        self.output_dir = Path("output")
+        self.reports_dir = self.output_dir / "relatorios"
+
+    def generate_reports(
+        self,
+        model_results: Dict[str, Any],
+        feature_cols: List[str],
+        X_train: Any,
+        y_train: Any
+    ) -> None:
+        """
+        Generate all configured reports.
+
+        Args:
+            model_results: Dictionary with model training results
+            feature_cols: List of feature column names
+            X_train: Training features
+            y_train: Training labels
+        """
+        # Create output directories
+        self.reports_dir.mkdir(parents=True, exist_ok=True)
+
+        try:
+            if self.config.get("generate_md", True):
+                self._generate_markdown_report(model_results, feature_cols)
+
+            if self.config.get("generate_docx", True):
+                self._generate_docx_report(model_results, feature_cols)
+
+            if self.config.get("generate_pdf", True):
+                self._generate_pdf_report(model_results, feature_cols)
+
+            # Generate additional plots if configured
+            if self.config.get("include_calibration_plots", True):
+                self._generate_calibration_plots(model_results, X_train, y_train)
+
+            if self.config.get("include_feature_importance", True):
+                self._generate_feature_importance_plots(model_results, feature_cols)
+
+        except Exception as e:
+            logger.error(f"   ❌ Report generation failed: {e}")
+
+    def _generate_markdown_report(self, model_results: Dict[str, Any],
+                                feature_cols: List[str]) -> None:
+        """Generate Markdown report."""
+        try:
+            report_path = self.reports_dir / "relatorio_final.md"
+
+            with open(report_path, "w", encoding="utf-8") as f:
+                f.write("# Titanic ML Pipeline - Relatório Final\n\n")
+
+                # Summary section
+                f.write("## Resumo Executivo\n\n")
+                f.write(f"- **Total de Modelos Treinados:** {len(model_results)}\n")
+                f.write(f"- **Total de Features:** {len(feature_cols)}\n")
+                f.write(f"- **Melhor Acurácia:** {self._get_best_score(model_results):.4f}\n\n")
+
+                # Model results table
+                f.write("## Resultados dos Modelos\n\n")
+                f.write("| Modelo | Acurácia Média | Desvio Padrão | Melhor Score |\n")
+                f.write("|--------|---------------|---------------|--------------|\n")
+
+                for model_name, result in sorted(
+                    model_results.items(),
+                    key=lambda x: x[1].get("mean_score", 0),
+                    reverse=True
+                ):
+                    mean_score = result.get("mean_score", 0)
+                    std_score = result.get("std_score", 0)
+                    best_score = max(result.get("cv_scores", [0]))
+
+                    f.write(f"| {model_name} | {mean_score:.4f} | {std_score:.4f} | {best_score:.4f} |\n")
+
+                f.write("\n")
+
+                # Feature list
+                f.write("## Features Utilizadas\n\n")
+                for i, feature in enumerate(feature_cols, 1):
+                    f.write(f"{i}. {feature}\n")
+                f.write("\n")
+
+                # Configuration
+                f.write("## Configuração Utilizada\n\n")
+                f.write("```json\n")
+                import json
+                f.write(json.dumps(self.config, indent=2, default=str))
+                f.write("\n```\n")
+
+            logger.info(f"   📝 Markdown report saved: {report_path}")
+
+        except Exception as e:
+            logger.error(f"   ❌ Markdown report generation failed: {e}")
+
+    def _generate_docx_report(self, model_results: Dict[str, Any],
+                            feature_cols: List[str]) -> None:
+        """Generate DOCX report."""
+        try:
+            from docx import Document
+
+            doc = Document()
+            doc.add_heading("Titanic ML Pipeline - Relatório Final", 0)
+
+            # Summary
+            doc.add_heading("Resumo Executivo", level=1)
+            doc.add_paragraph(f"Total de Modelos Treinados: {len(model_results)}")
+            doc.add_paragraph(f"Total de Features: {len(feature_cols)}")
+            doc.add_paragraph(f"Melhor Acurácia: {self._get_best_score(model_results):.4f}")
+
+            # Model results table
+            doc.add_heading("Resultados dos Modelos", level=1)
+            table = doc.add_table(rows=1, cols=4)
+            table.style = "Table Grid"
+
+            # Header row
+            header_cells = table.rows[0].cells
+            header_cells[0].text = "Modelo"
+            header_cells[1].text = "Acurácia Média"
+            header_cells[2].text = "Desvio Padrão"
+            header_cells[3].text = "Melhor Score"
+
+            # Data rows
+            for model_name, result in sorted(model_results.items(),
+                                           key=lambda x: x[1].get("mean_score", 0),
+                                           reverse=True):
+                row_cells = table.add_row().cells
+                row_cells[0].text = model_name
+                row_cells[1].text = f"{result.get('mean_score', 0):.4f}"
+                row_cells[2].text = f"{result.get('std_score', 0):.4f}"
+                best_score = max(result.get("cv_scores", [0]))
+                row_cells[3].text = f"{best_score:.4f}"
+
+            # Save document
+            docx_path = self.reports_dir / "relatorio_final.docx"
+            doc.save(docx_path)
+            logger.info(f"   📄 DOCX report saved: {docx_path}")
+
+        except ImportError:
+            logger.warning("   ⚠️  python-docx not available, skipping DOCX report")
+        except Exception as e:
+            logger.error(f"   ❌ DOCX report generation failed: {e}")
+
+    def _generate_pdf_report(self, model_results: Dict[str, Any],
+                           feature_cols: List[str]) -> None:
+        """Generate PDF report."""
+        try:
+            from reportlab.lib import colors
+            from reportlab.lib.pagesizes import letter
+            from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+            from reportlab.lib.styles import getSampleStyleSheet
+
+            pdf_path = self.reports_dir / "relatorio_final.pdf"
+            doc = SimpleDocTemplate(str(pdf_path), pagesize=letter)
+            styles = getSampleStyleSheet()
+            story = []
+
+            # Title
+            title = Paragraph("Titanic ML Pipeline - Relatório Final", styles["Title"])
+            story.append(title)
+            story.append(Spacer(1, 12))
+
+            # Summary
+            summary_data = [
+                ["Total de Modelos Treinados:", str(len(model_results))],
+                ["Total de Features:", str(len(feature_cols))],
+                ["Melhor Acurácia:", f"{self._get_best_score(model_results):.4f}"],
             ]
-            f.write("Files Generated: " + ", ".join(files_generated) + "\n")
-            f.write(f"Timestamp: {datetime.now().isoformat()}\n")
-        logger.info(f"Summary log saved: {summary_log_path}")
-    except Exception as e:
-        logger.error(f"Failed to generate summary_log.txt: {e}")
 
-    elapsed = datetime.now() - start_time
-    logger.info(f"Relatórios gerados em {elapsed.total_seconds():.2f}s")
+            summary_table = Table(summary_data)
+            summary_table.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 10),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                ("GRID", (0, 0), (-1, -1), 1, colors.black),
+            ]))
+
+            story.append(summary_table)
+            story.append(Spacer(1, 12))
+
+            # Model results table
+            model_data = [["Modelo", "Acurácia Média", "Desvio Padrão", "Melhor Score"]]
+            for model_name, result in sorted(model_results.items(),
+                                           key=lambda x: x[1].get("mean_score", 0),
+                                           reverse=True):
+                model_data.append([
+                    model_name,
+                    f"{result.get('mean_score', 0):.4f}",
+                    f"{result.get('std_score', 0):.4f}",
+                    f"{max(result.get('cv_scores', [0])):.4f}",
+                ])
+
+            model_table = Table(model_data)
+            model_table.setStyle(TableStyle([
+                ("BACKGROUND", (0, 0), (-1, 0), colors.grey),
+                ("TEXTCOLOR", (0, 0), (-1, 0), colors.whitesmoke),
+                ("ALIGN", (0, 0), (-1, -1), "CENTER"),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, -1), 9),
+                ("BOTTOMPADDING", (0, 0), (-1, 0), 12),
+                ("BACKGROUND", (0, 1), (-1, -1), colors.beige),
+                ("GRID", (0, 0), (-1, -1), 1, colors.black),
+            ]))
+
+            story.append(model_table)
+
+            # Build PDF
+            doc.build(story)
+            logger.info(f"   📕 PDF report saved: {pdf_path}")
+
+        except ImportError:
+            logger.warning("   ⚠️  reportlab not available, skipping PDF report")
+        except Exception as e:
+            logger.error(f"   ❌ PDF report generation failed: {e}")
+
+    def _generate_calibration_plots(self, model_results: Dict[str, Any],
+                                  X_train: Any, y_train: Any) -> None:
+        """Generate calibration plots for models."""
+        try:
+            from sklearn.calibration import calibration_curve
+            import matplotlib.pyplot as plt
+
+            graficos_dir = self.output_dir / "graficos" / "calibration"
+            graficos_dir.mkdir(parents=True, exist_ok=True)
+
+            for model_name, result in model_results.items():
+                if "trained_model" in result:
+                    model = result["trained_model"]
+
+                    # Get predicted probabilities
+                    if hasattr(model, "predict_proba"):
+                        prob_pos = model.predict_proba(X_train)[:, 1]
+                    else:
+                        continue
+
+                    # Calculate calibration curve
+                    prob_true, prob_pred = calibration_curve(y_train, prob_pos, n_bins=10)
+
+                    # Create plot
+                    plt.figure(figsize=(8, 6))
+                    plt.plot(prob_pred, prob_true, marker="o", linewidth=1, label=model_name)
+                    plt.plot([0, 1], [0, 1], linestyle="--", color="gray", label="Perfectly calibrated")
+
+                    plt.xlabel("Predicted probability")
+                    plt.ylabel("True probability")
+                    plt.title(f"Calibration Plot - {model_name}")
+                    plt.legend()
+                    plt.grid(True, alpha=0.3)
+
+                    # Save plot
+                    plot_path = graficos_dir / f"calibration_{model_name}.png"
+                    plt.savefig(plot_path, dpi=300, bbox_inches="tight")
+                    plt.close()
+
+            logger.info("   📊 Calibration plots generated")
+
+        except Exception as e:
+            logger.error(f"   ❌ Calibration plot generation failed: {e}")
+
+    def _generate_feature_importance_plots(self, model_results: Dict[str, Any],
+                                         feature_cols: List[str]) -> None:
+        """Generate feature importance plots."""
+        try:
+            import matplotlib.pyplot as plt
+            import numpy as np
+
+            graficos_dir = self.output_dir / "graficos" / "feature_importance"
+            graficos_dir.mkdir(parents=True, exist_ok=True)
+
+            for model_name, result in model_results.items():
+                if "trained_model" in result:
+                    model = result["trained_model"]
+
+                    # Check if model has feature_importances_
+                    if hasattr(model, "feature_importances_"):
+                        importances = model.feature_importances_
+
+                        # Use feature_cols, but if length mismatch, use indices
+                        if len(feature_cols) == len(importances):
+                            feature_names = feature_cols
+                        else:
+                            feature_names = [f"feature_{i}" for i in range(len(importances))]
+
+                        # Sort features by importance
+                        indices = np.argsort(importances)[::-1]
+                        top_n = min(20, len(importances))
+
+                        plt.figure(figsize=(10, 8))
+                        plt.title(f"Feature Importances - {model_name}")
+                        plt.barh(range(top_n),
+                                importances[indices][:top_n],
+                                align="center")
+
+                        plt.yticks(range(top_n), [feature_names[i] for i in indices[:top_n]])
+                        plt.xlabel("Relative Importance")
+                        plt.gca().invert_yaxis()
+                        plt.grid(True, alpha=0.3)
+
+                        # Save plot
+                        plot_path = graficos_dir / f"feature_importance_{model_name}.png"
+                        plt.savefig(plot_path, dpi=300, bbox_inches="tight")
+                        plt.close()
+
+            logger.info("   📊 Feature importance plots generated")
+
+        except Exception as e:
+            logger.error(f"   ❌ Feature importance plot generation failed: {e}")
+
+    def _get_best_score(self, model_results: Dict[str, Any]) -> float:
+        """Get the best score from model results."""
+        if not model_results:
+            return 0.0
+
+        return max(result.get("mean_score", 0) for result in model_results.values())
 
 
-def improved_generate_submission(
-    final_model: Any,
-    test: pd.DataFrame,
-    feature_cols: List[str],
-    train: pd.DataFrame,
-    submission_path: str = "output/submission_titanic_final.csv",
-) -> None:
-    """
-    Generate and save submission file with improvements and sanity checks.
+# Standalone functions for backward compatibility
 
-    Args:
-        final_model: Treinado modelo para predições.
-        test: DataFrame de teste.
-        feature_cols: Lista de features.
-        train: DataFrame de treino (para alinhar colunas).
-        submission_path: Caminho para salvar CSV.
-
-    Returns:
-        None: Salva submission CSV com logs.
-    """
-    logger.info("📤 GERANDO SUBMISSION MELHORADA...")
-    start_time = datetime.now()
-
-    # Prepare test data with better handling
-    X_test_pred = test[feature_cols].copy()
-    X_test_pred = pd.get_dummies(X_test_pred, drop_first=True)
-
-    train_cols = pd.get_dummies(train[feature_cols], drop_first=True).columns
-    missing_cols = set(train_cols) - set(X_test_pred.columns)
-    extra_cols = set(X_test_pred.columns) - set(train_cols)
-
-    for col in missing_cols:
-        X_test_pred[col] = 0
-    X_test_pred = X_test_pred.drop(columns=extra_cols, errors="ignore")
-    X_test_pred = X_test_pred[train_cols]  # Ensure order
-
-    predictions = final_model.predict(X_test_pred)
-
-    submission = pd.DataFrame(
-        {"PassengerId": test["PassengerId"], "Survived": predictions.astype(int)}
-    )
-    submission.to_csv(submission_path, index=False)
-
-    # Sanity checks
-    assert len(submission) == len(
-        test
-    ), f"Submission length mismatch: {len(submission)} vs {len(test)}"
-    assert submission["Survived"].isin([0, 1]).all(), "Survived values not in [0,1]"
-    zero_count = (submission["Survived"] == 0).sum()
-    one_count = (submission["Survived"] == 1).sum()
-    logger.info(
-        f"Predictions: {zero_count} zeros, {one_count} ones (balanced: {one_count / len(submission):.2%} survived)"
-    )
-
-    elapsed = datetime.now() - start_time
-    logger.info(
-        f"   ✅ Submission melhorada gerada: {len(predictions)} amostras em {elapsed.total_seconds():.2f}s"
-    )
+def generate_reports(model_results: Dict[str, Any],
+                    feature_cols: List[str],
+                    X_train: Any = None, y_train: Any = None) -> None:
+    """Standalone function to generate reports."""
+    manager = ReportingManager({})
+    manager.generate_reports(model_results, feature_cols, X_train, y_train)
 
 
-# Additional visualization functions (moved here for modularity)
-def generate_roc_curves(
-    resultados: Dict[str, Any], X_train: np.ndarray, y_train: np.ndarray
-) -> None:
-    """
-    Gera curvas ROC para todos os modelos treinados.
+def generate_roc_curves(model_results, X_train, y_train, feature_cols=None):
+    """Generate ROC curves for models."""
+    try:
+        from sklearn.metrics import roc_curve, auc
+        import matplotlib.pyplot as plt
+        from pathlib import Path
 
-    Args:
-        resultados: Dicionário de resultados.
-        X_train: Features de treino.
-        y_train: Target de treino.
+        roc_dir = Path("output/graficos/roc_curves")
+        roc_dir.mkdir(parents=True, exist_ok=True)
 
-    Returns:
-        None: Salva 07_roc_curves.png.
-    """
-    fig, ax = plt.subplots(figsize=(12, 8))
+        plt.figure(figsize=(10, 8))
 
-    for name, perf in resultados.items():
-        if perf.get("trained_model") and perf.get("mean_auc", 0) > 0:
-            model = perf["trained_model"]
-            try:
-                y_pred_proba = cross_val_predict(
-                    model,
-                    X_train,
-                    y_train,
-                    cv=5,  # Use CONFIG['cv_folds'] if available
-                    method="predict_proba",
-                )[:, 1]
+        for model_name, result in model_results.items():
+            if "trained_model" in result and hasattr(result["trained_model"], "predict_proba"):
+                model = result["trained_model"]
+                # Use feature_cols if provided, else assume X_train matches
+                if feature_cols and hasattr(X_train, 'select_dtypes'):
+                    X_for_pred = X_train[feature_cols] if feature_cols else X_train
+                else:
+                    X_for_pred = X_train
+                y_pred_proba = model.predict_proba(X_for_pred)[:, 1]
                 fpr, tpr, _ = roc_curve(y_train, y_pred_proba)
                 roc_auc = auc(fpr, tpr)
-                ax.plot(fpr, tpr, label=f"{name} (AUC = {roc_auc:.3f})")
-            except Exception:
-                try:
-                    y_pred_decision = cross_val_predict(
-                        model,
-                        X_train,
-                        y_train,
-                        cv=5,
-                        method="decision_function",
-                    )
-                    fpr, tpr, _ = roc_curve(y_train, y_pred_decision)
-                    roc_auc = auc(fpr, tpr)
-                    ax.plot(fpr, tpr, label=f"{name} (AUC = {roc_auc:.3f})")
-                except Exception as e:
-                    logger.warning(f"   Não foi possível gerar ROC para {name}: {e}")
+                plt.plot(fpr, tpr, label=f'{model_name} (AUC = {roc_auc:.2f})')
 
-    ax.plot([0, 1], [0, 1], "k--", label="Random")
-    ax.set_xlabel("False Positive Rate")
-    ax.set_ylabel("True Positive Rate")
-    ax.set_title("ROC Curves - All Models")
-    ax.legend()
-    plt.tight_layout()
-    os.makedirs("output/graficos", exist_ok=True)
-    plt.savefig("output/graficos/07_roc_curves.png", dpi=300, bbox_inches="tight")
-    plt.close()
-    logger.info("   ✅ Curvas ROC salvas em output/graficos/07_roc_curves.png")
+        plt.plot([0, 1], [0, 1], 'k--')
+        plt.xlim([0.0, 1.0])
+        plt.ylim([0.0, 1.05])
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC Curves')
+        plt.legend(loc="lower right")
+        plt.grid(True, alpha=0.3)
+        plt.savefig(roc_dir / "04_roc_curve.png", dpi=300, bbox_inches="tight")
+        plt.close()
+        logger.info("   📊 ROC curves generated")
+    except Exception as e:
+        logger.error(f"   ❌ ROC curve generation failed: {e}")
 
 
-def generate_feature_correlation_heatmap(
-    train: pd.DataFrame, feature_cols: List[str]
-) -> None:
-    """
-    Gera heatmap de correlação das features.
-
-    Args:
-        train: DataFrame de treino.
-        feature_cols: Lista de features.
-
-    Returns:
-        None: Salva 09_feature_correlation_heatmap.png.
-    """
-    logger.info("🔥 GERANDO HEATMAP DE CORRELAÇÃO DE FEATURES...")
-    corr_matrix = train[feature_cols].corr()
-    plt.figure(figsize=(14, 10))
-    sns.heatmap(corr_matrix, annot=False, cmap="coolwarm", center=0)
-    plt.title("Feature Correlation Heatmap")
-    plt.tight_layout()
-    os.makedirs("output/graficos", exist_ok=True)
-    plt.savefig(
-        "output/graficos/09_feature_correlation_heatmap.png",
-        dpi=300,
-        bbox_inches="tight",
-    )
-    plt.close()
-    logger.info(
-        "   ✅ Heatmap salvo em output/graficos/09_feature_correlation_heatmap.png"
-    )
-
-
-def generate_model_performance_timeline(resultados: Dict[str, Any]) -> None:
-    """
-    Gera gráfico de timeline de performance dos modelos.
-
-    Args:
-        resultados: Dicionário de resultados.
-
-    Returns:
-        None: Salva 10_model_performance_timeline.png.
-    """
-    logger.info("⏱️ GERANDO TIMELINE DE PERFORMANCE DOS MODELOS...")
-    models = list(resultados.keys())
-    scores = [resultados[m].get("mean_score", 0) for m in models]
-    plt.figure(figsize=(12, 6))
-    plt.plot(models, scores, marker="o")
-    plt.xticks(rotation=45, ha="right")
-    plt.xlabel("Models")
-    plt.ylabel("Mean CV Accuracy")
-    plt.title("Model Performance Timeline")
-    plt.tight_layout()
-    os.makedirs("output/graficos", exist_ok=True)
-    plt.savefig(
-        "output/graficos/10_model_performance_timeline.png",
-        dpi=300,
-        bbox_inches="tight",
-    )
-    plt.close()
-    logger.info(
-        "   ✅ Timeline salvo em output/graficos/10_model_performance_timeline.png"
-    )
-
-
-def generate_model_calibration_plots(
-    model: Any,
-    X_train: np.ndarray,
-    y_train: np.ndarray,
-    plot_suffix: Optional[str] = None,
-) -> None:
-    """
-    Gera plots de calibração para o modelo.
-
-    Args:
-        model: Modelo treinado.
-        X_train: Features de treino.
-        y_train: Target de treino.
-
-    Returns:
-        None: Salva 09_model_calibration.png.
-    """
-    if not CALIBRATED_AVAILABLE:
-        logger.warning("CalibrationDisplay não disponível. Pulando calibração.")
-        return
-
-    logger.info("📊 GERANDO PLOTS DE CALIBRAÇÃO...")
-    fig, ax = plt.subplots(figsize=(10, 8))
+def generate_feature_correlation_heatmap(train, feature_cols):
+    """Generate feature correlation heatmap."""
     try:
-        CalibrationDisplay.from_estimator(model, X_train, y_train, ax=ax)
-        plt.title("Model Calibration Plot")
+        import seaborn as sns
+        import matplotlib.pyplot as plt
+        from pathlib import Path
+
+        corr_dir = Path("output/graficos/correlation")
+        corr_dir.mkdir(parents=True, exist_ok=True)
+
+        corr_matrix = train[feature_cols].corr()
+        plt.figure(figsize=(14, 10))
+        sns.heatmap(corr_matrix, annot=False, cmap="coolwarm", center=0)
+        plt.title("Feature Correlation Heatmap")
         plt.tight_layout()
-        os.makedirs("output/graficos", exist_ok=True)
-        suffix = f"_{plot_suffix}" if plot_suffix else ""
-        plt.savefig(
-            f"output/graficos/09_model_calibration{suffix}.png",
-            dpi=300,
-            bbox_inches="tight",
-        )
+        plt.savefig(corr_dir / "09_feature_correlation_heatmap.png", dpi=300, bbox_inches="tight")
         plt.close()
-        logger.info(
-            f"   ✅ Calibration plot salvo em output/graficos/09_model_calibration{suffix}.png"
-        )
+        logger.info("   📊 Feature correlation heatmap generated")
     except Exception as e:
-        logger.error("   ❌ Falha ao gerar calibration plot", exc_info=True)
-        plt.close()
+        logger.error(f"   ❌ Feature correlation heatmap generation failed: {e}")
 
 
-def generate_changelog_and_manifest(
-    feature_cols: List[str], resultados: Dict[str, Any], script_total_time: datetime
-) -> None:
-    """Gera CHANGELOG.md e manifest.json automaticamente."""
-    if not resultados:
-        logger.warning(
-            "⚠️  No model results available; skipping changelog and manifest."
-        )
-        return
-    logger.info("📝 GERANDO CHANGELOG E MANIFEST...")
-
-    changelog_content = f"""# Changelog - Titanic ML Pipeline
-
-## Versão Atual - {datetime.now().strftime('%Y-%m-%d')}
-
-### Melhorias Implementadas
-- ✅ K-Fold Target Encoding para Title_Group, TicketPrefix, Deck, Embarked
-- ✅ Missingness indicators (feat_*_missing)
-- ✅ Bins e categorizações (feat_AgeBin, feat_FareBin, etc.)
-- ✅ Imputação avançada com validação
-- ✅ Seleção de features via modelo
-- ✅ Ensemble stacking
-- ✅ Calibração sistemática
-- ✅ Importância de permutação
-- ✅ Tuning automatizado (Optuna + RandomizedSearchCV)
-- ✅ Testes smoke
-- ✅ Versionamento automático
-- ✅ Reprodutibilidade com datahash
-- ✅ Relatórios aprimorados
-- ✅ Modo seguro com verificações de libs
-
-### Estatísticas do Pipeline
-- **Features criadas:** {len(feature_cols)}
-- **Modelos treinados:** {len(resultados)}
-- **Tempo total:** {script_total_time.total_seconds():.2f}s
-- **Melhor acurácia:** {max([r.get('mean_score', 0) for r in resultados.values()], default=0):.4f}
-
-### Arquivos Gerados
-- output/submission_titanic_final.csv
-- output/models/best_model_pipeline.pkl
-- output/relatorios/RELATORIO_FINAL_TITANIC.md
-- output/changelog/CHANGELOG.md
-- output/changelog/manifest.json
-"""
-
-    os.makedirs("output/changelog", exist_ok=True)
-    with open("output/changelog/CHANGELOG.md", "w", encoding="utf-8") as f:
-        f.write(changelog_content)
-
-    manifest = {
-        "version": "1.0.0",
-        "timestamp": datetime.now().isoformat(),
-        "features_count": len(feature_cols),
-        "models_trained": list(resultados.keys()),
-        "best_accuracy": max(
-            [r.get("mean_score", 0) for r in resultados.values()], default=0
-        ),
-        "execution_time_seconds": script_total_time.total_seconds(),
-        "files_generated": [
-            "output/submission_titanic_final.csv",
-            "output/models/best_model_pipeline.pkl",
-            "output/relatorios/RELATORIO_FINAL_TITANIC.md",
-            "output/changelog/CHANGELOG.md",
-            "output/changelog/manifest.json",
-        ],
-    }
-
-    with open("output/changelog/manifest.json", "w") as f:
-        json.dump(manifest, f, indent=2, default=str)
-
-    logger.info("   ✅ CHANGELOG.md e manifest.json gerados")
-
-
-def generate_permutation_importance(
-    model: Any,
-    X_train: np.ndarray,
-    y_train: np.ndarray,
-    feature_names: List[str],
-    n_repeats: int = 5,
-    model_name: Optional[str] = None,
-) -> None:
-    """Gera importância de permutação como fallback para SHAP."""
-    logger.info("🔄 GERANDO IMPORTÂNCIA DE PERMUTAÇÃO...")
+def generate_model_performance_timeline(model_results):
+    """Generate model performance timeline."""
     try:
-        if (
-            hasattr(model, "n_features_in_")
-            and X_train.shape[1] != model.n_features_in_
-        ):
-            logger.warning(
-                f"   ❌ Mismatch de features: modelo espera {model.n_features_in_}, X_train tem {X_train.shape[1]}. Pulando permutação para {model_name}."
-            )
-            return
-        perm_importance = permutation_importance(
-            model, X_train, y_train, n_repeats=n_repeats, random_state=42, n_jobs=-1
-        )
-        perm_df = pd.DataFrame(
-            {
-                "feature": feature_names,
-                "importance_mean": perm_importance.importances_mean,
-                "importance_std": perm_importance.importances_std,
-            }
-        ).sort_values("importance_mean", ascending=False)
-        os.makedirs("output/relatorios", exist_ok=True)
-        file_suffix = f"_{model_name.replace(' ', '_')}" if model_name else ""
-        output_path = f"output/relatorios/permutation_importance{file_suffix}.csv"
-        perm_df.to_csv(output_path, index=False)
-        logger.info(f"   ✅ Importância de permutação salva em {output_path}")
+        import matplotlib.pyplot as plt
+        from pathlib import Path
+
+        timeline_dir = Path("output/graficos/timeline")
+        timeline_dir.mkdir(parents=True, exist_ok=True)
+
+        # Simple timeline plot
+        models = list(model_results.keys())
+        scores = [result.get("mean_score", 0) for result in model_results.values()]
+        plt.figure(figsize=(12, 6))
+        plt.bar(models, scores)
+        plt.xticks(rotation=45, ha='right')
+        plt.ylabel('Mean CV Score')
+        plt.title('Model Performance Timeline')
+        plt.tight_layout()
+        plt.savefig(timeline_dir / "10_model_performance_timeline.png", dpi=300, bbox_inches="tight")
+        plt.close()
+        logger.info("   📊 Model performance timeline generated")
     except Exception as e:
-        logger.error(f"   ❌ Erro na importância de permutação: {e}")
+        logger.error(f"   ❌ Model performance timeline generation failed: {e}")
 
 
-def generate_shap_comparison_plot(
-    top_models: List[Tuple[str, Dict]],
-    X_train_data: np.ndarray,
-    feature_names_out: List[str],
+def generate_changelog_and_manifest(feature_cols, model_results, script_total_time):
+    """Generate changelog and manifest."""
+    try:
+        changelog_dir = Path("output") / "changelog"
+        changelog_dir.mkdir(parents=True, exist_ok=True)
+
+        # Convert script_total_time to float for JSON serialization
+        if isinstance(script_total_time, datetime.timedelta):
+            total_seconds = script_total_time.total_seconds()
+        else:
+            total_seconds = float(script_total_time)
+
+        # Manifest
+        manifest = {
+            "total_time_seconds": total_seconds,
+            "features_count": len(feature_cols),
+            "models_count": len(model_results),
+            "best_score": _get_best_score(model_results)
+        }
+        with open(changelog_dir / "manifest.json", "w") as f:
+            import json
+            json.dump(manifest, f, indent=2, default=str)
+
+        # Changelog
+        with open(changelog_dir / "CHANGELOG.md", "w") as f:
+            f.write("# Changelog\n\n")
+            f.write(f"- Generated at: {datetime.datetime.now().isoformat()}\n")
+            f.write(f"- Total time: {total_seconds:.2f} seconds\n")
+            f.write(f"- Features: {len(feature_cols)}\n")
+            f.write(f"- Models: {len(model_results)}\n")
+
+        logger.info("   📝 Changelog and manifest generated")
+    except Exception as e:
+        logger.error(f"   ❌ Changelog and manifest generation failed: {e}")
+
+
+def save_timing_report(script_total_time, model_results):
+    """Save timing report."""
+    try:
+        from pathlib import Path
+
+        reports_dir = Path("output/relatorios")
+        reports_dir.mkdir(parents=True, exist_ok=True)
+
+        if isinstance(script_total_time, datetime.timedelta):
+            total_seconds = script_total_time.total_seconds()
+        else:
+            total_seconds = float(script_total_time)
+        timing = {
+            "total_time_seconds": total_seconds,
+            "models_trained": len(model_results),
+            "best_model": max(model_results, key=lambda x: model_results[x].get("mean_score", 0))
+        }
+        with open(reports_dir / "timing_report.json", "w") as f:
+            import json
+            json.dump(timing, f, indent=2, default=str)
+        logger.info("   ⏱️  Timing report saved")
+    except Exception as e:
+        logger.error(f"   ❌ Timing report save failed: {e}")
+
+
+def generate_shap_comparison_plot(top_models, X_train_data, feature_names_out):
+    """Generate SHAP comparison plot."""
+    try:
+        import shap
+        import matplotlib.pyplot as plt
+        from pathlib import Path
+
+        shap_dir = Path("output/graficos/shap")
+        shap_dir.mkdir(parents=True, exist_ok=True)
+
+        # Simplified SHAP comparison
+        plt.figure(figsize=(12, 8))
+        for name, perf in top_models:
+            model = perf.get("trained_model")
+            if model and hasattr(model, "predict"):
+                explainer = shap.TreeExplainer(model)
+                shap_values = explainer.shap_values(X_train_data[:100])  # sample
+                shap.summary_plot(shap_values, X_train_data[:100], feature_names=feature_names_out, show=False)
+                plt.title(f"SHAP Summary - {name}")
+                plt.savefig(shap_dir / "08_shap_comparison.png", dpi=300, bbox_inches="tight")
+                plt.close()
+                break  # Only first for simplicity
+        logger.info("   📊 SHAP comparison plot generated")
+    except Exception as e:
+        logger.error(f"   ❌ SHAP comparison plot generation failed: {e}")
+
+
+def improved_generate_submission(final_model, test, feature_cols, train):
+    """Generate improved submission."""
+    try:
+        import joblib
+        import pandas as pd
+        pipeline = joblib.load("output/models/best_model_pipeline.pkl")
+        X_test = test[feature_cols]
+        predictions = pipeline.predict(X_test)
+
+        submission = pd.DataFrame({
+            'PassengerId': test['PassengerId'],
+            'Survived': predictions.astype(int)
+        })
+        submission.to_csv("output/submission_titanic_final.csv", index=False)
+        logger.info("   📤 Improved submission generated")
+    except Exception as e:
+        logger.error(f"   ❌ Improved submission generation failed: {e}")
+
+
+def generate_model_calibration_plots(model, X_train, y_train, model_name):
+    """Generate calibration plots for a model."""
+    try:
+        from sklearn.calibration import calibration_curve
+        import matplotlib.pyplot as plt
+        plt.figure(figsize=(8, 6))
+        if hasattr(model, "predict_proba"):
+            try:
+                prob_pos = model.predict_proba(X_train)[:, 1]
+                prob_true, prob_pred = calibration_curve(y_train, prob_pos, n_bins=10)
+                plt.plot(prob_pred, prob_true, marker="o", label=model_name)
+                plt.plot([0, 1], [0, 1], 'k--')
+                plt.xlabel("Predicted probability")
+                plt.ylabel("True probability")
+                plt.title(f"Calibration Plot - {model_name}")
+                plt.legend()
+                plt.grid(True, alpha=0.3)
+                plt.savefig(f"output/graficos/09_model_calibration_{model_name}.png", dpi=300, bbox_inches="tight")
+                plt.close()
+            except Exception as inner_e:
+                logger.warning(f"   ⚠️  Skipping calibration for {model_name}: {inner_e}")
+        logger.info(f"   📊 Calibration plot for {model_name} generated")
+    except Exception as e:
+        logger.error(f"   ❌ Calibration plot for {model_name} failed: {e}")
+
+
+def log_model_performance_to_csv(
+    model_results: Dict[str, Any],
+    output_path: str = "output/reports/model_performance.csv"
 ) -> None:
-    """Gera um gráfico comparando a importância das features (SHAP)
-    entre os top modelos."""
-    if not SHAP_AVAILABLE or not top_models:
-        return
+    """
+    Log model performance metrics to a CSV file.
 
-    logger.info("📊 GERANDO GRÁFICO COMPARATIVO DE IMPORTÂNCIA SHAP...")
-    shap_importances = {}
+    Args:
+        model_results: Dictionary with model results
+        output_path: Path to save the CSV file
+    """
+    import csv
+    import os
 
-    # Sample data for SHAP calculation to optimize performance
-    shap_sample_size = min(100, X_train_data.shape[0])
-    X_train_df = pd.DataFrame(X_train_data, columns=feature_names_out)
-    X_shap_sample = X_train_df.sample(
-        shap_sample_size, random_state=42
-    )
-    X_shap_sample_values = X_shap_sample.values.astype(float)
+    # Ensure output directory exists
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    for model_name, perf in top_models:
-        model = perf.get("trained_model")
-        if model is None:
-            continue
-        try:
-            logger.info(f"   Calculando SHAP para {model_name}...")
-            explainer = shap.TreeExplainer(model)
-            shap_values = explainer.shap_values(X_shap_sample_values)
-            # For binary classification, shap_values is (n_samples, 2),
-            # select positive class
-            if isinstance(shap_values, list) and len(shap_values) == 2:
-                shap_values_class1 = shap_values[1]  # Positive class
-            elif (isinstance(shap_values, np.ndarray) and
-                  shap_values.shape[1] == 2):
-                shap_values_class1 = shap_values[:, 1]  # Positive class
-            else:
-                # Fallback for regression or single output
-                shap_values_class1 = shap_values
-            mean_abs_shap = np.abs(shap_values_class1).mean(axis=0)
-            if len(mean_abs_shap) != len(feature_names_out):
-                logger.warning(
-                    f"   SHAP feature count mismatch: {len(mean_abs_shap)} vs {len(feature_names_out)}, skipping {model_name}"
-                )
-                continue
-            shap_importances[model_name] = pd.Series(
-                mean_abs_shap, index=feature_names_out
-            )
-        except Exception as e:
-            logger.warning(
-                f"   Não foi possível calcular SHAP para {model_name}: {e}"
-            )
+    # Prepare data for CSV
+    rows = []
+    for model_name, result in model_results.items():
+        row = {
+            "model_name": model_name,
+            "mean_score": result.get("mean_score", 0.0),
+            "std_score": result.get("std_score", 0.0),
+            "cv_scores": result.get("cv_scores", []),
+        }
+        rows.append(row)
 
-    if not shap_importances:
-        logger.warning(
-            "   Nenhum valor SHAP pôde ser calculado. "
-            "Abortando gráfico comparativo."
-        )
-        return
+    # Write to CSV
+    with open(output_path, "w", newline="", encoding="utf-8") as csvfile:
+        fieldnames = ["model_name", "mean_score", "std_score", "cv_scores"]
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        for row in rows:
+            # Convert cv_scores list to string for CSV
+            row["cv_scores"] = str(row["cv_scores"])
+            writer.writerow(row)
 
-    importance_df = pd.DataFrame(shap_importances).nlargest(
-        15, columns=list(shap_importances.keys())[0]
-    )
-    importance_df.plot(kind="barh", figsize=(14, 10), width=0.8)
-    plt.title(
-        "Comparação da Importância das Features (SHAP) - Top Modelos",
-        fontsize=16,
-        fontweight="bold",
-    )
-    plt.xlabel("Impacto Médio no Modelo (Valor Absoluto SHAP)")
-    plt.ylabel("Features")
-    plt.gca().invert_yaxis()
-    plt.tight_layout()
-    plt.savefig(
-        "output/graficos/08_shap_comparison.png",
-        dpi=300,
-        bbox_inches="tight"
-    )
-    plt.close()
-    logger.info("   ✅ Gráfico comparativo SHAP salvo.")
+    logger.info(f"Model performance logged to {output_path}")
 
 
-def save_timing_report(script_total_time, resultados):
-    """Salva relatório de timing."""  # noqa
-    timing_data = {
-        "total_time_seconds": script_total_time.total_seconds(),
-        "models_trained": len(resultados),
-        "timestamp": datetime.now().isoformat(),
-    }
-    os.makedirs("output/relatorios", exist_ok=True)
-    with open("output/relatorios/timing_report.json", "w") as f:
-        json.dump(timing_data, f, indent=2)
-    logger.info("   ✅ Timing report salvo em output/relatorios/timing_report.json")
+def generate_permutation_importance(model, X_train, y_train, feature_names, n_repeats=5, model_name="Model"):
+    """Generate permutation importance."""
+    try:
+        from sklearn.inspection import permutation_importance
+        import matplotlib.pyplot as plt
+        import pandas as pd
+        from pathlib import Path
+
+        # Ensure output directory exists
+        graficos_dir = Path("output/graficos")
+        graficos_dir.mkdir(parents=True, exist_ok=True)
+
+        perm_importance = permutation_importance(model, X_train, y_train, n_repeats=n_repeats, random_state=42)
+        sorted_idx = perm_importance.importances_mean.argsort()
+
+        plt.figure(figsize=(10, 8))
+        plt.barh(range(len(sorted_idx)), perm_importance.importances_mean[sorted_idx])
+        plt.yticks(range(len(sorted_idx)), [feature_names[i] for i in sorted_idx])
+        plt.xlabel("Permutation Importance")
+        plt.title(f"Permutation Importance - {model_name}")
+        plt.tight_layout()
+
+        # Use Path for safe file handling
+        safe_model_name = model_name.replace(" ", "_").replace("/", "_")
+        plot_path = graficos_dir / f"permutation_importance_{safe_model_name}.png"
+        plt.savefig(plot_path, dpi=300, bbox_inches="tight")
+        plt.close()
+
+        # Save as CSV
+        df = pd.DataFrame({
+            'feature': [feature_names[i] for i in sorted_idx],
+            'importance_mean': perm_importance.importances_mean[sorted_idx],
+            'importance_std': perm_importance.importances_std[sorted_idx]
+        })
+        csv_path = graficos_dir / f"permutation_importance_{safe_model_name}.csv"
+        df.to_csv(csv_path, index=False)
+        logger.info(f"   📊 Permutation importance for {model_name} generated")
+    except Exception as e:
+        logger.error(f"   ❌ Permutation importance for {model_name} failed: {e}")
+
+
+def _get_best_score(model_results: Dict[str, Any]) -> float:
+    """Get the best score from model results."""
+    if not model_results:
+        return 0.0
+
+    return max(result.get("mean_score", 0) for result in model_results.values())

@@ -1,9 +1,9 @@
 """
-Titanic Pipeline Core Modules
-
-This package contains the core functionality for the Titanic ML pipeline,
-organized into modular components for better maintainability and testing.
+Core pipeline components for Titanic ML Pipeline.
 """
 
-__version__ = "1.0.0"
-__author__ = "Dagoberto Candeias de Moraes"
+from .pipeline import TitanicPipeline
+from .modeling import ModelingManager
+from .reporting import ReportingManager
+
+__all__ = ["TitanicPipeline", "ModelingManager", "ReportingManager"]

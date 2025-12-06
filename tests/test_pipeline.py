@@ -1,11 +1,9 @@
 import pandas as pd
 from sklearn.linear_model import LogisticRegression
 
-from ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio import (
-    preprocess_data,
-    train_single_model,
-    validate_data_schema,
-)
+from titanic_pipeline.core.modeling import train_single_model
+from titanic_pipeline.core.preprocessing import preprocess_data
+from titanic_pipeline.core.utils import validate_data_schema
 
 
 def test_validate_data_schema_basic():

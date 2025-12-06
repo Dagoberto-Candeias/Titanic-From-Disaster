@@ -15,7 +15,7 @@ print("=" * 60)
 
 try:
     from train import main
-    print("✅ train.main() imported successfully")
+    print("[OK] train.main() imported successfully")
     print("\nStarting execution...")
     print("-" * 60)
     
@@ -24,13 +24,13 @@ try:
     
     if result:
         print("-" * 60)
-        print("✅ Pipeline completed successfully!")
+        print("[OK] Pipeline completed successfully!")
     else:
         print("-" * 60)
-        print("⚠️  Pipeline returned False (check logs)")
+        print("[WARN] Pipeline returned False (check logs)")
         
 except Exception as e:
-    print(f"❌ Error: {type(e).__name__}: {e}")
+    print(f"[ERROR] {type(e).__name__}: {e}")
     import traceback
     traceback.print_exc()
     sys.exit(1)
