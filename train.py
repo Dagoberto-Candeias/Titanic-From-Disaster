@@ -139,10 +139,20 @@ from titanic_pipeline.core.utils import (
     cache_result,
     load_cached_result,
 )
-from titanic_pipeline.utils import (
-    ensure_feature_cols_intersection,
-    optimize_memory_usage,
-)
+from titanic_pipeline.utils import ensure_feature_cols_intersection
+# Evitar import circular: optimize_memory_usage está em titanic_pipeline/utils.py
+try:
+    from titanic_pipeline.utils import optimize_memory_usage
+except ImportError:
+    # Fallback: importar direto do módulo
+    import sys
+    import importlib
+    titanic_utils_module = importlib.import_module('titanic_pipeline.utils')
+    optimize_memory_usage = getattr(titanic_utils_module, 'optimize_memory_usage', None)
+    if optimize_memory_usage is None:
+        # Última opção: definir função stub
+        def optimize_memory_usage(df, deep=True):
+            return df
 from titanic_pipeline.core.reporting import (
     generate_reports as modular_generate_reports,
     generate_roc_curves as modular_generate_roc_curves,
