@@ -13,8 +13,10 @@ import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-def get_cache_key(data_hash: str, operation: str) -> str:
-    return hashlib.md5(f"{data_hash}_{operation}".encode()).hexdigest()
+def get_cache_key(data_hash: str, operation: str, schema_version: str = "1.0.0") -> str:
+    """Gera chave de cache com versionamento de schema."""
+    key_str = f"{data_hash}_{operation}_{schema_version}"
+    return hashlib.md5(key_str.encode()).hexdigest()
 
 def validate_data_schema(df: pd.DataFrame, expected_columns: List[str], dataset_name: str) -> bool:
     """Valida schema dos dados de entrada e salva relatório JSON"""

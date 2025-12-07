@@ -1,5 +1,5 @@
 {
-  "total_time_seconds": 31.589926,
+  "total_time_seconds": 215.397831,
   "models_trained": 20,
-  "best_model": "Ridge Classifier"
+  "best_model": "Ensemble_Voting"
 }

@@ -1,9 +1,10 @@
 """
 Modeling manager for Titanic ML Pipeline.
+Enhanced with parallel processing, memory optimization, and performance monitoring.
 """
 
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any
 import numpy as np
 import pandas as pd
 
@@ -83,24 +84,50 @@ class ModelingManager:
 
     def _train_single_model(self, model_name: str, model_class, X_train: np.ndarray,
                           y_train: np.ndarray) -> Dict[str, Any]:
-        """Train a single model with cross-validation."""
+        """Train a single model with cross-validation and timeout protection."""
         try:
-            # Create model instance
+            # Create model instance with optimized parameters
             if model_name in self.model_configs:
-                model = model_class(**self.model_configs[model_name])
+                model_params = self.model_configs[model_name].copy()
+                # Add performance optimizations for slow models
+                if model_name in ["SVC", "KNeighbors"]:
+                    model_params.update({
+                        "max_iter": 10000 if model_name == "SVC" else None,
+                        "n_jobs": -1 if model_name == "KNeighbors" else None
+                    })
+                model = model_class(**model_params)
             else:
                 model = model_class(random_state=self.config["random_state"])
 
-            # Perform cross-validation
-            cv_scores = cross_val_score(
-                model, X_train, y_train,
-                cv=self.config["cv_folds"],
-                scoring="accuracy",
-                n_jobs=1  # Avoid nested parallelism
-            )
+            # Timeout protection for slow models
+            timeout_seconds = 300  # 5 minutes timeout
+            if model_name in ["SVC", "KNeighbors", "MLPClassifier"]:
+                timeout_seconds = 600  # 10 minutes for very slow models
 
-            # Train final model
-            model.fit(X_train, y_train)
+            # Perform cross-validation with timeout
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future_cv = executor.submit(
+                    cross_val_score,
+                    model, X_train, y_train,
+                    cv=self.config["cv_folds"],
+                    scoring="accuracy",
+                    n_jobs=1  # Avoid nested parallelism
+                )
+                try:
+                    cv_scores = future_cv.result(timeout=timeout_seconds)
+                except concurrent.futures.TimeoutError:
+                    logger.warning(f"   ⚠️  CV for {model_name} timed out after {timeout_seconds}s, skipping")
+                    raise TimeoutError(f"CV timeout for {model_name}")
+
+            # Train final model with timeout
+            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+                future_fit = executor.submit(model.fit, X_train, y_train)
+                try:
+                    future_fit.result(timeout=timeout_seconds)
+                except concurrent.futures.TimeoutError:
+                    logger.warning(f"   ⚠️  Training for {model_name} timed out after {timeout_seconds}s, skipping")
+                    raise TimeoutError(f"Training timeout for {model_name}")
 
             result = {
                 "trained_model": model,
@@ -214,6 +241,17 @@ class ModelingManager:
             "KNeighbors": "sklearn.neighbors.KNeighborsClassifier",
             "GaussianNB": "sklearn.naive_bayes.GaussianNB",
             "MLPClassifier": "sklearn.neural_network.MLPClassifier",
+            "GradientBoosting": "sklearn.ensemble.GradientBoostingClassifier",
+            "ExtraTrees": "sklearn.ensemble.ExtraTreesClassifier",
+            "AdaBoost": "sklearn.ensemble.AdaBoostClassifier",
+            "Bagging": "sklearn.ensemble.BaggingClassifier",
+            "SGDClassifier": "sklearn.linear_model.SGDClassifier",
+            "RidgeClassifier": "sklearn.linear_model.RidgeClassifier",
+            "LinearSVC": "sklearn.svm.LinearSVC",
+            "DecisionTree": "sklearn.tree.DecisionTreeClassifier",
+            "BernoulliNB": "sklearn.naive_bayes.BernoulliNB",
+            "LinearDiscriminantAnalysis": "sklearn.discriminant_analysis.LinearDiscriminantAnalysis",
+            "QuadraticDiscriminantAnalysis": "sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis",
         }
 
         # Check for optional libraries

@@ -10,7 +10,6 @@ Este projeto implementa um pipeline completo e avançado de machine learning par
 - **Otimização de hiperparâmetros**: Optuna com 150 trials
 - **Avaliação robusta**: Cross-validation com 15 folds
 - **Geração de relatórios**: Markdown, DOCX, PDF com gráficos e tabelas
-- **API Flask**: Endpoint simples para predições
 - **Testes abrangentes**: Unitários, integração e smoke tests
 
 ## 🏗️ Arquitetura do Projeto
@@ -20,7 +19,7 @@ Este projeto implementa um pipeline completo e avançado de machine learning par
 titanic-from-disaster/
 ├── ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio.py  # Script principal
 ├── config.py                                           # Configurações globais
-├── app.py                                              # API Flask
+
 ├── titanic_pipeline/                                   # Módulos organizados
 │   ├── core/
 │   │   ├── modeling.py                                 # Treinamento de modelos
@@ -76,7 +75,6 @@ pip install -r requirements-dev.txt
 - **Otimização**: optuna
 - **Visualização**: matplotlib, seaborn, plotly
 - **Relatórios**: python-docx, reportlab, shap
-- **API**: flask
 - **Testes**: pytest, pytest-cov
 
 ## 📊 Uso
@@ -100,15 +98,7 @@ CONFIG["optuna_trials"] = 50
 results = run_pipeline()
 ```
 
-### API Flask
-```bash
-# Iniciar servidor
-python app.py
 
-# Endpoints disponíveis:
-# GET / - Status da API
-# POST /predict - Predição de sobrevivência
-```
 
 ### Testes
 ```bash

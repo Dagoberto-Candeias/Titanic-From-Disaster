@@ -393,7 +393,16 @@ def generate_feature_correlation_heatmap(train, feature_cols):
         corr_dir = Path("output/graficos/correlation")
         corr_dir.mkdir(parents=True, exist_ok=True)
 
-        corr_matrix = train[feature_cols].corr()
+        # Filtrar apenas colunas numéricas para correlação
+        numeric_cols = train[feature_cols].select_dtypes(include=[np.number]).columns.tolist()
+
+        if not numeric_cols:
+            logger.warning("   ⚠️  No numeric columns found for correlation heatmap")
+            return
+
+        logger.info(f"   📊 Using {len(numeric_cols)} numeric features for correlation heatmap")
+
+        corr_matrix = train[numeric_cols].corr()
         plt.figure(figsize=(14, 10))
         sns.heatmap(corr_matrix, annot=False, cmap="coolwarm", center=0)
         plt.title("Feature Correlation Heatmap")

@@ -1,136 +1,142 @@
 {
-  "timestamp": "2025-12-06T22:34:05.818510",
-  "total_time_seconds": 31.589926,
+  "timestamp": "2025-12-07T11:54:13.180970",
+  "total_time_seconds": 215.397831,
   "features_count": 7,
   "models": {
     "Random Forest": {
-      "accuracy": 0.7903954802259887,
-      "std": 0.04709901726021665,
+      "accuracy": 0.8105084745762713,
+      "std": 0.04792636863366504,
       "trained": true,
       "best_params": {}
     },
     "Gradient Boosting": {
-      "accuracy": 0.7891148775894539,
-      "std": 0.046763130473890156,
+      "accuracy": 0.823879472693032,
+      "std": 0.0379145952896089,
       "trained": true,
       "best_params": {}
     },
     "Extra Trees": {
-      "accuracy": 0.7700941619585688,
-      "std": 0.05217638431552723,
+      "accuracy": 0.7958945386064029,
+      "std": 0.05545266734224654,
       "trained": true,
       "best_params": {}
     },
     "AdaBoost": {
-      "accuracy": 0.7802071563088513,
-      "std": 0.03827566751284643,
+      "accuracy": 0.8046892655367232,
+      "std": 0.024516302356919942,
       "trained": true,
       "best_params": {}
     },
     "Bagging": {
-      "accuracy": 0.7847645951035781,
-      "std": 0.05042431875104389,
+      "accuracy": 0.8206026365348399,
+      "std": 0.0486944764707162,
       "trained": true,
       "best_params": {}
     },
     "Logistic Regression": {
-      "accuracy": 0.8148399246704332,
-      "std": 0.04689264024081014,
+      "accuracy": 0.7980037664783428,
+      "std": 0.03055768972202704,
       "trained": true,
       "best_params": {}
     },
     "SGD Classifier": {
-      "accuracy": 0.7800941619585687,
-      "std": 0.05314137895162162,
+      "accuracy": 0.7331826741996234,
+      "std": 0.06380078566930561,
       "trained": true,
       "best_params": {}
     },
     "Ridge Classifier": {
-      "accuracy": 0.8237664783427496,
-      "std": 0.045751186229267944,
+      "accuracy": 0.7922787193973636,
+      "std": 0.03340135844580517,
       "trained": true,
       "best_params": {}
     },
     "SVC": {
-      "accuracy": 0.8059133709981169,
-      "std": 0.033061624696216256,
+      "accuracy": 0.8204519774011299,
+      "std": 0.04036324158356512,
       "trained": true,
       "best_params": {}
     },
     "Linear SVC": {
-      "accuracy": 0.8204143126177025,
-      "std": 0.04437630033996257,
+      "accuracy": 0.7911864406779662,
+      "std": 0.03151040148603138,
       "trained": true,
       "best_params": {}
     },
     "KNN": {
-      "accuracy": 0.7565913370998117,
-      "std": 0.0404490665170454,
+      "accuracy": 0.809322033898305,
+      "std": 0.03546219869009565,
       "trained": true,
       "best_params": {}
     },
     "Decision Tree": {
-      "accuracy": 0.7198116760828625,
-      "std": 0.06420888972276341,
+      "accuracy": 0.788060263653484,
+      "std": 0.05366859603189521,
       "trained": true,
       "best_params": {}
     },
     "Gaussian NB": {
-      "accuracy": 0.4119209039548022,
-      "std": 0.025438832090546495,
+      "accuracy": 0.6710922787193974,
+      "std": 0.037618474356221905,
       "trained": true,
       "best_params": {}
     },
     "Bernoulli NB": {
-      "accuracy": 0.7578719397363466,
-      "std": 0.05446875306203025,
+      "accuracy": 0.7799435028248588,
+      "std": 0.03528307768129119,
       "trained": true,
       "best_params": {}
     },
     "LDA": {
-      "accuracy": 0.8237664783427496,
-      "std": 0.04104263029372634,
+      "accuracy": 0.7922787193973636,
+      "std": 0.03340135844580517,
       "trained": true,
       "best_params": {}
     },
     "QDA": {
-      "accuracy": 0.4241996233521656,
-      "std": 0.03297497474764596,
+      "accuracy": 0.6161581920903956,
+      "std": 0.006202864971158562,
       "trained": true,
       "best_params": {}
     },
     "XGBoost": {
-      "accuracy": 0.7913935969868173,
-      "std": 0.03374760391442096,
+      "accuracy": 0.8126930320150658,
+      "std": 0.045344566912039044,
       "trained": true,
       "best_params": {}
     },
     "LightGBM": {
-      "accuracy": 0.8036911487758946,
-      "std": 0.04327679518255974,
+      "accuracy": 0.8229001883239171,
+      "std": 0.05338175555139556,
       "trained": true,
       "best_params": {}
     },
     "Ensemble_Voting": {
-      "accuracy": 0.7934463276836159,
-      "std": 0.030589311889839554,
+      "accuracy": 0.8418455743879474,
+      "std": 0.04471741795962963,
       "trained": true,
       "best_params": {}
     },
     "Ensemble_Stacking": {
-      "accuracy": 0.8181920903954804,
-      "std": 0.034223145382483784,
+      "accuracy": 0.8328625235404896,
+      "std": 0.03715473865664923,
       "trained": true,
       "best_params": {}
     }
   },
   "ensemble": {
-    "name": "Ensemble_Stacking",
-    "accuracy": 0.8181920903954804,
-    "weights": []
+    "name": "Ensemble_Voting",
+    "accuracy": 0.8418455743879474,
+    "weights": [
+      1.0,
+      0.9212121212121218,
+      0.7363636363636387,
+      0.7242424242424218,
+      0.1
+    ]
   },
   "best_model": {
-    "name": "Ridge Classifier",
-    "accuracy": 0.8237664783427496
+    "name": "Ensemble_Voting",
+    "accuracy": 0.8418455743879474
   }
 }

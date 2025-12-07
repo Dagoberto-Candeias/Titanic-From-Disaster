@@ -382,6 +382,9 @@ if sys.platform.startswith("win"):
             # If even the fallback fails, continue without modifying streams
             pass
 
+# Feature Schema Versioning for Cache Invalidation
+FEATURE_SCHEMA_VERSION = "1.0.0"
+
 DEFAULT_CONFIG = {
     "debug_mode": False,
     "parallel_jobs": max(1, multiprocessing.cpu_count() - 1),

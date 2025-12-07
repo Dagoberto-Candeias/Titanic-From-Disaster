@@ -16,7 +16,6 @@ import os
 import pickle
 import sys
 import warnings
-from concurrent.futures import ProcessPoolExecutor, as_completed
 from datetime import datetime
 
 # Importações de terceiros
@@ -25,7 +24,6 @@ matplotlib.use('Agg')  # Set backend for headless environments
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 
 # Importações do Scikit-learn
 try:
@@ -35,23 +33,13 @@ except ImportError:
     CALIBRATED_AVAILABLE = False
     CalibratedClassifierCV = None
 
-from sklearn.discriminant_analysis import (
-    LinearDiscriminantAnalysis,
-    QuadraticDiscriminantAnalysis,
-)
 from sklearn.ensemble import (
-    AdaBoostClassifier,
-    BaggingClassifier,
-    ExtraTreesClassifier,
-    GradientBoostingClassifier,
-    RandomForestClassifier,
     VotingClassifier,
+    RandomForestClassifier,
+    GradientBoostingClassifier,
+    ExtraTreesClassifier,
 )
-from sklearn.linear_model import (
-    LogisticRegression,
-    RidgeClassifier,
-    SGDClassifier,
-)
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import (
     ConfusionMatrixDisplay,
     confusion_matrix,
@@ -60,15 +48,6 @@ from sklearn.model_selection import (
     cross_val_predict,
     cross_val_score,
 )
-from sklearn.naive_bayes import BernoulliNB, GaussianNB
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.svm import SVC, LinearSVC
-from sklearn.tree import DecisionTreeClassifier
-
-from sklearn.preprocessing import OneHotEncoder, StandardScaler
-from sklearn.compose import ColumnTransformer
-from sklearn.calibration import CalibrationDisplay
-from sklearn.model_selection import train_test_split
 
 # Importações opcionais de terceiros com verificações de disponibilidade
 try:
@@ -146,7 +125,7 @@ from titanic_pipeline.preprocessing import (
     extract_title,
     extract_deck,
     extract_ticket_prefix,
-    create_feature_pipeline, # Adicionado para usar o pipeline modular
+    create_feature_pipeline,  # Adicionado para usar o pipeline modular
 )
 from titanic_pipeline.core.preprocessing import (
     preprocess_data as modular_preprocess_data
@@ -155,6 +134,7 @@ from titanic_pipeline.core.modeling import (
     train_single_model as modular_train_single_model,
     build_stacking_ensemble as modular_build_stacking_ensemble,
     get_base_models,
+    ModelingManager,
     objective,
     save_model_pipeline,
 )
@@ -175,7 +155,6 @@ from titanic_pipeline.core.reporting import (
     generate_changelog_and_manifest as modular_generate_changelog_and_manifest,
     save_timing_report,
     generate_shap_comparison_plot,
-    improved_generate_submission,
     generate_model_calibration_plots,
     generate_permutation_importance,
 )
@@ -259,8 +238,12 @@ try:
     from config import LOGGING_CONFIG as IMPORTED_LOGGING_CONFIG
 
     CONFIG = {**DEFAULT_CONFIG, **IMPORTED_CONFIG}
-    EXPECTED_TRAIN_SCHEMA = {**DEFAULT_EXPECTED_TRAIN_SCHEMA, **IMPORTED_EXPECTED_TRAIN_SCHEMA}
-    EXPECTED_TEST_SCHEMA = {**DEFAULT_EXPECTED_TEST_SCHEMA, **IMPORTED_EXPECTED_TEST_SCHEMA}
+    EXPECTED_TRAIN_SCHEMA = {
+        **DEFAULT_EXPECTED_TRAIN_SCHEMA, **IMPORTED_EXPECTED_TRAIN_SCHEMA
+    }
+    EXPECTED_TEST_SCHEMA = {
+        **DEFAULT_EXPECTED_TEST_SCHEMA, **IMPORTED_EXPECTED_TEST_SCHEMA
+    }
     LOGGING_CONFIG = {**DEFAULT_LOGGING_CONFIG, **IMPORTED_LOGGING_CONFIG}
 except ImportError:
     CONFIG = DEFAULT_CONFIG.copy()
@@ -476,14 +459,15 @@ Optional dependencies can be installed with:
     if not all(critical_libs):
         CONFIG["fast_mode"] = True  # noqa
         logger.info(
-            "⚡ FAST MODE ENABLED - Missing critical libs (XGBoost/LightGBM), "
-            "limiting features"
+            "⚡ FAST MODE ENABLED - Missing critical libs "
+            "(XGBoost/LightGBM), limiting features"
         )
         CONFIG["optuna_trials"] = 0  # Disable Optuna # noqa
         CONFIG["parallel_jobs"] = 1  # noqa
     elif not all(optional_libs):
         logger.info(
-            "⚠️  Optional libs missing (SHAP/Optuna), using fallbacks"
+            "⚠️  Optional libs missing (SHAP/Optuna), "
+            "using fallbacks"
         )
         CONFIG["optuna_trials"] = min(
             CONFIG.get("optuna_trials", 50), 20
@@ -542,9 +526,10 @@ Optional dependencies can be installed with:
 
         if apply_smote:
             logger.info(
-                f"🔄 DETECTADO DESBALANCEAMENTO DE CLASSES: "
-                f"Razão {class_ratio:.2f} > 1.5 (Maioria: {majority_class}, "
-                f"Minoria: {minority_class}). Ativando balanceamento automático."
+                f"🔄 DETECTADO DESBALANCEAMENTO DE CLASSES: Razão "
+                f"{class_ratio:.2f} > 1.5 (Maioria: {majority_class}, "
+                f"Minoria: {minority_class}). Ativando balanceamento "
+                f"automático."
             )
             CONFIG["enhanced_balance"] = True
         else:
@@ -769,34 +754,8 @@ Optional dependencies can be installed with:
         if CONFIG.get("run_smoke_tests", False):
             unit_results = run_unit_tests()
             logger.info(
-                f"Unit tests: {sum(unit_results.values())}/{len(unit_results)} "
-                f"passed - {unit_results}"
-            )
-
-        # Run Integration Tests
-        if CONFIG.get("run_integration_tests", False):
-            logger.info("🧪 EXECUTANDO INTEGRATION TESTS...")
-            integration_start = datetime.now()
-            integration_results = run_integration_tests(train, test, feature_cols)
-            os.makedirs("output/relatorios", exist_ok=True)
-            with open("output/relatorios/integration_results.json", "w") as f:
-                json.dump(integration_results, f, indent=2)
-            passed_integration = sum(integration_results.values())
-            total_integration = len(integration_results)
-            if passed_integration == total_integration:
-                logger.info(
-                    f"   ✅ Integration tests passed: "
-                    f"{passed_integration}/{total_integration}"
-                )
-            else:
-                logger.warning(
-                    f"   ⚠️  Integration tests partial: "
-                    f"{passed_integration}/{total_integration}"
-                )
-            integration_elapsed = datetime.now() - integration_start
-            logger.info(
-                f"   Integration tests concluídos em "
-                f"{integration_elapsed.total_seconds():.2f}s"
+                f"Unit tests: {sum(unit_results.values())}/"
+                f"{len(unit_results)} passed - {unit_results}"
             )
 
         logger.info("📈 GERANDO GRÁFICO EDA...")  # noqa
@@ -881,98 +840,20 @@ Optional dependencies can be installed with:
             resultados = cached_results
             logger.info("Resultados dos modelos carregados do cache")
         else:
-            modelos = get_base_models(CONFIG)
-            if hasattr(X_train_processed, "toarray"):
-                X_train_np = X_train_processed.toarray()
-            else:
-                X_train_np = np.asarray(X_train_processed)
+            # Use ModelingManager for improved parallel processing with timeouts
+            logger.info("   🚀 Iniciando treinamento paralelo com ModelingManager...")
 
-            modelos = {
-                "Random Forest": RandomForestClassifier(
-                    n_estimators=100, random_state=CONFIG["random_state"]
-                ),
-                "Gradient Boosting": GradientBoostingClassifier(
-                    n_estimators=100, random_state=CONFIG["random_state"]
-                ),
-                "Extra Trees": ExtraTreesClassifier(
-                    n_estimators=100, random_state=CONFIG["random_state"]
-                ),
-                "AdaBoost": AdaBoostClassifier(
-                    n_estimators=100, random_state=CONFIG["random_state"]
-                ),
-                "Bagging": BaggingClassifier(
-                    n_estimators=100, random_state=CONFIG["random_state"]
-                ),
-                "Logistic Regression": LogisticRegression(
-                    random_state=CONFIG["random_state"], max_iter=1000
-                ),
-                "SGD Classifier": SGDClassifier(
-                    random_state=CONFIG["random_state"], max_iter=1000
-                ),
-                "Ridge Classifier": RidgeClassifier(
-                    random_state=CONFIG["random_state"]
-                ),
-                "SVC": SVC(probability=True, random_state=CONFIG["random_state"]),
-                "Linear SVC": LinearSVC(
-                    random_state=CONFIG["random_state"], max_iter=10000
-                ),
-                "KNN": KNeighborsClassifier(),
-                "Decision Tree": DecisionTreeClassifier(
-                    random_state=CONFIG["random_state"]
-                ),
-                "Gaussian NB": GaussianNB(),
-                "Bernoulli NB": BernoulliNB(),
-                "LDA": LinearDiscriminantAnalysis(),
-                "QDA": QuadraticDiscriminantAnalysis(),
-            }
+            # Get model configurations from get_base_models
+            model_configs = get_base_models(CONFIG)
 
-            if XGB_AVAILABLE:
-                modelos["XGBoost"] = XGBClassifier(
-                    n_estimators=100, random_state=CONFIG["random_state"], verbosity=0
-                )
+            # Initialize ModelingManager
+            modeling_manager = ModelingManager(CONFIG, model_configs)
 
-            if LGBM_AVAILABLE:
-                modelos["LightGBM"] = LGBMClassifier(
-                    n_estimators=100, random_state=CONFIG["random_state"], verbosity=-1
-                )
-
-            logger.info(
-                f"   🚀 Iniciando treinamento paralelo com "
-                f"{CONFIG['parallel_jobs']} jobs..."
-            )  # noqa
-
-            resultados = {}
-
-            with ProcessPoolExecutor(max_workers=CONFIG["parallel_jobs"]) as executor:
-                future_to_model = {
-                    executor.submit(
-                        modular_train_single_model,
-                        name,
-                        model,
-                        X_train_np,
-                        y_train,
-                        CONFIG["cv_folds"],
-                    ): name
-                    for name, model in modelos.items()
-                }
-
-                for future in as_completed(future_to_model):
-                    model_name = future_to_model[future]
-                    try:
-                        result = future.result()
-                        resultados[model_name] = result
-                        logger.info("   ✅ %s concluído" % model_name)
-                    except Exception as e:  # noqa
-                        logger.error(f"   ❌ {model_name} falhou: {e}")
-                        resultados[model_name] = {
-                            "model_name": model_name,
-                            "error": str(e),
-                            "mean_score": 0.0,
-                            "std_score": 0.0,
-                        }
+            # Train all models with parallel processing and timeouts
+            resultados = modeling_manager.train_all_models(X_train_processed, y_train)
 
             # Cache results
-            cache_result(cache_key_models, resultados)  # noqa
+            cache_result(cache_key_models, resultados)
             logger.info("   💾 Resultados dos modelos cached")
 
         elapsed = datetime.now() - start_time
@@ -1339,7 +1220,8 @@ Optional dependencies can be installed with:
 
         elapsed = datetime.now() - start_time
         logger.info(
-            f"Ensemble criado e gráfico salvo em {elapsed.total_seconds():.2f}s"
+            f"Ensemble criado e gráfico salvo em "
+            f"{elapsed.total_seconds():.2f}s"
         )
 
         logger.info("GERANDO MATRIZ DE CONFUSÃO...")
@@ -1367,7 +1249,8 @@ Optional dependencies can be installed with:
 
                 cm = confusion_matrix(y_train_cm, y_pred)
                 disp = ConfusionMatrixDisplay(
-                    confusion_matrix=cm, display_labels=["Not Survived", "Survived"]
+                    confusion_matrix=cm,
+                    display_labels=["Not Survived", "Survived"]
                 )
 
                 fig, ax = plt.subplots(figsize=(8, 6))
@@ -1383,7 +1266,9 @@ Optional dependencies can be installed with:
                 cache_result(cache_key_cm, True)  # noqa
 
         elapsed = datetime.now() - start_time
-        logger.info(f"Matriz de confusão salva em {elapsed.total_seconds():.2f}s")
+        logger.info(
+            f"Matriz de confusão salva em {elapsed.total_seconds():.2f}s"
+        )
 
         if SHAP_AVAILABLE and not CONFIG.get("fast_mode", False):
             logger.info(
@@ -1427,11 +1312,14 @@ Optional dependencies can be installed with:
                         shap_values = explainer.shap_values(X_shap_sample_values)  # noqa
                     else:
                         predict_fn = model.predict_proba
-                        explainer = shap.KernelExplainer(predict_fn, X_shap_sample_values)
+                        explainer = shap.KernelExplainer(
+                            predict_fn, X_shap_sample_values
+                        )
                         shap_values = explainer.shap_values(X_shap_sample_values)  # noqa
 
                     shap_plot_values = (
-                        shap_values[1] if isinstance(shap_values, list) else shap_values
+                        shap_values[1] if isinstance(shap_values, list)
+                        else shap_values
                     )  # noqa
 
                     plt.figure()
@@ -1485,7 +1373,8 @@ Optional dependencies can be installed with:
                         logger.error(f"Erro ao gerar comparação SHAP: {e}")
 
                 logger.info(
-                    f"   Análise SHAP concluída em {(datetime.now() - start_time).total_seconds():.2f}s"
+                    f"   Análise SHAP concluída em "
+                    f"{(datetime.now() - start_time).total_seconds():.2f}s"
                 )
 
             # 8.5. Generate Permutation Importance (Item 8) # noqa
