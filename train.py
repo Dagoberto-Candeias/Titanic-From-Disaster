@@ -175,7 +175,8 @@ DEFAULT_CONFIG = {
     "fast_mode": False,
     "feature_selection": False,
     "run_smoke_tests": False,
-    "optuna_trials": 50,
+    "use_optuna": False,  # Desabilitar Optuna temporariamente
+    "optuna_trials": 5,  # Reduzir para teste rápido se ativar
     "enhanced_balance": False,
     "log_level": logging.INFO,
 }
@@ -649,7 +650,7 @@ def main():
         elapsed = datetime.now() - start_time
         logger.info(f"Modelos treinados: {len(resultados)} modelos em {elapsed.total_seconds():.2f}s")
 
-        if OPTUNA_AVAILABLE and not CONFIG.get("fast_mode", False):
+        if OPTUNA_AVAILABLE and not CONFIG.get("fast_mode", False) and CONFIG.get("use_optuna", False):
             logger.info("🔥 OTIMIZANDO HIPERPARÂMETROS COM OPTUNA...")
             optuna_start_time = datetime.now()
 

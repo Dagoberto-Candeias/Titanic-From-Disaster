@@ -1,0 +1,41 @@
+INFO - ================================================================================
+INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+INFO - ================================================================================
+INFO - \U0001f680 Rodando smoke tests antes do pipeline principal...
+INFO - \U0001f9ea Iniciando SMOKE TESTS...
+INFO -    \u2705 Diretórios e arquivos OK
+INFO -    \u2705 Dados carregados: train=(50, 12), test=(30, 11)
+INFO - \U0001f50d VALIDANDO SCHEMA: train.csv
+INFO - \u2705 Schema válido para train.csv: 50 linhas, 12 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+INFO - \U0001f50d VALIDANDO SCHEMA: test.csv
+INFO - \u2705 Schema válido para test.csv: 30 linhas, 11 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+INFO -    \u2705 Schema válido
+INFO - \U0001f512 Global seeds set to 42
+INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+ERROR - \u274c Erro em smoke tests: 'AdvancedFeatureEngineer' object has no attribute 'advanced_missing_imputation'
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\train.py", line 447, in smoke_test
+    train_fe = fe.advanced_missing_imputation(train_sample)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AdvancedFeatureEngineer' object has no attribute 'advanced_missing_imputation'
+WARNING - \u26a0\ufe0f  Smoke tests falharam, mas continuando...
+INFO - \U0001f4c1 CRIANDO DIRETÓRIOS...
+INFO - \U0001f4ca CARREGANDO E VALIDANDO DADOS...
+INFO - \U0001f9e0 OTIMIZANDO USO DE MEMÓRIA...
+INFO - \U0001f50d VALIDANDO SCHEMA: train.csv
+INFO - \u2705 Schema válido para train.csv: 891 linhas, 12 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+INFO - \U0001f50d VALIDANDO SCHEMA: test.csv
+INFO - \u2705 Schema válido para test.csv: 418 linhas, 11 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+INFO - \U0001f527 CRIANDO FEATURES AVANÇADAS COM CACHE...
+INFO - \U0001f512 Global seeds set to 42
+INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+CRITICAL - \u274c ERRO CRÍTICO NO PIPELINE DE TREINAMENTO: 'AdvancedFeatureEngineer' object has no attribute 'advanced_missing_imputation'
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\train.py", line 565, in main
+    train = feature_engineer.advanced_missing_imputation(train)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'AdvancedFeatureEngineer' object has no attribute 'advanced_missing_imputation'

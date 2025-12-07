@@ -1,5 +1,5 @@
 {
-  "total_time_seconds": 120.5,
-  "models_trained": 2,
-  "best_model": "RandomForest"
+  "total_time_seconds": 31.589926,
+  "models_trained": 20,
+  "best_model": "Ridge Classifier"
 }
