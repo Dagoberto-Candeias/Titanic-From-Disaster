@@ -444,10 +444,7 @@ def smoke_test():
         
         # 4. Feature Engineering
         fe = AdvancedFeatureEngineer()
-        train_fe = fe.advanced_missing_imputation(train_sample)
-        train_fe = fe.create_advanced_features(train_fe, is_training=True)
-        test_fe = fe.advanced_missing_imputation(test_sample)
-        test_fe = fe.create_advanced_features(test_fe, is_training=False)
+        train_fe, test_fe = fe.fit_transform(train_sample, test_sample)
         logger.info(f"   ✅ Features geradas: train={train_fe.shape}, test={test_fe.shape}")
         
         # 5. Treinar modelo simples
@@ -554,18 +551,7 @@ def main():
         logger.info("🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...")
         feature_engineer = AdvancedFeatureEngineer()
 
-        # Impute first to avoid NaNs in derived features
-        cache_key_imputation = get_versioned_cache_key(data_hash, "imputation_train")
-        cached_imputation = load_cached_result(cache_key_imputation)
-
-        if cached_imputation is not None:
-            train = cached_imputation
-            logger.info("   📖 Imputação de treino carregada do cache (v" + FEATURE_SCHEMA_VERSION + ")")
-        else:
-            train = feature_engineer.advanced_missing_imputation(train)
-            cache_result(cache_key_imputation, train)
-            logger.info("   💾 Imputação de treino processada e cached (v" + FEATURE_SCHEMA_VERSION + ")")
-
+        # Use fit_transform to handle all feature engineering at once
         cache_key_features = get_versioned_cache_key(data_hash, "features_train")
         cached_features = load_cached_result(cache_key_features)
 
@@ -573,14 +559,9 @@ def main():
             train = cached_features
             logger.info("   📖 Features de treino carregadas do cache (v" + FEATURE_SCHEMA_VERSION + ")")
         else:
-            train = feature_engineer.create_advanced_features(train, is_training=True)
+            train, test = feature_engineer.fit_transform(train, test)
             cache_result(cache_key_features, train)
             logger.info("   💾 Features de treino processadas e cached (v" + FEATURE_SCHEMA_VERSION + ")")
-
-        # Process test data similarly
-        logger.info("🔧 Processando features para o conjunto de teste...")
-        test = feature_engineer.advanced_missing_imputation(test)
-        test = feature_engineer.create_advanced_features(test, is_training=False)
 
         feature_cols = [
             col for col in train.columns if col not in ["PassengerId", "Survived", "Name", "Ticket", "Cabin", "Title", "AgeGroup"]
