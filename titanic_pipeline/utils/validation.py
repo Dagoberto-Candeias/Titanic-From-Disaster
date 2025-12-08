@@ -81,10 +81,8 @@ class DataValidator:
                             "expected": expected_dtype,
                             "actual": actual_dtype
                         })
-                        msg = (
-                            f"⚠️  Dtype mismatch in {dataset_name}.{col}: "
-                            f"expected {expected_dtype}, got {actual_dtype}"
-                        )
+                        msg = f"⚠️  Dtype mismatch in {dataset_name}.{col}: "
+                        msg += f"expected {expected_dtype}, got {actual_dtype}"
                         logger.warning(msg)
 
         # Save validation report
@@ -175,7 +173,8 @@ class DataValidator:
 
         removed_cols = set(feature_cols) - set(filtered_cols)
         if removed_cols:
-            logger.warning(f"⚠️  Removed features not in both datasets: {removed_cols}")
+            msg = f"⚠️  Removed features not in both datasets: {removed_cols}"
+            logger.warning(msg)
 
         return filtered_cols
 
@@ -245,13 +244,16 @@ def validate_data_schema(
     if missing_cols:
         schema_report["missing_columns"] = list(missing_cols)
         schema_report["validation_passed"] = False
-        logger.error(f"❌ Missing columns in {dataset_name}: {missing_cols}")
+        logger.error(
+            f"❌ Missing columns in {dataset_name}: {missing_cols}"
+        )
 
     # Check for extra columns
     extra_cols = set(df.columns) - set(expected_columns)
     if extra_cols:
         schema_report["extra_columns"] = list(extra_cols)
-        logger.warning(f"⚠️  Extra columns in {dataset_name}: {extra_cols}")
+        msg = f"⚠️  Extra columns in {dataset_name}: {extra_cols}"
+        logger.warning(msg)
 
     # Save validation report
     report_path = os.path.join(output_dir, f"schema_validation_{dataset_name}.json")

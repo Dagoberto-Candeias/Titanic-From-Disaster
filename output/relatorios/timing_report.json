@@ -1,5 +1,5 @@
 {
-  "total_time_seconds": 215.397831,
+  "total_time_seconds": 370.264391,
   "models_trained": 20,
-  "best_model": "Ensemble_Voting"
+  "best_model": "Ensemble_Stacking"
 }

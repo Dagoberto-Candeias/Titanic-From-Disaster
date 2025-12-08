@@ -364,6 +364,11 @@ def generate_roc_curves(model_results, X_train, y_train, feature_cols=None):
                 else:
                     X_for_pred = X_train
                 y_pred_proba = model.predict_proba(X_for_pred)[:, 1]
+                # skip models with NaNs in predicted probabilities
+                import numpy as _np
+                if _np.isnan(y_pred_proba).any():
+                    logger.warning(f"   ⚠️  Skipping ROC for {model_name} due to NaNs in predicted probabilities")
+                    continue
                 fpr, tpr, _ = roc_curve(y_train, y_pred_proba)
                 roc_auc = auc(fpr, tpr)
                 plt.plot(fpr, tpr, label=f'{model_name} (AUC = {roc_auc:.2f})')
@@ -388,6 +393,7 @@ def generate_feature_correlation_heatmap(train, feature_cols):
     try:
         import seaborn as sns
         import matplotlib.pyplot as plt
+        import numpy as np
         from pathlib import Path
 
         corr_dir = Path("output/graficos/correlation")

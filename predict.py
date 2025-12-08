@@ -69,4 +69,36 @@ def make_predictions(
     logger.info(f"✅ Processo de predição concluído em {elapsed.total_seconds():.2f} segundos.")
 
 if __name__ == "__main__":
-    make_predictions()
+    import argparse
+    
+    # CLI support
+    parser = argparse.ArgumentParser(
+        description="Titanic ML Pipeline - Prediction Script",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python predict.py --input test.csv --output predictions.csv
+  python predict.py --input data/test.csv --output output/my_predictions.csv
+        """
+    )
+    
+    parser.add_argument("--input", type=str, default="test.csv", help="Path to input CSV (default: test.csv)")
+    parser.add_argument("--output", type=str, default="output/submission.csv", help="Path to save predictions (default: output/submission.csv)")
+    parser.add_argument("--model", type=str, default="output/models/best_model_pipeline.pkl", help="Path to trained pipeline")
+    
+    args = parser.parse_args()
+    
+    # Validate files exist
+    if not os.path.exists(args.input):
+        logger.error(f"Input file not found: {args.input}")
+        sys.exit(1)
+    if not os.path.exists(args.model):
+        logger.error(f"Model file not found: {args.model}")
+        sys.exit(1)
+    
+    # Run prediction
+    make_predictions(
+        input_data_path=args.input,
+        model_pipeline_path=args.model,
+        submission_path=args.output
+    )

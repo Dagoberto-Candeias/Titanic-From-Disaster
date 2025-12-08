@@ -1,0 +1,153 @@
+nohup: ignoring input
+INFO - ================================================================================
+INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+INFO - ================================================================================
+INFO - \U0001f680 Rodando smoke tests antes do pipeline principal...
+INFO - \U0001f9ea Iniciando SMOKE TESTS...
+INFO -    \u2705 Diretórios e arquivos OK
+INFO -    \u2705 Dados carregados: train=(50, 12), test=(30, 11)
+INFO - \U0001f50d VALIDANDO SCHEMA: train.csv
+INFO - \u2705 Schema válido para train.csv: 50 linhas, 12 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+INFO - \U0001f50d VALIDANDO SCHEMA: test.csv
+INFO - \u2705 Schema válido para test.csv: 30 linhas, 11 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+INFO -    \u2705 Schema válido
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+INFO - Starting advanced feature engineering...
+INFO - Features de família criadas: FamilySize, IsAlone.
+INFO - Feature Title extraída de Name.
+INFO - Feature Deck extraída de Cabin.
+INFO - Feature TicketPrefix extraída de Ticket.
+INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+INFO - Indicadores de missing criados: feat_*_missing.
+INFO - Features de família criadas: FamilySize, IsAlone.
+INFO - Feature Title extraída de Name.
+INFO - Feature Deck extraída de Cabin.
+INFO - Feature TicketPrefix extraída de Ticket.
+INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+INFO - Indicadores de missing criados: feat_*_missing.
+INFO - Feature engineering applied in parallel.
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Pclass
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Sex
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Embarked
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Title
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Deck
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna TicketPrefix
+INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+INFO - Target encoding aplicado.
+INFO - Column consistency ensured between train and test.
+INFO - Advanced feature engineering completed.
+INFO -    \u2705 Features geradas: train=(50, 34), test=(30, 33)
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+INFO - Pipeline de pré-processamento criado com sucesso.
+INFO -    \u2705 Modelo treinado: Acc=0.6000
+INFO -    \u2705 Predições geradas: 30 amostras
+INFO -    \u2705 Modelo salvo e carregado OK
+INFO - \u2705 SMOKE TESTS PASSARAM!
+INFO - \U0001f4c1 CRIANDO DIRETÓRIOS...
+INFO - \U0001f4ca CARREGANDO E VALIDANDO DADOS...
+INFO - \U0001f9e0 OTIMIZANDO USO DE MEMÓRIA...
+INFO -    \U0001f4be Memory usage decreased from 0.28 MB to 0.24 MB (14.0% reduction)
+INFO -    \U0001f4be Memory usage decreased from 0.13 MB to 0.11 MB (12.1% reduction)
+INFO - \U0001f50d VALIDANDO SCHEMA: train.csv
+INFO - \u2705 Schema válido para train.csv: 891 linhas, 12 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+INFO - \U0001f50d VALIDANDO SCHEMA: test.csv
+INFO - \u2705 Schema válido para test.csv: 418 linhas, 11 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+INFO - \U0001f527 CRIANDO FEATURES AVANÇADAS COM CACHE...
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+INFO -    \U0001f4d6 Features de treino carregadas do cache (v1.0.0)
+WARNING - \u26a0\ufe0f  Removed features not in both datasets: {'feat_Cabin_missing', 'feat_Embarked_missing', 'AgeClass', 'feat_Deck_te', 'Deck', 'feat_TicketPrefix_te', 'feat_Sex_te', 'feat_Title_te', 'Title_Interactions', 'feat_Fare_missing', 'FamilySize', 'FarePerPerson', 'IsAlone', 'TicketPrefix', 'feat_Embarked_te', 'feat_Pclass_te', 'feat_Age_missing'}
+INFO - \U0001f916 TREINANDO MODELOS COM PARALELIZAÇÃO...
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']
+INFO - Features categóricas: ['Sex', 'Embarked']
+INFO - Pipeline de pré-processamento criado com sucesso.
+INFO - Resultados dos modelos carregados do cache
+INFO - Modelos treinados: 18 modelos em 0.21s
+INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+INFO - \U0001f4ca Pesos do Ensemble (normalizados):
+INFO -    Gradient Boosting: 1.000
+INFO -    Bagging: 0.829
+INFO -    SVC: 0.804
+INFO -    Random Forest: 0.271
+INFO -    LightGBM: 0.100
+  File "C:\Users\dcm\anaconda3\Lib\site-packages\joblib\externals\loky\backend\context.py", line 257, in _count_physical_cores
+    cpu_info = subprocess.run(
+        "wmic CPU Get NumberOfCores /Format:csv".split(),
+        capture_output=True,
+        text=True,
+    )
+  File "C:\Users\dcm\anaconda3\Lib\subprocess.py", line 554, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ~~~~~^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dcm\anaconda3\Lib\subprocess.py", line 1039, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        pass_fds, cwd, env,
+                        ^^^^^^^^^^^^^^^^^^^
+    ...<5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dcm\anaconda3\Lib\subprocess.py", line 1554, in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+                       ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+                             # no special security
+                             ^^^^^^^^^^^^^^^^^^^^^
+    ...<4 lines>...
+                             cwd,
+                             ^^^^
+                             startupinfo)
+                             ^^^^^^^^^^^^
+INFO - \u2705 Ensemble Voting criado:INFO - \u2705 EnsembleINFO - \u2705 Ensemble stacking criado: Acc=0.8385
+INFO - GERANDO GRÁFINFO - Model performanINFO - Model performance logged to output/reports/model_performance.csv
+ERROR -    \u274c ROC curve generation failed: Input contains NaN.
+ERROR -    \u274c Feature correlation heatmap generation failed: name 'np' is not defined
+INFO -    \U0001f4ca Model performance timeline generated
+INFO - SALVANDO MODELO FINAL...
+INFO - Pipeline saved to output/models/best_model_pipeline.pkl
+INFO - Modelo final 'Ensemble_Stacking' salvo como pipeline completo.
+INFO - \U0001f4e4 GERANDO ARQUIVO DE SUBMISSÃO A PARTIR DO MODELO SALVO...
+INFO - Pipeline loaded from output/models/best_model_pipeline.pkl
+INFO - Predictions generated for 418 samples
+INFO -    \u2705 Submission gerada e salva em: output/submission.csv
+INFO -    \U0001f4dd Markdown report saved: output\relatorios\relatorio_final.md
+INFO -    \U0001f4c4 DOCX report saved: output\relatorios\relatorio_final.docx
+INFO -    \U0001f4d5 PDF report saved: output\relatorios\relatorio_final.pdf
+INFO -    \U0001f4ca Calibration plots generated
+INFO -    \U0001f4ca Feature importance plots generated
+INFO -    \U0001f4dd Changelog and manifest generated
+INFO -    \u23f1\ufe0f  Timing report saved
+INFO - \u2705 Métricas exportadas: output/relatorios/metrics.json
+INFO - ================================================================================
+INFO - \U0001f4ca RESUMO FINAL DO PIPELINE TITANIC ML
+INFO - ================================================================================
+INFO - \u23f1\ufe0f  Tempo total: 370.26s
+INFO - \U0001f916 Modelos treinados: 20/20
+INFO - \U0001f3c6 Melhor modelo: Ensemble_Stacking (Acc: 0.8385)
+INFO - \U0001f3af Ensemble: Ensemble_Stacking (Acc: 0.8385)
+INFO - \u2728 Features: 7
+INFO - \U0001f4c1 Saídas: submission.csv, métricas.json, gráficos, relatórios
+INFO - ================================================================================
+INFO - \u2705 SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!

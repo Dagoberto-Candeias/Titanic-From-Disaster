@@ -1,23 +1,23 @@
 {
-  "timestamp": "2025-12-07T11:54:13.180970",
-  "total_time_seconds": 215.397831,
+  "timestamp": "2025-12-08T12:55:44.336802",
+  "total_time_seconds": 370.264391,
   "features_count": 7,
   "models": {
     "Random Forest": {
-      "accuracy": 0.8105084745762713,
-      "std": 0.04792636863366504,
+      "accuracy": 0.817231638418079,
+      "std": 0.04688210350274703,
       "trained": true,
       "best_params": {}
     },
     "Gradient Boosting": {
-      "accuracy": 0.823879472693032,
-      "std": 0.0379145952896089,
+      "accuracy": 0.8216384180790961,
+      "std": 0.03534104913414619,
       "trained": true,
       "best_params": {}
     },
     "Extra Trees": {
-      "accuracy": 0.7958945386064029,
-      "std": 0.05545266734224654,
+      "accuracy": 0.801563088512241,
+      "std": 0.056374996578740004,
       "trained": true,
       "best_params": {}
     },
@@ -29,7 +29,7 @@
     },
     "Bagging": {
       "accuracy": 0.8206026365348399,
-      "std": 0.0486944764707162,
+      "std": 0.045550584435996404,
       "trained": true,
       "best_params": {}
     },
@@ -40,8 +40,8 @@
       "best_params": {}
     },
     "SGD Classifier": {
-      "accuracy": 0.7331826741996234,
-      "std": 0.06380078566930561,
+      "accuracy": 0.764406779661017,
+      "std": 0.04116883159818808,
       "trained": true,
       "best_params": {}
     },
@@ -64,14 +64,14 @@
       "best_params": {}
     },
     "KNN": {
-      "accuracy": 0.809322033898305,
-      "std": 0.03546219869009565,
+      "accuracy": 0.8070809792843693,
+      "std": 0.03394025443710234,
       "trained": true,
       "best_params": {}
     },
     "Decision Tree": {
-      "accuracy": 0.788060263653484,
-      "std": 0.05366859603189521,
+      "accuracy": 0.7913935969868172,
+      "std": 0.0493957731327492,
       "trained": true,
       "best_params": {}
     },
@@ -82,8 +82,8 @@
       "best_params": {}
     },
     "Bernoulli NB": {
-      "accuracy": 0.7799435028248588,
-      "std": 0.03528307768129119,
+      "accuracy": 0.7844444444444445,
+      "std": 0.03451548431566386,
       "trained": true,
       "best_params": {}
     },
@@ -100,43 +100,37 @@
       "best_params": {}
     },
     "XGBoost": {
-      "accuracy": 0.8126930320150658,
-      "std": 0.045344566912039044,
+      "accuracy": 0.8149529190207156,
+      "std": 0.051773063780062745,
       "trained": true,
       "best_params": {}
     },
     "LightGBM": {
-      "accuracy": 0.8229001883239171,
-      "std": 0.05338175555139556,
+      "accuracy": 0.8161958568738231,
+      "std": 0.05656725095407418,
       "trained": true,
       "best_params": {}
     },
     "Ensemble_Voting": {
-      "accuracy": 0.8418455743879474,
-      "std": 0.04471741795962963,
+      "accuracy": 0.8383992467043314,
+      "std": 0.04535817414405747,
       "trained": true,
       "best_params": {}
     },
     "Ensemble_Stacking": {
-      "accuracy": 0.8328625235404896,
-      "std": 0.03715473865664923,
+      "accuracy": 0.8384745762711865,
+      "std": 0.04257506065827825,
       "trained": true,
       "best_params": {}
     }
   },
   "ensemble": {
-    "name": "Ensemble_Voting",
-    "accuracy": 0.8418455743879474,
-    "weights": [
-      1.0,
-      0.9212121212121218,
-      0.7363636363636387,
-      0.7242424242424218,
-      0.1
-    ]
+    "name": "Ensemble_Stacking",
+    "accuracy": 0.8384745762711865,
+    "weights": []
   },
   "best_model": {
-    "name": "Ensemble_Voting",
-    "accuracy": 0.8418455743879474
+    "name": "Ensemble_Stacking",
+    "accuracy": 0.8384745762711865
   }
 }

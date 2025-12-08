@@ -30,15 +30,21 @@ from .cache import (
 )
 
 # Import from parallel module
+# Import CacheManager from cache module
+from .cache import CacheManager
+
+# Import from parallel module
 from .parallel import (
     safe_parallel_map,
     is_tree_model,
     robust_pickle_dump,
     robust_pickle_load,
 )
+# Import ParallelProcessor from parallel module
+from .parallel import ParallelProcessor
 
-# Import from utils module
-from .utils import (
+# Import validate_data_schema from validation module
+from .validation import (
     validate_data_schema,
 )
 
@@ -59,12 +65,14 @@ __all__ = [
     "get_cache_key",
     "cache_result",
     "load_cached_result",
+    "CacheManager",
 
     # Parallel utilities
     "safe_parallel_map",
     "is_tree_model",
     "robust_pickle_dump",
     "robust_pickle_load",
+    "ParallelProcessor",
 
     # General utilities
     "validate_data_schema",
