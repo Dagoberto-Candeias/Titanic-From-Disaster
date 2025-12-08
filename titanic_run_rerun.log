@@ -1,0 +1,139 @@
+INFO - ================================================================================
+INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+INFO - ================================================================================
+INFO - \U0001f680 Rodando smoke tests antes do pipeline principal...
+INFO - \U0001f9ea Iniciando SMOKE TESTS...
+INFO -    \u2705 Diretórios e arquivos OK
+INFO -    \u2705 Dados carregados: train=(50, 12), test=(30, 11)
+INFO - \U0001f50d VALIDANDO SCHEMA: train.csv
+INFO - \u2705 Schema válido para train.csv: 50 linhas, 12 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+INFO - \U0001f50d VALIDANDO SCHEMA: test.csv
+INFO - \u2705 Schema válido para test.csv: 30 linhas, 11 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+INFO -    \u2705 Schema válido
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+INFO - Starting advanced feature engineering...
+INFO - Features de família criadas: FamilySize, IsAlone.
+INFO - Feature Title extraída de Name.
+INFO - Feature Deck extraída de Cabin.
+INFO - Feature TicketPrefix extraída de Ticket.
+INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+INFO - Indicadores de missing criados: feat_*_missing.
+INFO - Features de família criadas: FamilySize, IsAlone.
+INFO - Feature Title extraída de Name.
+INFO - Feature Deck extraída de Cabin.
+INFO - Feature TicketPrefix extraída de Ticket.
+INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+INFO - Indicadores de missing criados: feat_*_missing.
+INFO - Feature engineering applied in parallel.
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Pclass
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Sex
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Embarked
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Title
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Deck
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna TicketPrefix
+INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+INFO - Target encoding aplicado.
+INFO - Column consistency ensured between train and test.
+INFO - Advanced feature engineering completed.
+INFO -    \u2705 Features geradas: train=(50, 34), test=(30, 33)
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+INFO - Pipeline de pré-processamento criado com sucesso.
+INFO -    \u2705 Modelo treinado: Acc=0.6000
+INFO -    \u2705 Predições geradas: 30 amostras
+INFO -    \u2705 Modelo salvo e carregado OK
+INFO - \u2705 SMOKE TESTS PASSARAM!
+INFO - \U0001f4c1 CRIANDO DIRETÓRIOS...
+INFO - \U0001f4ca CARREGANDO E VALIDANDO DADOS...
+INFO - \U0001f9e0 OTIMIZANDO USO DE MEMÓRIA...
+INFO -    \U0001f4be Memory usage decreased from 0.28 MB to 0.24 MB (14.0% reduction)
+INFO -    \U0001f4be Memory usage decreased from 0.13 MB to 0.11 MB (12.1% reduction)
+INFO - \U0001f50d VALIDANDO SCHEMA: train.csv
+INFO - \u2705 Schema válido para train.csv: 891 linhas, 12 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+INFO - \U0001f50d VALIDANDO SCHEMA: test.csv
+INFO - \u2705 Schema válido para test.csv: 418 linhas, 11 colunas
+INFO -    \U0001f4c4 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+INFO - \U0001f527 CRIANDO FEATURES AVANÇADAS COM CACHE...
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+INFO - Starting advanced feature engineering...
+INFO - Features de família criadas: FamilySize, IsAlone.
+INFO - Feature Title extraída de Name.
+INFO - Feature Deck extraída de Cabin.
+INFO - Feature TicketPrefix extraída de Ticket.
+INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+WARNING - Parallel failed for _create_bins on train: float16 indexes are not supported. Fallback to sequential.
+WARNING - Parallel processing failed: float16 indexes are not supported. Using sequential.
+INFO - Features de família criadas: FamilySize, IsAlone.
+INFO - Features de família criadas: FamilySize, IsAlone.
+INFO - Applied _create_family_features sequentially.
+INFO - Feature Title extraída de Name.
+INFO - Feature Title extraída de Name.
+INFO - Applied _extract_title sequentially.
+INFO - Feature Deck extraída de Cabin.
+INFO - Feature Deck extraída de Cabin.
+INFO - Applied _extract_deck sequentially.
+INFO - Feature TicketPrefix extraída de Ticket.
+INFO - Feature TicketPrefix extraída de Ticket.
+INFO - Applied _extract_ticket_prefix sequentially.
+INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+INFO - Applied _create_interactions sequentially.
+WARNING - Failed to apply _create_bins: float16 indexes are not supported. Skipping.
+INFO - Indicadores de missing criados: feat_*_missing.
+INFO - Indicadores de missing criados: feat_*_missing.
+INFO - Applied _create_missing_indicators sequentially.
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Pclass
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Sex
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Embarked
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Title
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna Deck
+INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Iniciando target encoding para coluna TicketPrefix
+INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+INFO - Target encoding aplicado.
+INFO - Column consistency ensured between train and test.
+INFO - Advanced feature engineering completed.
+INFO -    \U0001f4be Features de treino processadas e cached (v1.0.0)
+INFO - \U0001f916 TREINANDO MODELOS COM PARALELIZAÇÃO...
+INFO -    \U0001f3b2 Global random seeds set to 42
+INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+INFO - Features categóricas: ['Sex', 'Embarked', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+INFO - Pipeline de pré-processamento criado com sucesso.
+INFO -    \U0001f680 Iniciando treinamento paralelo com 1 jobs...
+INFO -    \u2705 Random Forest concluído
+INFO -    \u2705 Gradient Boosting concluído
+INFO -    \u2705 Extra Trees concluído
+INFO -    \u2705 AdaBoost concluído
+INFO -    \u2705 Bagging concluído
+INFO -    \u2705 Logistic Regression concluído
+INFO -    \u2705 SGD Classifier concluído
+INFO -    \u2705 Ridge Classifier concluído
