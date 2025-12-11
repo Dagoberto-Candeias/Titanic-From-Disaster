@@ -11,6 +11,7 @@ import pandas as pd
 from sklearn.ensemble import VotingClassifier, StackingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
+from sklearn.calibration import CalibratedClassifierCV
 
 # Optional imports for optimization
 try:
@@ -56,31 +57,39 @@ class ModelingManager:
         # Get available models
         available_models = self._get_available_models()
 
-        # Train models in parallel
+        # Train models in parallel using ParallelProcessor
+        # Set training data as instance attributes for the task function
+        self._X_train = X_train
+        self._y_train = y_train
+
+        model_tasks = list(available_models.items())
+        trained_results = self.parallel_processor.process(
+            func=self._train_model_task,
+            items=model_tasks,
+            error_handling="log"
+        )
+
+        # Process results
         results = {}
-        futures = {}
+        for i, result in enumerate(trained_results):
+            if result is not None:
+                model_name = model_tasks[i][0]
+                results[model_name] = result
+                logger.info(f"   ✅ {model_name} trained: {result['mean_score']:.4f}")
+            else:
+                model_name = model_tasks[i][0]
+                logger.error(f"   ❌ {model_name} training failed")
 
-        with self.parallel_processor.executor as executor:
-            for model_name, model_class in available_models.items():
-                future = executor.submit(
-                    self._train_single_model,
-                    model_name,
-                    model_class,
-                    X_train,
-                    y_train
-                )
-                futures[future] = model_name
-
-            for future in self.parallel_processor.as_completed(futures):
-                model_name = futures[future]
-                try:
-                    result = future.result()
-                    results[model_name] = result
-                    logger.info(f"   ✅ {model_name} trained: {result['mean_score']:.4f}")
-                except Exception as e:
-                    logger.error(f"   ❌ {model_name} training failed: {e}")
+        # Apply calibration if enabled
+        if self.config.get("calibration_enabled", True):
+            results = self._calibrate_models(results, X_train, y_train)
 
         return results
+
+    def _train_model_task(self, model_info):
+        """Task function for parallel model training."""
+        model_name, model_class = model_info
+        return self._train_single_model(model_name, model_class, self._X_train, self._y_train)
 
     def _train_single_model(self, model_name: str, model_class, X_train: np.ndarray,
                           y_train: np.ndarray) -> Dict[str, Any]:
@@ -171,7 +180,7 @@ class ModelingManager:
             return ensemble_results
 
         try:
-            # Voting Classifier
+            # Voting Classifier (All models)
             voting_clf = VotingClassifier(
                 estimators=base_models,
                 voting="soft",
@@ -196,41 +205,155 @@ class ModelingManager:
 
             logger.info(f"   ✅ Voting Ensemble: {voting_scores.mean():.4f}")
 
-            # Stacking Classifier
-            meta_model = LogisticRegression(
-                random_state=self.config["random_state"],
-                max_iter=1000
-            )
+            # Advanced Ensemble: Top 3 Models (AdaBoost, SVC, LDA)
+            top_models = self._get_top_models(model_results, n=3)
+            if len(top_models) >= 3:
+                advanced_voting = VotingClassifier(
+                    estimators=top_models,
+                    voting="soft",
+                    weights=[0.4, 0.35, 0.25],  # Weighted voting
+                    n_jobs=1
+                )
 
-            stacking_clf = StackingClassifier(
-                estimators=base_models,
-                final_estimator=meta_model,
-                cv=self.config["cv_folds"],
-                n_jobs=1,
-                passthrough=True
-            )
+                advanced_scores = cross_val_score(
+                    advanced_voting, X_train, y_train,
+                    cv=self.config["cv_folds"],
+                    scoring="accuracy"
+                )
 
-            stacking_scores = cross_val_score(
-                stacking_clf, X_train, y_train,
-                cv=self.config["cv_folds"],
-                scoring="accuracy"
-            )
+                advanced_voting.fit(X_train, y_train)
 
-            stacking_clf.fit(X_train, y_train)
+                ensemble_results["AdvancedEnsemble"] = {
+                    "trained_model": advanced_voting,
+                    "mean_score": advanced_scores.mean(),
+                    "std_score": advanced_scores.std(),
+                    "cv_scores": advanced_scores.tolist(),
+                    "model_name": "AdvancedEnsemble",
+                    "description": "Weighted voting of top 3 models (AdaBoost, SVC, LDA)"
+                }
 
-            ensemble_results["StackingEnsemble"] = {
-                "trained_model": stacking_clf,
-                "mean_score": stacking_scores.mean(),
-                "std_score": stacking_scores.std(),
-                "cv_scores": stacking_scores.tolist(),
-                "model_name": "StackingEnsemble"
-            }
+                logger.info(f"   ✅ Advanced Ensemble: {advanced_scores.mean():.4f}")
 
-            logger.info(f"   ✅ Stacking Ensemble: {stacking_scores.mean():.4f}")
+            # Stacking Classifier with best model as meta-classifier
+            best_model_result = self._get_best_model(model_results)
+            if best_model_result:
+                meta_model = best_model_result["trained_model"]
+
+                stacking_clf = StackingClassifier(
+                    estimators=base_models,
+                    final_estimator=meta_model,
+                    cv=self.config["cv_folds"],
+                    n_jobs=1,
+                    passthrough=True
+                )
+
+                stacking_scores = cross_val_score(
+                    stacking_clf, X_train, y_train,
+                    cv=self.config["cv_folds"],
+                    scoring="accuracy"
+                )
+
+                stacking_clf.fit(X_train, y_train)
+
+                ensemble_results["StackingEnsemble"] = {
+                    "trained_model": stacking_clf,
+                    "mean_score": stacking_scores.mean(),
+                    "std_score": stacking_scores.std(),
+                    "cv_scores": stacking_scores.tolist(),
+                    "model_name": "StackingEnsemble",
+                    "description": f"Stacking with {best_model_result['model_name']} as meta-classifier"
+                }
+
+                logger.info(f"   ✅ Stacking Ensemble: {stacking_scores.mean():.4f}")
+
         except Exception as e:
             logger.error(f"   ❌ Ensemble creation failed: {e}")
 
         return ensemble_results
+
+    def _get_top_models(self, model_results: Dict[str, Any], n: int = 3) -> list:
+        """Get top N performing models for advanced ensemble."""
+        # Sort models by mean score
+        sorted_models = sorted(
+            [(name, result) for name, result in model_results.items() if "mean_score" in result],
+            key=lambda x: x[1]["mean_score"],
+            reverse=True
+        )
+
+        # Return top N models
+        top_models = []
+        for name, result in sorted_models[:n]:
+            top_models.append((name, result["trained_model"]))
+
+        return top_models
+
+    def _get_best_model(self, model_results: Dict[str, Any]) -> Dict[str, Any]:
+        """Get the best performing model."""
+        best_score = -1
+        best_result = None
+
+        for name, result in model_results.items():
+            if "mean_score" in result and result["mean_score"] > best_score:
+                best_score = result["mean_score"]
+                best_result = result.copy()
+                best_result["model_name"] = name
+
+        return best_result
+
+    def _calibrate_models(self, model_results: Dict[str, Any], X_train: np.ndarray,
+                         y_train: np.ndarray) -> Dict[str, Any]:
+        """Apply probability calibration to models that support it."""
+        logger.info("   📊 Calibrating model probabilities...")
+
+        calibrated_results = {}
+
+        for model_name, result in model_results.items():
+            try:
+                model = result["trained_model"]
+
+                # Check if model supports probability prediction
+                if hasattr(model, "predict_proba"):
+                    # Apply Platt calibration
+                    calibrated_model = CalibratedClassifierCV(
+                        estimator=model,
+                        method="sigmoid",  # Platt scaling
+                        cv=self.config["cv_folds"],
+                        n_jobs=1
+                    )
+
+                    calibrated_model.fit(X_train, y_train)
+
+                    # Evaluate calibrated model
+                    calibrated_scores = cross_val_score(
+                        calibrated_model, X_train, y_train,
+                        cv=self.config["cv_folds"],
+                        scoring="accuracy"
+                    )
+
+                    calibrated_result = result.copy()
+                    calibrated_result["trained_model"] = calibrated_model
+                    calibrated_result["calibrated_mean_score"] = calibrated_scores.mean()
+                    calibrated_result["calibrated_std_score"] = calibrated_scores.std()
+                    calibrated_result["original_mean_score"] = result["mean_score"]
+                    calibrated_result["calibration_improvement"] = (
+                        calibrated_scores.mean() - result["mean_score"]
+                    )
+
+                    calibrated_results[model_name] = calibrated_result
+
+                    logger.info(
+                        f"   ✅ {model_name} calibrated: {calibrated_scores.mean():.4f} "
+                        f"(+{calibrated_result['calibration_improvement']:.4f})"
+                    )
+                else:
+                    # Model doesn't support probabilities, keep original
+                    calibrated_results[model_name] = result
+
+            except Exception as e:
+                logger.warning(f"   ⚠️  Calibration failed for {model_name}: {e}")
+                calibrated_results[model_name] = result
+
+        return calibrated_results
 
     def _get_available_models(self) -> Dict[str, Any]:
         """Get dictionary of available models based on installed libraries."""

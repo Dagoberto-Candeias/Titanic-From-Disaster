@@ -156,14 +156,14 @@ Versão: 5.2 (Modular + Robusto + Validação Completa)
 DEFAULT_CONFIG = {
     "debug_mode": False,
     "parallel_jobs": max(1, multiprocessing.cpu_count() - 1),
-    "cv_folds": 5,
+    "cv_folds": 10,  # Aumentado para melhor avaliação
     "random_state": 42,
     "cache_enabled": True,
     "fast_mode": False,
     "feature_selection": False,
     "run_smoke_tests": False,
-    "use_optuna": False,  # Desabilitar Optuna temporariamente
-    "optuna_trials": 5,  # Reduzir para teste rápido se ativar
+    "use_optuna": True,  # Habilitado para otimização de hiperparâmetros
+    "optuna_trials": 20,  # Aumentado para melhor tuning
     "enhanced_balance": False,
     "log_level": logging.INFO,
 }
@@ -943,7 +943,7 @@ def main():
         logger.info("📊 RESUMO FINAL DO PIPELINE TITANIC ML")
         logger.info("=" * 80)
         logger.info(f"⏱️  Tempo total: {script_total_time.total_seconds():.2f}s")
-        logger.info(f"🤖 Modelos treinados: {len([m for m in resultados.values() if m.get('trained_model')])}/{len(resultados)}")
+        logger.info(f"🤖 Modelos treinados: {sum(1 for m in resultados.values() if m.get('trained_model') is not None)}/{len(resultados)}")
         logger.info(f"🏆 Melhor modelo: {metrics['best_model']['name']} (Acc: {metrics['best_model']['accuracy']:.4f})")
         ensemble_acc = f"{metrics['ensemble']['accuracy']:.4f}" if metrics['ensemble'] else 'N/A'
         logger.info(f"🎯 Ensemble: {metrics['ensemble']['name'] if metrics['ensemble'] else 'Nenhum'} (Acc: {ensemble_acc})")

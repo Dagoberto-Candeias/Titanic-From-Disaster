@@ -738,7 +738,12 @@ def kfold_target_encode(
         ) / (fold_means["count"] + prior)
 
         # Aplicar no fold de validação
-        encoded[val_idx] = val_fold[col_name].map(smoothed_means).fillna(global_mean)
+        mapped_values = pd.Series(
+            val_fold[col_name].map(smoothed_means).values,
+            index=val_fold.index,
+            dtype=float
+        )
+        encoded[val_idx] = mapped_values.fillna(global_mean)
 
     # Salvar mapa (usando o último smoothed_means para compatibilidade)
     te_map = {k: float(v) for k, v in smoothed_means.to_dict().items()}

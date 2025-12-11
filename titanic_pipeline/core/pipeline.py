@@ -86,6 +86,10 @@ class TitanicPipeline:
             # Step 4: Train models
             model_results = self.modeling_manager.train_all_models(X_train_selected, y_train)
 
+            # Step 4.5: Apply calibration if enabled
+            if self.config.get("calibration_enabled", True):
+                model_results = self.modeling_manager._calibrate_models(model_results, X_train_selected, y_train)
+
             # Step 5: Create ensembles
             ensemble_results = self.modeling_manager.create_ensembles(X_train_selected, y_train, model_results)
 

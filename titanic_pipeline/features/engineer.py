@@ -123,6 +123,26 @@ class FeatureEngineer:
         # Age and Sex interaction
         data["Age*Sex"] = data["Age"] * (data["Sex"] == "male").astype(int)
 
+        # Additional advanced interactions
+        if self.config.get("advanced_interactions", True):
+            # Title and FamilySize interaction
+            data["Title*FamilySize"] = data["Title"] + "_" + data["FamilySize"].astype(str)
+
+            # Pclass and Embarked interaction
+            data["Pclass*Embarked"] = data["Pclass"].astype(str) + "_" + data["Embarked"]
+
+            # Fare and Pclass interaction
+            data["Fare*Pclass"] = data["Fare"] * data["Pclass"]
+
+            # Age and Fare interaction
+            data["Age*Fare"] = data["Age"] * data["Fare"]
+
+            # Sex and Embarked interaction
+            data["Sex*Embarked"] = data["Sex"] + "_" + data["Embarked"]
+
+            # Nova feature: FamilySize * Pclass (interação classe-família)
+            data["FamilySize*Pclass"] = data["FamilySize"] * data["Pclass"]
+
         # Family size categories
         data["FamilySizeCat"] = pd.cut(data["FamilySize"], bins=[0, 1, 4, 20],
                                      labels=["Alone", "Small", "Large"])

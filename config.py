@@ -12,7 +12,7 @@ CONFIG = {
     "debug_mode": False,
     "random_state": 42,
     "parallel_jobs": 1,
-    "cv_folds": 15,
+    "cv_folds": 20,
     "cache_enabled": True,  # Enabled for better performance
     "fast_mode": False,
     "feature_selection": True,  # Enable feature selection
@@ -116,6 +116,7 @@ MODEL_CONFIGS = {
 FEATURE_CONFIG = {
     "create_feat_prefix": True,  # Add 'feat_' prefix to new features
     "advanced_interactions": True,
+    "calibration_enabled": True,  # Enable model calibration
     "polynomial_features": True,
     "target_encoding": True,
     "demographic_features": True,

@@ -17,7 +17,8 @@ Este projeto implementa um pipeline completo e avançado de machine learning par
 ### Estrutura de Diretórios
 ```
 titanic-from-disaster/
-├── ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio.py  # Script principal
+├── train.py                                            # Script principal (orquestrador)
+├── predict.py                                          # Script de inferência
 ├── config.py                                           # Configurações globais
 
 ├── titanic_pipeline/                                   # Módulos organizados
@@ -82,7 +83,7 @@ pip install -r requirements-dev.txt
 ### Execução Completa do Pipeline
 ```bash
 # Pipeline completo com todos os modelos e relatórios
-python ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio.py
+python train.py
 ```
 
 ### Execução com Configurações Customizadas
@@ -96,6 +97,24 @@ CONFIG["optuna_trials"] = 50
 
 # Executar pipeline
 results = run_pipeline()
+```
+
+### Validação de Setup
+```bash
+# Validar importações e dependências
+python test_imports.py
+```
+
+### Execução Rápida (Fast Mode)
+```bash
+# Execução rápida com menos modelos e trials
+python train.py --fast-mode
+```
+
+### Inferência em Novos Dados
+```bash
+# Fazer predições com modelo treinado
+python predict.py --input test.csv --output predictions.csv
 ```
 
 
@@ -123,29 +142,37 @@ O arquivo `config.py` contém todas as configurações do sistema:
 - **Cache**: Configurações de cache para performance
 - **Testes**: Configurações de testes
 
-## 📈 Resultados Esperados
+## 📈 Resultados Atuais (Última Execução)
 
-- **Acurácia**: ~82-85% no conjunto de teste
-- **Features**: ~25-30 features após engenharia
-- **Modelos**: 7+ algoritmos treinados e comparados
-- **Relatórios**: Documentação completa em 3 formatos
-- **Plots**: 10+ visualizações geradas
+- **Melhor Acurácia**: 83.61% (Ensemble Voting)
+- **Features**: 25 features após engenharia completa
+- **Modelos**: 20 algoritmos treinados e comparados
+- **Relatórios**: Documentação completa em 3 formatos (MD, DOCX, PDF)
+- **Plots**: 15+ visualizações geradas (ROC, calibração, feature importance, etc.)
+- **Ensemble**: Voting e Stacking com calibração automática
+- **Tempo de Execução**: ~17 minutos (completo) / ~2 minutos (rápido)
 
 ## 🔧 Desenvolvimento
 
 ### Adicionando Novos Modelos
 ```python
-# Em config.py, adicionar configuração
-MODEL_CONFIGS["NewModel"] = {
-    "param1": value1,
-    "param2": value2
-}
+# Em titanic_pipeline/core/modeling.py, adicionar novo modelo
+from sklearn.ensemble import NewModel
 
-# Em modeling.py, implementar treinamento
-def train_new_model(X, y):
-    model = NewModel(**MODEL_CONFIGS["NewModel"])
-    # ... implementação
+def get_base_models(config):
+    models = {
+        # ... modelos existentes
+        "New Model": NewModel(param1=value1, param2=value2),
+    }
+    return models
+
+# Ou modificar config.py para configurações customizadas
 ```
+
+### Atualizações Recentes
+- **Correções no Módulo Parallel:** Removida classe `ParallelProcessor` duplicada em `titanic_pipeline/utils/parallel.py`. Melhorada formatação para conformidade com Flake8 (linhas longas quebradas, indentação ajustada). Removidos imports não utilizados. O módulo agora está limpo e sem erros de linting.
+- **Testes Validados:** Importações, execução do pipeline e geração de relatórios confirmados sem erros.
+- **Performance:** Processamento paralelo otimizado com fallback sequencial em caso de falhas.
 
 ### Contribuindo
 1. Fork o projeto
@@ -167,6 +194,8 @@ def train_new_model(X, y):
 2. **Dados não encontrados**: Verificar arquivos `train.csv` e `test.csv`
 3. **Memória insuficiente**: Reduzir `CONFIG["parallel_jobs"]`
 4. **SHAP falhando**: Instalar `pip install shap` ou desabilitar
+5. **Import errors**: Executar `python test_imports.py` para validar setup
+6. **Arquivo antigo**: O script antigo foi movido para `.bak`, usar `train.py`
 
 ### Performance
 - Use `CONFIG["fast_mode"] = True` para execuções rápidas

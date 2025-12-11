@@ -6,13 +6,11 @@ Enhanced with robust error handling and memory management.
 import logging
 import multiprocessing as mp
 from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
-from functools import partial, wraps
-from typing import Any, Callable, Dict, List, Optional, Union, Iterator, Iterable, TypeVar
+from functools import partial
+from typing import Any, Callable, Dict, List, Optional, Iterator, Iterable, TypeVar
 import pickle
 import os
-import gc
 import psutil
-import time
 from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
@@ -370,49 +368,6 @@ def parallel_pipeline_execution(pipeline_steps: List[Callable], data: Any, max_w
     return result
 
 
-    class ParallelProcessor:
-        """Simple parallel processing wrapper using ProcessPoolExecutor."""
-
-        def __init__(self, max_workers: Optional[int] = None):
-            """Initialize the parallel processor."""
-            if max_workers is None:
-                max_workers = min(4, mp.cpu_count())
-            self.max_workers = max_workers
-            logger.debug(f"ParallelProcessor initialized with {max_workers} workers")
-
-        def process(
-            self,
-            func: Callable[[Any], T],
-            items: List[Any],
-            error_handling: str = "raise",
-            timeout: Optional[float] = None
-        ) -> List[T]:
-            """Process items in parallel."""
-            return safe_parallel_map(
-                func=func,
-                items=items,
-                max_workers=self.max_workers,
-                use_threads=False,
-                error_handling=error_handling,
-                timeout=timeout
-            )
-
-        def process_with_threads(
-            self,
-            func: Callable[[Any], T],
-            items: List[Any],
-            error_handling: str = "raise",
-            timeout: Optional[float] = None
-        ) -> List[T]:
-            """Process items in parallel using threads."""
-            return safe_parallel_map(
-                func=func,
-                items=items,
-                max_workers=self.max_workers,
-                use_threads=True,
-                error_handling=error_handling,
-                timeout=timeout
-            )
 class ParallelProcessor:
     """Simple parallel processing wrapper using ProcessPoolExecutor."""
 

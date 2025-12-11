@@ -535,7 +535,29 @@ DEFAULT_LOGGING_CONFIG = {
 	"disable_existing_loggers": False,
 	"formatters": {
 		"detailed": {
-			"format": "%(
+			"format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+		},
+		"simple": {
+			"format": "%(levelname)s - %(message)s",
+		},
+	},
+	"handlers": {
+		"file": {
+			"class": "logging.FileHandler",
+			"filename": "titanic_ml.log",
+			"formatter": "detailed",
+			"encoding": "utf-8",
+		},
+		"console": {
+			"class": "logging.StreamHandler",
+			"formatter": "simple",
+		},
+	},
+	"root": {
+		"level": DEFAULT_CONFIG["log_level"],
+		"handlers": ["file", "console"],
+	},
+}
 """
 Full backup of the original `ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio.py`.
 

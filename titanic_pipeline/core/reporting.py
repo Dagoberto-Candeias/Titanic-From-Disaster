@@ -349,21 +349,46 @@ def generate_roc_curves(model_results, X_train, y_train, feature_cols=None):
         from sklearn.metrics import roc_curve, auc
         import matplotlib.pyplot as plt
         from pathlib import Path
+        from sklearn.preprocessing import StandardScaler, OneHotEncoder
+        from sklearn.impute import SimpleImputer
+        from sklearn.compose import ColumnTransformer
+        from sklearn.pipeline import Pipeline
 
         roc_dir = Path("output/graficos/roc_curves")
         roc_dir.mkdir(parents=True, exist_ok=True)
 
         plt.figure(figsize=(10, 8))
 
+        # Define preprocessing pipeline to match training
+        numeric_features = ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']
+        categorical_features = ['Sex', 'Embarked']
+
+        numeric_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='median')),
+            ('scaler', StandardScaler())
+        ])
+
+        categorical_transformer = Pipeline(steps=[
+            ('imputer', SimpleImputer(strategy='constant', fill_value='missing')),
+            ('onehot', OneHotEncoder(drop='first', sparse_output=False))
+        ])
+
+        preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', numeric_transformer, numeric_features),
+                ('cat', categorical_transformer, categorical_features)
+            ])
+
+        # Fit preprocessor on training data
+        X_train_processed = preprocessor.fit_transform(X_train)
+
         for model_name, result in model_results.items():
             if "trained_model" in result and hasattr(result["trained_model"], "predict_proba"):
                 model = result["trained_model"]
-                # Use feature_cols if provided, else assume X_train matches
-                if feature_cols and hasattr(X_train, 'select_dtypes'):
-                    X_for_pred = X_train[feature_cols] if feature_cols else X_train
-                else:
-                    X_for_pred = X_train
-                y_pred_proba = model.predict_proba(X_for_pred)[:, 1]
+
+                # Use preprocessed data for prediction
+                y_pred_proba = model.predict_proba(X_train_processed)[:, 1]
+
                 # skip models with NaNs in predicted probabilities
                 import numpy as _np
                 if _np.isnan(y_pred_proba).any():
@@ -509,7 +534,7 @@ def save_timing_report(script_total_time, model_results):
 def generate_shap_comparison_plot(top_models, X_train_data, feature_names_out):
     """Generate SHAP comparison plot."""
     try:
-        import shap
+        import shap  # pylint: disable=import-error
         import matplotlib.pyplot as plt
         from pathlib import Path
 
@@ -595,25 +620,46 @@ def log_model_performance_to_csv(
     # Ensure output directory exists
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    # Prepare data for CSV
+    # Prepare data for CSV - collect all possible fields dynamically
+    all_fields = set()
     rows = []
+
     for model_name, result in model_results.items():
-        row = {
-            "model_name": model_name,
-            "mean_score": result.get("mean_score", 0.0),
-            "std_score": result.get("std_score", 0.0),
-            "cv_scores": result.get("cv_scores", []),
-        }
+        row = {"model_name": model_name}
+
+        # Add all result fields, mapping mean_score to mean_accuracy
+        for key, value in result.items():
+            if key != "model_name":  # model_name is already added
+                if key == "mean_score":
+                    row["mean_accuracy"] = value
+                    all_fields.add("mean_accuracy")
+                else:
+                    row[key] = value
+                    all_fields.add(key)
+
         rows.append(row)
+
+    # Ensure basic fields are included
+    all_fields.update(["model_name", "mean_accuracy", "std_score", "cv_scores"])
+
+    # Fill missing fields with defaults
+    for row in rows:
+        for field in all_fields:
+            if field not in row:
+                if field == "cv_scores":
+                    row[field] = []
+                else:
+                    row[field] = None
 
     # Write to CSV
     with open(output_path, "w", newline="", encoding="utf-8") as csvfile:
-        fieldnames = ["model_name", "mean_score", "std_score", "cv_scores"]
+        fieldnames = sorted(list(all_fields))
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for row in rows:
             # Convert cv_scores list to string for CSV
-            row["cv_scores"] = str(row["cv_scores"])
+            if "cv_scores" in row and isinstance(row["cv_scores"], list):
+                row["cv_scores"] = str(row["cv_scores"])
             writer.writerow(row)
 
     logger.info(f"Model performance logged to {output_path}")
@@ -666,3 +712,135 @@ def _get_best_score(model_results: Dict[str, Any]) -> float:
         return 0.0
 
     return max(result.get("mean_score", 0) for result in model_results.values())
+
+
+# Nova seção: Funções para análise de melhorias e simulação de resultados Kaggle
+def analyze_model_improvements(resultados: Dict[str, Any], baseline_accuracy: float = 0.75) -> Dict[str, Any]:
+    """
+    Analisa melhorias nos modelos em relação a uma baseline.
+
+    Args:
+        resultados: Dicionário com resultados dos modelos
+        baseline_accuracy: Acurácia baseline para comparação
+
+    Returns:
+        Dict com análise de melhorias
+    """
+    improvements = {}
+
+    for model_name, perf in resultados.items():
+        if perf.get("trained_model") is not None:
+            accuracy = perf.get("mean_score", 0)
+            improvement = accuracy - baseline_accuracy
+            improvements[model_name] = {
+                "accuracy": accuracy,
+                "improvement": improvement,
+                "improvement_pct": (improvement / baseline_accuracy) * 100 if baseline_accuracy > 0 else 0
+            }
+
+    best_model = max(improvements.keys(), key=lambda x: improvements[x]["accuracy"])
+    best_improvement = improvements[best_model]["improvement"]
+
+    analysis = {
+        "baseline_accuracy": baseline_accuracy,
+        "best_model": best_model,
+        "best_accuracy": improvements[best_model]["accuracy"],
+        "best_improvement": best_improvement,
+        "best_improvement_pct": improvements[best_model]["improvement_pct"],
+        "model_improvements": improvements,
+        "kaggle_score_simulation": simulate_kaggle_score(best_improvement)
+    }
+
+    return analysis
+
+def simulate_kaggle_score(improvement: float, base_kaggle_score: float = 0.78) -> Dict[str, Any]:
+    """
+    Simula pontuação Kaggle baseada na melhoria do modelo.
+
+    Args:
+        improvement: Melhoria na acurácia CV
+        base_kaggle_score: Pontuação Kaggle base
+
+    Returns:
+        Dict com simulação de pontuação Kaggle
+    """
+    # Estimativa conservadora: melhoria CV ~ 70% da melhoria real no Kaggle
+    estimated_kaggle_improvement = improvement * 0.7
+    simulated_score = base_kaggle_score + estimated_kaggle_improvement
+
+    # Garantir que não exceda 1.0
+    simulated_score = min(simulated_score, 1.0)
+
+    # Calcular ranking estimado (baseado em competição típica)
+    if simulated_score >= 0.85:
+        estimated_rank = "Top 10%"
+    elif simulated_score >= 0.82:
+        estimated_rank = "Top 25%"
+    elif simulated_score >= 0.80:
+        estimated_rank = "Top 50%"
+    else:
+        estimated_rank = "Abaixo do top 50%"
+
+    return {
+        "simulated_score": simulated_score,
+        "estimated_rank": estimated_rank,
+        "confidence_interval": f"{simulated_score-0.02:.3f} - {simulated_score+0.02:.3f}",
+        "improvement_factor": estimated_kaggle_improvement
+    }
+
+def generate_improvement_report(analysis: Dict[str, Any], output_dir: str = "output/relatorios") -> str:
+    """
+    Gera relatório de melhorias do modelo.
+
+    Args:
+        analysis: Resultado da análise de melhorias
+        output_dir: Diretório de saída
+
+    Returns:
+        Caminho do arquivo gerado
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    report_path = os.path.join(output_dir, "model_improvements_report.json")
+
+    report = {
+        "timestamp": datetime.now().isoformat(),
+        "analysis": analysis,
+        "recommendations": generate_recommendations(analysis)
+    }
+
+    with open(report_path, "w", encoding="utf-8") as f:
+        json.dump(report, f, indent=2, ensure_ascii=False)
+
+    logger.info(f"✅ Relatório de melhorias gerado: {report_path}")
+    return report_path
+
+def generate_recommendations(analysis: Dict[str, Any]) -> List[str]:
+    """
+    Gera recomendações baseadas na análise de melhorias.
+
+    Args:
+        analysis: Resultado da análise
+
+    Returns:
+        Lista de recomendações
+    """
+    recommendations = []
+
+    best_improvement_pct = analysis.get("best_improvement_pct", 0)
+
+    if best_improvement_pct > 10:
+        recommendations.append("🎯 Excelente melhoria! Considere submeter para competição Kaggle.")
+    elif best_improvement_pct > 5:
+        recommendations.append("✅ Boa melhoria. Teste com dados de validação adicionais.")
+    else:
+        recommendations.append("🔄 Melhoria modesta. Considere ajustes adicionais nas features.")
+
+    if analysis.get("simulated_score", 0) >= 0.82:
+        recommendations.append("🏆 Pontuação simulada indica potencial para top ranking!")
+    else:
+        recommendations.append("📈 Explore técnicas adicionais: stacking avançado, feature selection.")
+
+    recommendations.append("🔍 Analise feature importance para identificar oportunidades de melhoria.")
+    recommendations.append("⚡ Considere ensemble com mais modelos para maior robustez.")
+
+    return recommendations
