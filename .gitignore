@@ -1,0 +1,11 @@
+# Ignore generated outputs and caches
+/output/
+output/*
+/output/cache/
+/output/models/
+*.pyc
+__pycache__/
+.pytest_cache/
+venv/
+dist/
+build/
