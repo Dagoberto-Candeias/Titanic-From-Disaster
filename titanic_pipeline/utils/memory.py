@@ -10,6 +10,7 @@ import os
 from typing import Dict, Iterator
 import numpy as np
 import pandas as pd
+import pandas.api.types as ptypes
 from contextlib import contextmanager
 
 logger = logging.getLogger(__name__)
@@ -32,7 +33,7 @@ def memory_monitor():
     )
 
 
-def optimize_memory_usage(df: pd.DataFrame) -> pd.DataFrame:
+def optimize_memory_usage(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
     """
     Optimize memory usage of a DataFrame by downcasting numeric types.
 
@@ -42,38 +43,71 @@ def optimize_memory_usage(df: pd.DataFrame) -> pd.DataFrame:
     Returns:
         DataFrame with optimized memory usage
     """
-    start_mem = df.memory_usage(deep=True).sum() / 1024**2
+    start_mem = df.memory_usage(deep=deep).sum() / 1024**2
 
     for col in df.columns:
         col_type = df[col].dtype
 
-        if col_type != object:
+        # Skip datetime-like columns entirely
+        if ptypes.is_datetime64_any_dtype(col_type):
+            continue
+
+        # Convert booleans to int8 (0/1) to save memory
+        if ptypes.is_bool_dtype(col_type):
+            df[col] = df[col].astype(np.int8)
+            continue
+
+        # Handle integer dtypes (no NaNs)
+        if ptypes.is_integer_dtype(col_type):
             c_min = df[col].min()
             c_max = df[col].max()
 
-            if str(col_type)[:3] == 'int':
-                if (c_min > np.iinfo(np.int8).min and
-                        c_max < np.iinfo(np.int8).max):
-                    df[col] = df[col].astype(np.int8)
-                elif (c_min > np.iinfo(np.int16).min and
-                      c_max < np.iinfo(np.int16).max):
-                    df[col] = df[col].astype(np.int16)
-                elif (c_min > np.iinfo(np.int32).min and
-                      c_max < np.iinfo(np.int32).max):
-                    df[col] = df[col].astype(np.int32)
-                else:
-                    df[col] = df[col].astype(np.int64)
+            if (c_min >= np.iinfo(np.int8).min and
+                    c_max <= np.iinfo(np.int8).max):
+                df[col] = df[col].astype(np.int8)
+            elif (c_min >= np.iinfo(np.int16).min and
+                  c_max <= np.iinfo(np.int16).max):
+                df[col] = df[col].astype(np.int16)
+            elif (c_min >= np.iinfo(np.int32).min and
+                  c_max <= np.iinfo(np.int32).max):
+                df[col] = df[col].astype(np.int32)
             else:
-                if (c_min > np.finfo(np.float16).min and
-                        c_max < np.finfo(np.float16).max):
-                    df[col] = df[col].astype(np.float16)
-                elif (c_min > np.finfo(np.float32).min and
-                      c_max < np.finfo(np.float32).max):
+                df[col] = df[col].astype(np.int64)
+            continue
+
+        # Handle floats (including ints with NaNs which are floats now)
+        if ptypes.is_float_dtype(col_type):
+            # Prefer float32 when it preserves values within reasonable tolerance
+            col_data = df[col]
+
+            # Compare only non-NaN values to avoid propagation issues
+            non_na = col_data[~col_data.isna()].astype(np.float64)
+
+            if not non_na.empty:
+                as32 = non_na.astype(np.float32).astype(np.float64)
+                # Use a conservative tolerance to preserve precision
+                if np.allclose(non_na.values, as32.values, rtol=1e-6, atol=1e-8):
                     df[col] = df[col].astype(np.float32)
                 else:
                     df[col] = df[col].astype(np.float64)
+            else:
+                # Column all NaNs — default to float32 to save memory
+                df[col] = df[col].astype(np.float32)
+            continue
 
-    end_mem = df.memory_usage(deep=True).sum() / 1024**2
+        # Convert low-cardinality object columns to category
+        if col_type == object:
+            try:
+                nunique = df[col].nunique(dropna=True)
+                # Convert if unique values represent a relatively small portion
+                # of the dataset (<= 60%) — this handles small frames with NaNs
+                if nunique / len(df) <= 0.6:
+                    df[col] = df[col].astype('category')
+            except Exception:
+                # If anything goes wrong, leave as object
+                pass
+
+    end_mem = df.memory_usage(deep=deep).sum() / 1024**2
     reduction = 100 * (start_mem - end_mem) / start_mem
     logger.info(
         f"   💾 Memory usage decreased from {start_mem:.2f} MB to "
