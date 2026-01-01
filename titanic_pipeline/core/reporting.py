@@ -37,15 +37,24 @@ class ReportingManager:
         # Create output directories
         self.reports_dir.mkdir(parents=True, exist_ok=True)
 
+        # persist training data on the instance for backward-compatible helpers
+        # some report helper methods expect self.X_train / self.y_train
+        self.X_train = X_train
+        self.y_train = y_train
+
         try:
             if self.config.get("generate_md", True):
                 self._generate_markdown_report(model_results, feature_cols)
 
             if self.config.get("generate_docx", True):
-                self._generate_docx_report(model_results, feature_cols)
+                self._generate_docx_report(
+                    model_results, feature_cols, self.X_train, self.y_train
+                )
 
             if self.config.get("generate_pdf", True):
-                self._generate_pdf_report(model_results, feature_cols)
+                self._generate_pdf_report(
+                    model_results, feature_cols, self.X_train, self.y_train
+                )
 
             # Generate additional plots if configured
             if self.config.get("include_calibration_plots", True):
@@ -55,7 +64,9 @@ class ReportingManager:
                 self._generate_feature_importance_plots(model_results, feature_cols)
 
         except Exception as e:
-            logger.error(f"   ❌ Report generation failed: {e}")
+            logger.error(
+                f"   ❌ Report generation failed: {e}"
+            )
 
     def _generate_markdown_report(self, model_results: Dict[str, Any],
                                 feature_cols: List[str]) -> None:
@@ -253,7 +264,9 @@ class ReportingManager:
                         continue
 
                     # Calculate calibration curve
-                    prob_true, prob_pred = calibration_curve(y_train, prob_pos, n_bins=10)
+                    prob_true, prob_pred = calibration_curve(
+                        y_train, prob_pos, n_bins=10
+                    )
 
                     # Create plot
                     plt.figure(figsize=(8, 6))
@@ -267,7 +280,9 @@ class ReportingManager:
                     plt.grid(True, alpha=0.3)
 
                     # Save plot
-                    plot_path = graficos_dir / f"calibration_{model_name}.png"
+                    plot_path = graficos_dir / (
+                        f"calibration_{model_name}.png"
+                    )
                     plt.savefig(plot_path, dpi=300, bbox_inches="tight")
                     plt.close()
 
@@ -386,12 +401,12 @@ def generate_roc_curves(model_results, X_train, y_train, feature_cols=None):
 def generate_feature_correlation_heatmap(train, feature_cols):
     """Generate feature correlation heatmap."""
     try:
+        import numpy as np
         import seaborn as sns
         import matplotlib.pyplot as plt
         from pathlib import Path
 
         corr_dir = Path("output/graficos/correlation")
-        corr_dir.mkdir(parents=True, exist_ok=True)
 
         # Filtrar apenas colunas numéricas para correlação
         numeric_cols = train[feature_cols].select_dtypes(include=[np.number]).columns.tolist()
@@ -400,6 +415,9 @@ def generate_feature_correlation_heatmap(train, feature_cols):
             logger.warning("   ⚠️  No numeric columns found for correlation heatmap")
             return
 
+        # Only create output directory when we actually will save a plot
+        corr_dir.mkdir(parents=True, exist_ok=True)
+
         logger.info(f"   📊 Using {len(numeric_cols)} numeric features for correlation heatmap")
 
         corr_matrix = train[numeric_cols].corr()
@@ -407,7 +425,8 @@ def generate_feature_correlation_heatmap(train, feature_cols):
         sns.heatmap(corr_matrix, annot=False, cmap="coolwarm", center=0)
         plt.title("Feature Correlation Heatmap")
         plt.tight_layout()
-        plt.savefig(corr_dir / "09_feature_correlation_heatmap.png", dpi=300, bbox_inches="tight")
+        out_path = corr_dir / "09_feature_correlation_heatmap.png"
+        plt.savefig(out_path, dpi=300, bbox_inches="tight")
         plt.close()
         logger.info("   📊 Feature correlation heatmap generated")
     except Exception as e:
@@ -425,21 +444,32 @@ def generate_model_performance_timeline(model_results):
 
         # Simple timeline plot
         models = list(model_results.keys())
-        scores = [result.get("mean_score", 0) for result in model_results.values()]
+        scores = [
+            result.get("mean_score", 0)
+            for result in model_results.values()
+        ]
         plt.figure(figsize=(12, 6))
         plt.bar(models, scores)
         plt.xticks(rotation=45, ha='right')
         plt.ylabel('Mean CV Score')
         plt.title('Model Performance Timeline')
         plt.tight_layout()
-        plt.savefig(timeline_dir / "10_model_performance_timeline.png", dpi=300, bbox_inches="tight")
+        plt.savefig(
+            timeline_dir / "10_model_performance_timeline.png",
+            dpi=300,
+            bbox_inches="tight",
+        )
         plt.close()
         logger.info("   📊 Model performance timeline generated")
     except Exception as e:
         logger.error(f"   ❌ Model performance timeline generation failed: {e}")
 
 
-def generate_changelog_and_manifest(feature_cols, model_results, script_total_time):
+def generate_changelog_and_manifest(
+    feature_cols,
+    model_results,
+    script_total_time,
+):
     """Generate changelog and manifest."""
     try:
         changelog_dir = Path("output") / "changelog"
@@ -490,7 +520,13 @@ def save_timing_report(script_total_time, model_results):
         timing = {
             "total_time_seconds": total_seconds,
             "models_trained": len(model_results),
-            "best_model": max(model_results, key=lambda x: model_results[x].get("mean_score", 0))
+            "best_model": max(
+                model_results,
+                key=lambda x: model_results[x].get(
+                    "mean_score",
+                    0,
+                ),
+            ),
         }
         with open(reports_dir / "timing_report.json", "w") as f:
             import json
@@ -516,10 +552,21 @@ def generate_shap_comparison_plot(top_models, X_train_data, feature_names_out):
             model = perf.get("trained_model")
             if model and hasattr(model, "predict"):
                 explainer = shap.TreeExplainer(model)
-                shap_values = explainer.shap_values(X_train_data[:100])  # sample
-                shap.summary_plot(shap_values, X_train_data[:100], feature_names=feature_names_out, show=False)
+                shap_values = explainer.shap_values(
+                    X_train_data[:100]
+                )  # sample
+                shap.summary_plot(
+                    shap_values,
+                    X_train_data[:100],
+                    feature_names=feature_names_out,
+                    show=False,
+                )
                 plt.title(f"SHAP Summary - {name}")
-                plt.savefig(shap_dir / "08_shap_comparison.png", dpi=300, bbox_inches="tight")
+                plt.savefig(
+                    shap_dir / "08_shap_comparison.png",
+                    dpi=300,
+                    bbox_inches="tight",
+                )
                 plt.close()
                 break  # Only first for simplicity
         logger.info("   📊 SHAP comparison plot generated")
@@ -555,7 +602,9 @@ def generate_model_calibration_plots(model, X_train, y_train, model_name):
         if hasattr(model, "predict_proba"):
             try:
                 prob_pos = model.predict_proba(X_train)[:, 1]
-                prob_true, prob_pred = calibration_curve(y_train, prob_pos, n_bins=10)
+                prob_true, prob_pred = calibration_curve(
+                    y_train, prob_pos, n_bins=10
+                )
                 plt.plot(prob_pred, prob_true, marker="o", label=model_name)
                 plt.plot([0, 1], [0, 1], 'k--')
                 plt.xlabel("Predicted probability")
@@ -563,10 +612,15 @@ def generate_model_calibration_plots(model, X_train, y_train, model_name):
                 plt.title(f"Calibration Plot - {model_name}")
                 plt.legend()
                 plt.grid(True, alpha=0.3)
-                plt.savefig(f"output/graficos/09_model_calibration_{model_name}.png", dpi=300, bbox_inches="tight")
+                out_path = (
+                    f"output/graficos/09_model_calibration_{model_name}.png"
+                )
+                plt.savefig(out_path, dpi=300, bbox_inches="tight")
                 plt.close()
             except Exception as inner_e:
-                logger.warning(f"   ⚠️  Skipping calibration for {model_name}: {inner_e}")
+                logger.warning(
+                    f"   ⚠️  Skipping calibration for {model_name}: {inner_e}"
+                )
         logger.info(f"   📊 Calibration plot for {model_name} generated")
     except Exception as e:
         logger.error(f"   ❌ Calibration plot for {model_name} failed: {e}")
@@ -594,26 +648,52 @@ def log_model_performance_to_csv(
     for model_name, result in model_results.items():
         row = {
             "model_name": model_name,
-            "mean_score": result.get("mean_score", 0.0),
-            "std_score": result.get("std_score", 0.0),
+            "mean_accuracy": result.get("mean_score", None),
+            "std_score": result.get("std_score", None),
+            "mean_auc": result.get("mean_auc", None),
+            "mean_precision": result.get("mean_precision", None),
+            "mean_recall": result.get("mean_recall", None),
+            "mean_f1": result.get("mean_f1", None),
+            "error": result.get("error", None),
             "cv_scores": result.get("cv_scores", []),
         }
         rows.append(row)
 
     # Write to CSV
     with open(output_path, "w", newline="", encoding="utf-8") as csvfile:
-        fieldnames = ["model_name", "mean_score", "std_score", "cv_scores"]
+        fieldnames = [
+            "model_name",
+            "mean_accuracy",
+            "std_score",
+            "mean_auc",
+            "mean_precision",
+            "mean_recall",
+            "mean_f1",
+            "error",
+            "cv_scores",
+        ]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
         for row in rows:
             # Convert cv_scores list to string for CSV
             row["cv_scores"] = str(row["cv_scores"])
+            # Ensure None values are written as empty (CSV-friendly)
+            for k, v in row.items():
+                if v is None:
+                    row[k] = ""
             writer.writerow(row)
 
     logger.info(f"Model performance logged to {output_path}")
 
 
-def generate_permutation_importance(model, X_train, y_train, feature_names, n_repeats=5, model_name="Model"):
+def generate_permutation_importance(
+    model,
+    X_train,
+    y_train,
+    feature_names,
+    n_repeats: int = 5,
+    model_name: str = "Model",
+) -> None:
     """Generate permutation importance."""
     try:
         from sklearn.inspection import permutation_importance
@@ -625,33 +705,59 @@ def generate_permutation_importance(model, X_train, y_train, feature_names, n_re
         graficos_dir = Path("output/graficos")
         graficos_dir.mkdir(parents=True, exist_ok=True)
 
-        perm_importance = permutation_importance(model, X_train, y_train, n_repeats=n_repeats, random_state=42)
+        perm_importance = permutation_importance(
+            model,
+            X_train,
+            y_train,
+            n_repeats=n_repeats,
+            random_state=42,
+        )
         sorted_idx = perm_importance.importances_mean.argsort()
 
         plt.figure(figsize=(10, 8))
-        plt.barh(range(len(sorted_idx)), perm_importance.importances_mean[sorted_idx])
-        plt.yticks(range(len(sorted_idx)), [feature_names[i] for i in sorted_idx])
+        plt.barh(
+            range(len(sorted_idx)),
+            perm_importance.importances_mean[sorted_idx],
+        )
+        plt.yticks(
+            range(len(sorted_idx)),
+            [feature_names[i] for i in sorted_idx],
+        )
         plt.xlabel("Permutation Importance")
         plt.title(f"Permutation Importance - {model_name}")
         plt.tight_layout()
 
         # Use Path for safe file handling
         safe_model_name = model_name.replace(" ", "_").replace("/", "_")
-        plot_path = graficos_dir / f"permutation_importance_{safe_model_name}.png"
+        plot_path = graficos_dir / (
+            f"permutation_importance_{safe_model_name}.png"
+        )
         plt.savefig(plot_path, dpi=300, bbox_inches="tight")
         plt.close()
 
         # Save as CSV
-        df = pd.DataFrame({
-            'feature': [feature_names[i] for i in sorted_idx],
-            'importance_mean': perm_importance.importances_mean[sorted_idx],
-            'importance_std': perm_importance.importances_std[sorted_idx]
-        })
-        csv_path = graficos_dir / f"permutation_importance_{safe_model_name}.csv"
+        features_list = [feature_names[i] for i in sorted_idx]
+        mean_list = perm_importance.importances_mean[sorted_idx]
+        std_list = perm_importance.importances_std[sorted_idx]
+
+        df = pd.DataFrame(
+            {
+                "feature": features_list,
+                "importance_mean": mean_list,
+                "importance_std": std_list,
+            }
+        )
+        csv_path = graficos_dir / (
+            f"permutation_importance_{safe_model_name}.csv"
+        )
         df.to_csv(csv_path, index=False)
-        logger.info(f"   📊 Permutation importance for {model_name} generated")
+        logger.info(
+            f"   📊 Permutation importance for {model_name} generated"
+        )
     except Exception as e:
-        logger.error(f"   ❌ Permutation importance for {model_name} failed: {e}")
+        logger.error(
+            f"   ❌ Permutation importance for {model_name} failed: {e}"
+        )
 
 
 def _get_best_score(model_results: Dict[str, Any]) -> float:
@@ -659,4 +765,7 @@ def _get_best_score(model_results: Dict[str, Any]) -> float:
     if not model_results:
         return 0.0
 
-    return max(result.get("mean_score", 0) for result in model_results.values())
+    return max(
+        result.get("mean_score", 0)
+        for result in model_results.values()
+    )
