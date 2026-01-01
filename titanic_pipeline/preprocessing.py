@@ -738,7 +738,14 @@ def kfold_target_encode(
         ) / (fold_means["count"] + prior)
 
         # Aplicar no fold de validação
-        encoded[val_idx] = val_fold[col_name].map(smoothed_means).fillna(global_mean)
+        # Mapear os valores e garantir que o resultado seja numérico antes de
+        # preencher NaNs. Isso evita erros quando a coluna original é do tipo
+        # 'category' e o fillna tenta inserir um valor que não está nas
+        # categorias (levando a TypeError).
+        mapped = val_fold[col_name].map(smoothed_means)
+        mapped = pd.to_numeric(mapped, errors='coerce')
+        mapped = mapped.fillna(global_mean)
+        encoded[val_idx] = mapped.values
 
     # Salvar mapa (usando o último smoothed_means para compatibilidade)
     te_map = {k: float(v) for k, v in smoothed_means.to_dict().items()}
