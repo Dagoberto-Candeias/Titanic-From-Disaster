@@ -15,7 +15,7 @@ import os
 import pickle
 import sys
 import warnings
-from concurrent.futures import ProcessPoolExecutor, as_completed
+
 from datetime import datetime
 
 # Importações de terceiros
@@ -82,9 +82,8 @@ from titanic_pipeline.preprocessing import (
     AdvancedFeatureEngineer,
 )
 from titanic_pipeline.core.modeling import (
-    train_single_model as modular_train_single_model,
+    ModelingManager,
     build_stacking_ensemble as modular_build_stacking_ensemble,
-    get_base_models,
     objective,
     load_and_predict,
     save_model_pipeline,
@@ -466,13 +465,13 @@ def validate_feature_consistency(X_train, X_test, feature_cols, logger):
     
     if removed:
         logger.warning(
-            f"⚠️  Colunas em TRAIN mas não em TEST "
+            "⚠️  Colunas em TRAIN mas não em TEST "
             f"({len(removed)}): {removed}"
         )
     
     if added:
         logger.warning(
-            f"⚠️  Colunas em TEST mas não em TRAIN "
+            "⚠️  Colunas em TEST mas não em TRAIN "
             f"({len(added)}): {added}"
         )
     
@@ -715,61 +714,21 @@ def main():
             resultados = cached_results
             logger.info("Resultados dos modelos carregados do cache")
         else:
-            modelos = get_base_models(CONFIG)
+            # Use ModelingManager for parallel training
+            modeling_manager = ModelingManager(
+                config=CONFIG,
+                model_configs=None,  # Use default configs
+                pre_configured_models=None  # No pre-configured models
+            )
+
             if hasattr(X_train_processed, "toarray"):
                 X_train_np = X_train_processed.toarray()
             else:
                 X_train_np = np.asarray(X_train_processed)
 
-            logger.info(f"   🚀 Iniciando treinamento paralelo com {CONFIG['parallel_jobs']} jobs...")
+            logger.info("   🚀 Iniciando treinamento paralelo com ModelingManager...")
 
-            resultados = {}
-            with ProcessPoolExecutor(max_workers=CONFIG["parallel_jobs"]) as executor:
-                future_to_model = {
-                    executor.submit(
-                        modular_train_single_model,
-                        name,
-                        model,
-                        X_train_np,
-                        y_train,
-                        CONFIG["cv_folds"],
-                    ): name
-                    for name, model in modelos.items()
-                }
-
-                for future in as_completed(future_to_model):
-                    model_name = future_to_model[future]
-                    try:
-                        result = future.result()
-                        resultados[model_name] = result
-                        logger.info(f"   ✅ {model_name} concluído")
-                    except ModelTrainingError as e:
-                        logger.error(f"   ❌ {model_name} falhou (ModelTrainingError): {e}")
-                        resultados[model_name] = {
-                            "model_name": model_name,
-                            "error": f"ModelTrainingError: {str(e)}",
-                            "mean_score": 0.0,
-                            "std_score": 0.0,
-                            "trained_model": None,
-                        }
-                    except MemoryError:
-                        logger.error(f"   ❌ {model_name} falhou: Memória insuficiente")
-                        resultados[model_name] = {
-                            "model_name": model_name,
-                            "error": "MemoryError",
-                            "mean_score": 0.0,
-                            "std_score": 0.0,
-                            "trained_model": None,
-                        }
-                    except Exception as e:
-                        logger.error(f"   ❌ {model_name} falhou ({type(e).__name__}): {e}")
-                        resultados[model_name] = {
-                            "model_name": model_name,
-                            "error": f"{type(e).__name__}: {str(e)}",
-                            "mean_score": 0.0,
-                            "std_score": 0.0,
-                            "trained_model": None,
-                        }
+            resultados = modeling_manager.train_all_models(X_train_np, y_train)
 
             cache_result(cache_key_models, resultados)
             logger.info("   💾 Resultados dos modelos cached")
@@ -925,37 +884,69 @@ def main():
             )
             submission_path = "output/submission.csv"
             submission.to_csv(submission_path, index=False)
-            logger.info(f"   ✅ Submission gerada e salva em: {submission_path}")
+            logger.info("   ✅ Submission gerada e salva em: %s", submission_path)
 
         except (FileNotFoundError, Exception) as e:
-            logger.error(f"❌ Falha ao gerar submissão a partir do modelo salvo: {e}")
+            logger.error("Falha ao gerar submissão: %s", e)
 
         script_total_time = datetime.now() - script_start_time
-        modular_generate_reports(resultados, feature_cols, X_train_processed, y_train)
-        modular_generate_changelog_and_manifest(feature_cols, resultados, script_total_time)
+
+        modular_generate_reports(
+            resultados,
+            feature_cols,
+            X_train_processed,
+            y_train,
+        )
+
+        modular_generate_changelog_and_manifest(
+            feature_cols,
+            resultados,
+            script_total_time,
+        )
+
         save_timing_report(script_total_time, resultados)
 
         # Exportar métricas estruturadas
-        metrics = export_metrics_json(resultados, script_total_time, len(feature_cols))
+        metrics = export_metrics_json(
+            resultados,
+            script_total_time,
+            len(feature_cols),
+        )
 
         # Log resumo final
         logger.info("=" * 80)
         logger.info("📊 RESUMO FINAL DO PIPELINE TITANIC ML")
         logger.info("=" * 80)
-        logger.info(f"⏱️  Tempo total: {script_total_time.total_seconds():.2f}s")
-        logger.info(f"🤖 Modelos treinados: {len([m for m in resultados.values() if m.get('trained_model')])}/{len(resultados)}")
-        logger.info(f"🏆 Melhor modelo: {metrics['best_model']['name']} (Acc: {metrics['best_model']['accuracy']:.4f})")
-        ensemble_acc = f"{metrics['ensemble']['accuracy']:.4f}" if metrics['ensemble'] else 'N/A'
-        logger.info(f"🎯 Ensemble: {metrics['ensemble']['name'] if metrics['ensemble'] else 'Nenhum'} (Acc: {ensemble_acc})")
-        logger.info(f"✨ Features: {metrics['features_count']}")
-        logger.info(f"📁 Saídas: submission.csv, métricas.json, gráficos, relatórios")
+        total_seconds = script_total_time.total_seconds()
+        logger.info("⏱️  Tempo total: %.2fs", total_seconds)
+
+        trained_models_count = len(
+            [m for m in resultados.values() if m.get("trained_model")]
+        )
+        total_models = len(resultados)
+        logger.info("Modelos: %d/%d", trained_models_count, total_models)
+
+        best_name = metrics["best_model"]["name"]
+        best_acc = metrics["best_model"]["accuracy"]
+        logger.info("🏆 Melhor modelo: %s (Acc: %.4f)", best_name, best_acc)
+
+        if metrics.get("ensemble"):
+            ensemble_acc = f"{metrics['ensemble']['accuracy']:.4f}"
+            ensemble_name = metrics["ensemble"]["name"]
+        else:
+            ensemble_acc = "N/A"
+            ensemble_name = "Nenhum"
+        logger.info("🎯 Ensemble: %s (Acc: %s)", ensemble_name, ensemble_acc)
+
+        logger.info("✨ Features: %d", metrics["features_count"])
+        logger.info("Saídas: submission.csv, métricas.json")
         logger.info("=" * 80)
 
         logger.info("✅ SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!")
         return True
 
     except Exception as e:
-        logger.critical(f"❌ ERRO CRÍTICO NO PIPELINE DE TREINAMENTO: {e}", exc_info=True)
+        logger.critical("ERRO CRÍTICO: %s", e, exc_info=True)
         return False
 
 if __name__ == "__main__":
