@@ -10,6 +10,7 @@ from titanic_pipeline.preprocessing import (
     create_interactions,
     create_bins,
     create_missing_indicators,
+    kfold_target_encode,
 )
 
 @pytest.fixture
@@ -108,3 +109,17 @@ def test_create_missing_indicators(sample_dataframe):
     assert df.loc[1, 'feat_Age_missing'] == 0
     assert df.loc[0, 'feat_Cabin_missing'] == 1
     assert df.loc[1, 'feat_Cabin_missing'] == 0
+
+
+def test_kfold_target_encode_handles_categorical_dtype():
+    """Garante que target encoding aceite colunas com dtype 'category'."""
+    df = pd.DataFrame({
+        'cat': pd.Series(['a', 'b', 'a', 'c', 'b'], dtype='category'),
+        'Survived': [0, 1, 0, 1, 0]
+    })
+
+    encoded = kfold_target_encode(df, 'cat', 'Survived', n_splits=2)
+
+    # Deve retornar série numérica sem NaNs e com valores float
+    assert encoded.dtype.kind == 'f'
+    assert not encoded.isnull().any()
