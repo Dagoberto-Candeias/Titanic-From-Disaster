@@ -519,15 +519,15 @@ def generate_feature_correlation_heatmap(train, feature_cols):
 
         if not numeric_cols:
             logger.warning("   ⚠️  No numeric columns for correlation heatmap")
-            # Defensive: if an old heatmap exists from earlier runs, remove it
-            # to ensure callers/tests see a consistent state (no heatmap).
+            # Defensive: remove an old heatmap file from earlier runs if it
+            # exists so callers/tests see a consistent state (no heatmap).
             old_path = corr_dir / "09_feature_correlation_heatmap.png"
             try:
                 if old_path.exists():
                     old_path.unlink()
             except Exception:
                 # Non-fatal: log and continue silently
-                logger.debug("   ⚠️  Could not remove old correlation heatmap file")
+                logger.debug("   ⚠️  Could not remove old correlation heatmap")
 
             return
 
