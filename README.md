@@ -3,50 +3,67 @@
 ## 📋 Descrição
 Este projeto implementa um pipeline completo e avançado de machine learning para o problema clássico do Titanic, utilizando dados do Kaggle. O pipeline inclui:
 
-- **Pré-processamento avançado**: Imputação KNN, encoding categórico, normalização
-- **Engenharia de features**: Target encoding, features polinomiais, interações
-- **Balanceamento de classes**: SMOTE + undersampling
-- **Treinamento de múltiplos modelos**: RandomForest, XGBoost, LightGBM, CatBoost, MLP, etc.
-- **Otimização de hiperparâmetros**: Optuna com 150 trials
-- **Avaliação robusta**: Cross-validation com 15 folds
-- **Geração de relatórios**: Markdown, DOCX, PDF com gráficos e tabelas
-- **Testes abrangentes**: Unitários, integração e smoke tests
+- **Pré-processamento avançado**: Imputação KNN/Iterative, encoding categórico, normalização
+- **Engenharia de features**: Target encoding, features polinomiais, interações, bins e missing indicators
+- **Balanceamento de classes**: SMOTE + undersampling (opcional)
+- **Treinamento de múltiplos modelos**: RandomForest, XGBoost, LightGBM, SVM, Logistic Regression, etc. (18+ modelos)
+- **Otimização de hiperparâmetros**: Optuna (configurável, desabilitado por padrão para performance)
+- **Avaliação robusta**: Cross-validation estratificada (5 folds) + RepeatedStratifiedKFold (5x3=15 folds para validação estendida)
+- **Explicabilidade**: SHAP plots (bar, beeswarm), curvas de calibração
+- **Geração de relatórios**: Métricas JSON, logs estruturados, visualizações (ROC, confusion matrix, correlation heatmap)
+- **Testes abrangentes**: Smoke tests, unit tests (pytest), validação de schema
+
+O pipeline foi corrigido para remover erros críticos (typos, imports circulares, chamadas incorretas), implementadas melhorias (cache versionado, ensemble robusto, tratamento granular de erros, validação de features) e estendido com validação robusta via Repeated CV, SHAP e calibração. Todos os commits foram mesclados via PR no GitHub.
+
+Status atual: Funcional, testado e pronto para submissão Kaggle (acurácia ~82-85%).
 
 ## 🏗️ Arquitetura do Projeto
 
 ### Estrutura de Diretórios
 ```
 titanic-from-disaster/
-├── ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio.py  # Script principal
-├── config.py                                           # Configurações globais
+├── train.py                                      # Script principal de treinamento
+├── predict.py                                    # Previsão em dados novos
+├── config.py                                     # Configurações globais
 
-├── titanic_pipeline/                                   # Módulos organizados
+├── titanic_pipeline/                             # Módulos organizados
 │   ├── core/
-│   │   ├── modeling.py                                 # Treinamento de modelos
-│   │   ├── preprocessing.py                            # Pré-processamento
-│   │   ├── reporting.py                                # Geração de relatórios
-│   │   └── utils.py                                    # Utilitários
+│   │   ├── modeling.py                           # Treinamento de modelos e ensembles
+│   │   ├── pipeline.py                           # Pipeline principal
+│   │   ├── preprocessing.py                      # Pré-processamento e imputação
+│   │   ├── reporting.py                          # Geração de relatórios e métricas
+│   │   └── utils.py                              # Utilitários (cache, validação)
 │   ├── features/
-│   │   ├── engineer.py                                 # Engenharia de features
-│   │   └── selectors.py                                # Seleção de features
+│   │   ├── engineer.py                           # Engenharia de features avançada
+│   │   ├── preprocessing.py                      # Pré-processamento de features
+│   │   └── selectors.py                          # Seleção de features
 │   └── utils/
-│       ├── cache.py                                    # Sistema de cache
-│       ├── parallel.py                                 # Processamento paralelo
-│       └── validation.py                               # Validação de dados
-├── tests/                                              # Testes
-│   ├── test_pipeline.py                                # Testes unitários
-│   └── test_reporting.py                               # Testes de relatórios
-├── output/                                             # Resultados gerados
-│   ├── relatorios/                                     # Relatórios (MD, DOCX, PDF)
-│   ├── graficos/                                       # Gráficos e plots
-│   │   ├── calibration/                                # Plots de calibração
-│   │   ├── correlation/                                # Heatmaps de correlação
-│   │   ├── feature_importance/                         # Importância de features
-│   │   ├── roc_curves/                                 # Curvas ROC
-│   │   └── shap/                                       # Análises SHAP
-│   ├── models/                                         # Modelos treinados
-│   └── changelog/                                      # Logs e manifestos
-└── arquivo/                                            # Documentação adicional
+│       ├── cache.py                              # Sistema de cache versionado
+│       ├── helpers.py                            # Helpers gerais
+│       ├── memory.py                             # Otimização de memória
+│       ├── parallel.py                           # Processamento paralelo
+│       └── validation.py                         # Validação de dados e schema
+├── tests/                                        # Testes
+│   ├── conftest.py                               # Configuração pytest
+│   ├── test_modeling.py                          # Testes de modelagem
+│   ├── test_optimize_memory_additional.py        # Testes de otimização de memória
+│   ├── test_pipeline.py                          # Testes do pipeline
+│   ├── test_preprocessing.py                     # Testes de pré-processamento
+│   ├── test_reporting.py                         # Testes de relatórios
+│   └── test_utils.py                             # Testes de utilitários
+├── scripts/                                      # Scripts auxiliares
+│   ├── retrain_and_explain.py                    # Retreinamento com validação estendida e SHAP
+│   └── generate_shap.py                          # Geração de plots SHAP
+├── output/                                       # Resultados gerados
+│   ├── models/                                   # Modelos salvos (.pkl)
+│   ├── relatorios/                               # Relatórios (metrics.json, timing_report.json)
+│   ├── graficos/                                 # Gráficos (ROC, SHAP, calibração, etc.)
+│   ├── cache/                                    # Cache versionado (v1.0.0+)
+│   └── submission.csv                            # Predições para Kaggle
+├── data/raw/                                     # Dados originais
+│   ├── train.csv                                 # 891 amostras
+│   └── test.csv                                  # 418 amostras
+└── arquivo/                                      # Documentação adicional (guias, relatórios anotados)
 ```
 
 ## 🚀 Instalação e Configuração
@@ -54,134 +71,134 @@ titanic-from-disaster/
 ### Pré-requisitos
 - Python 3.8+
 - pip
-- Git
+- Git (para versionamento)
 
 ### Instalação
 ```bash
 # Clone o repositório
-git clone <repository-url>
-cd titanic-from-disaster
+git clone https://github.com/Dagoberto-Candeias/UFV.git  # Ajuste URL se necessário
+cd "c:/Projetos/UFV/ELT 579/Scripts e Datasets/Titanic From Disaster"
 
 # Instale as dependências
 pip install -r requirements.txt
 
-# Para desenvolvimento (opcional)
-pip install -r requirements-dev.txt
+# Para desenvolvimento e testes (opcional)
+pip install pytest pytest-cov
 ```
 
 ### Dependências Principais
-- **ML**: scikit-learn, xgboost, lightgbm, catboost
-- **Pré-processamento**: pandas, numpy, imbalanced-learn
-- **Otimização**: optuna
-- **Visualização**: matplotlib, seaborn, plotly
-- **Relatórios**: python-docx, reportlab, shap
-- **Testes**: pytest, pytest-cov
+- **ML/Core**: scikit-learn, xgboost, lightgbm, optuna
+- **Dados/Pré-processamento**: pandas, numpy
+- **Visualização/Explicabilidade**: matplotlib, seaborn, shap
+- **Utilitários**: joblib (paralelismo), python-docx (relatórios opcionais)
+- **Testes**: pytest
+
+Verifique instalação com: `python test_imports.py`
 
 ## 📊 Uso
 
 ### Execução Completa do Pipeline
 ```bash
-# Pipeline completo com todos os modelos e relatórios
-python ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio.py
+# Treinamento completo (gera models, submission.csv, relatórios)
+python train.py
+
+# Tempo estimado: 5-15 min (com cache: <1 min em execuções subsequentes)
+# Outputs: output/submission.csv (pronto para Kaggle), metrics.json, plots
 ```
 
-### Execução com Configurações Customizadas
+### Validação Estendida e Explicabilidade
+```bash
+# Retreinamento com Repeated CV (15 folds), SHAP e calibração
+python scripts/retrain_and_explain.py
+
+# Geração dedicada de SHAP plots
+python scripts/generate_shap.py
+```
+
+### Testes
+```bash
+# Smoke tests e validação básica (integrado no pipeline)
+python train.py  # Executa smoke tests automaticamente
+
+# Testes unitários completos
+pytest tests/ -v
+
+# Cobertura
+pytest --cov=titanic_pipeline tests/
+```
+
+### Configuração Customizada
+Edite `config.py` ou passe via variáveis:
+- `CONFIG["fast_mode"] = True`: Desabilita Optuna para execução rápida
+- `CONFIG["use_optuna"] = True`: Ativa otimização (aumenta tempo)
+- `CONFIG["run_smoke_tests"] = True`: Executa testes de integração
+- `CONFIG["cache_enabled"] = True`: Usa cache versionado (padrão)
+
+Exemplo via código:
 ```python
 from titanic_pipeline.core.pipeline import run_pipeline
 from config import CONFIG
 
-# Modificar configurações
-CONFIG["fast_mode"] = True
-CONFIG["optuna_trials"] = 50
-
-# Executar pipeline
-results = run_pipeline()
+CONFIG["optuna_trials"] = 50  # Reduz trials para teste
+results = run_pipeline()  # Retorna dict com métricas
 ```
 
+## 📈 Resultados e Outputs
 
+- **Acurácia Esperada**: 82-85% (ensemble); validação estendida com Repeated CV para robustez
+- **Features**: 25-35 após engenharia (inclui interações, bins, missing indicators)
+- **Modelos**: 18+ (base + otimizados); ensemble stacking/voting com pesos normalizados
+- **Explicabilidade**: SHAP (importância global/local), curvas de calibração
+- **Outputs Principais**:
+  - `output/submission.csv`: Predições (418 linhas, formato Kaggle)
+  - `output/relatorios/metrics.json`: Métricas estruturadas (acurácia, F1, tempo, best model)
+  - `output/graficos/`: Plots (ROC, confusion matrix, SHAP bar/beeswarm, calibração)
+  - `titanic_ml.log`: Logs detalhados (nível INFO por padrão)
+  - `output/models/best_model_pipeline.pkl`: Pipeline completo salvo
 
-### Testes
-```bash
-# Todos os testes
-pytest tests/
+Submissão Kaggle: Faça upload de `output/submission.csv` em https://www.kaggle.com/c/titanic/submit
 
-# Testes específicos
-pytest tests/test_pipeline.py -v
-pytest tests/test_reporting.py -v
+## 🔧 Desenvolvimento e Contribuição
 
-# Cobertura de testes
-pytest --cov=titanic_pipeline tests/
-```
+### Adicionando Novos Modelos/Features
+1. Edite `titanic_pipeline/core/modeling.py` > `get_base_models()` para novos modelos
+2. Atualize `config.py` com hiperparâmetros
+3. Incremente `FEATURE_SCHEMA_VERSION` em `train.py` para invalidar cache
+4. Rode `python train.py` e verifique métricas
 
-## ⚙️ Configuração
-
-O arquivo `config.py` contém todas as configurações do sistema:
-
-- **Modelo**: Número de folds CV, random state, paralelização
-- **Features**: Configurações de engenharia de features
-- **Relatórios**: Tipos de relatório a gerar
-- **Cache**: Configurações de cache para performance
-- **Testes**: Configurações de testes
-
-## 📈 Resultados Esperados
-
-- **Acurácia**: ~82-85% no conjunto de teste
-- **Features**: ~25-30 features após engenharia
-- **Modelos**: 7+ algoritmos treinados e comparados
-- **Relatórios**: Documentação completa em 3 formatos
-- **Plots**: 10+ visualizações geradas
-
-## 🔧 Desenvolvimento
-
-### Adicionando Novos Modelos
+Exemplo (novo modelo):
 ```python
-# Em config.py, adicionar configuração
-MODEL_CONFIGS["NewModel"] = {
-    "param1": value1,
-    "param2": value2
-}
-
-# Em modeling.py, implementar treinamento
-def train_new_model(X, y):
-    model = NewModel(**MODEL_CONFIGS["NewModel"])
-    # ... implementação
+# Em get_base_models():
+models["NewModel"] = NewModelClassifier(random_state=42)
 ```
 
 ### Contribuindo
 1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
+2. Crie branch: `git checkout -b feature/nova-melhoria`
+3. Commit: `git commit -m "feat: adiciona nova feature"`
+4. Push: `git push origin feature/nova-melhoria`
+5. Abra PR (prefixo `blackboxai/` para branches automáticas)
 
-## 📝 Logs e Debugging
+Histórico recente: PR "Extended Validation with Repeated CV, SHAP and Calibration" mesclado (branch `blackboxai/extended-validation`).
 
-- **Arquivo de log**: `titanic_ml.log`
-- **Níveis de log**: DEBUG, INFO, WARNING, ERROR
-- **Configuração**: Modificar `CONFIG["log_level"]`
+### Troubleshooting
+- **Imports falham**: Rode `python test_imports.py`; instale dependências faltantes
+- **Cache inválido**: Defina `CONFIG["cache_enabled"] = False` ou incremente versão
+- **Memória alta**: Reduza `CONFIG["parallel_jobs"] = 2`; ative otimização em `utils/memory.py`
+- **SHAP erro**: Verifique `SHAP_AVAILABLE`; fallback para feature importance básica
+- **Dados ausentes**: Certifique-se de `data/raw/train.csv` e `test.csv`
 
-## 🐛 Troubleshooting
-
-### Problemas Comuns
-1. **Dependências faltando**: `pip install -r requirements.txt`
-2. **Dados não encontrados**: Verificar arquivos `train.csv` e `test.csv`
-3. **Memória insuficiente**: Reduzir `CONFIG["parallel_jobs"]`
-4. **SHAP falhando**: Instalar `pip install shap` ou desabilitar
-
-### Performance
-- Use `CONFIG["fast_mode"] = True` para execuções rápidas
-- Configure `CONFIG["cache_enabled"] = True` para reutilizar computações
-- Ajuste `CONFIG["parallel_jobs"]` baseado no hardware
+Performance: Use cache para execuções <1 min; desabilite Optuna para testes rápidos.
 
 ## 📚 Referências
-
-- [Kaggle Titanic Competition](https://www.kaggle.com/c/titanic)
-- [Scikit-learn Documentation](https://scikit-learn.org/)
-- [Optuna Documentation](https://optuna.org/)
+- [Kaggle Titanic](https://www.kaggle.com/c/titanic)
+- [Scikit-learn](https://scikit-learn.org/)
+- [Optuna](https://optuna.org/)
+- [SHAP](https://shap.readthedocs.io/)
 
 ## 👤 Autor
 **Dagoberto Candeias de Moraes (118550)**  
-*Curso ELT579 - Universidade Federal de Viçosa*
+*ELT579 - Aprendizado de Máquina, UFV*
 
 ## 📄 Licença
-Este projeto é parte do curso ELT579 da UFV e é destinado para fins educacionais.
+Projeto educacional (ELT579/UFV); uso livre para fins acadêmicos.
