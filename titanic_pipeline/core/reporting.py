@@ -47,17 +47,13 @@ class ReportingManager:
                 self._generate_markdown_report(model_results, feature_cols)
 
             if self.config.get("generate_docx", True):
-                self._generate_docx_report(
-                    model_results, feature_cols, self.X_train, self.y_train
-                )
+                # _generate_docx_report does not require training data; keep
+                # call-site simple and backward-compatible.
+                self._generate_docx_report(model_results, feature_cols)
 
             if self.config.get("generate_pdf", True):
-                self._generate_pdf_report(
-                    model_results,
-                    feature_cols,
-                    self.X_train,
-                    self.y_train,
-                )
+                # PDF report does not need training data either.
+                self._generate_pdf_report(model_results, feature_cols)
 
             # Generate additional plots if configured
             if self.config.get("include_calibration_plots", True):
@@ -523,6 +519,16 @@ def generate_feature_correlation_heatmap(train, feature_cols):
 
         if not numeric_cols:
             logger.warning("   ⚠️  No numeric columns for correlation heatmap")
+            # Defensive: if an old heatmap exists from earlier runs, remove it
+            # to ensure callers/tests see a consistent state (no heatmap).
+            old_path = corr_dir / "09_feature_correlation_heatmap.png"
+            try:
+                if old_path.exists():
+                    old_path.unlink()
+            except Exception:
+                # Non-fatal: log and continue silently
+                logger.debug("   ⚠️  Could not remove old correlation heatmap file")
+
             return
 
         # Only create output directory when we actually will save a plot
