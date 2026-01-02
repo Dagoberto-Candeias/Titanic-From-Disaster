@@ -302,7 +302,7 @@ def invalidate_cache_version():
     `globals()` para satisfazer verificações estáticas.
     """
     major, minor, _ = FEATURE_SCHEMA_VERSION.split(".")
-    new_version = f"{major}.{int(minor)+1}.0"
+    new_version = f"{major}.{int(minor) + 1}.0"
     globals()["FEATURE_SCHEMA_VERSION"] = new_version
     logger.info("🔄 Cache versão atualizada para: %s", new_version)
 
