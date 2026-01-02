@@ -53,23 +53,34 @@ class ReportingManager:
 
             if self.config.get("generate_pdf", True):
                 self._generate_pdf_report(
-                    model_results, feature_cols, self.X_train, self.y_train
+                    model_results,
+                    feature_cols,
+                    self.X_train,
+                    self.y_train,
                 )
 
             # Generate additional plots if configured
             if self.config.get("include_calibration_plots", True):
-                self._generate_calibration_plots(model_results, X_train, y_train)
+                self._generate_calibration_plots(
+                    model_results,
+                    X_train,
+                    y_train,
+                )
 
             if self.config.get("include_feature_importance", True):
-                self._generate_feature_importance_plots(model_results, feature_cols)
+                self._generate_feature_importance_plots(
+                    model_results,
+                    feature_cols,
+                )
 
         except Exception as e:
-            logger.error(
-                f"   ❌ Report generation failed: {e}"
-            )
+            logger.error("   ❌ Report generation failed: %s", e)
 
-    def _generate_markdown_report(self, model_results: Dict[str, Any],
-                                feature_cols: List[str]) -> None:
+    def _generate_markdown_report(
+        self,
+        model_results: Dict[str, Any],
+        feature_cols: List[str],
+    ) -> None:
         """Generate Markdown report."""
         try:
             report_path = self.reports_dir / "relatorio_final.md"
@@ -79,25 +90,39 @@ class ReportingManager:
 
                 # Summary section
                 f.write("## Resumo Executivo\n\n")
-                f.write(f"- **Total de Modelos Treinados:** {len(model_results)}\n")
+                total_models = len(model_results)
+                f.write(f"- **Total de Modelos Treinados:** {total_models}\n")
                 f.write(f"- **Total de Features:** {len(feature_cols)}\n")
-                f.write(f"- **Melhor Acurácia:** {self._get_best_score(model_results):.4f}\n\n")
+                best_score = self._get_best_score(model_results)
+                f.write(f"- **Melhor Acurácia:** {best_score:.4f}\n\n")
 
                 # Model results table
                 f.write("## Resultados dos Modelos\n\n")
-                f.write("| Modelo | Acurácia Média | Desvio Padrão | Melhor Score |\n")
-                f.write("|--------|---------------|---------------|--------------|\n")
+                header = (
+                    "| Modelo | Acurácia Média | Desvio Padrão | "
+                    "Melhor Score |\n"
+                )
+                sep = (
+                    "|--------|---------------|---------------|"
+                    "--------------|\n"
+                )
+                f.write(header)
+                f.write(sep)
 
                 for model_name, result in sorted(
                     model_results.items(),
                     key=lambda x: x[1].get("mean_score", 0),
-                    reverse=True
+                    reverse=True,
                 ):
                     mean_score = result.get("mean_score", 0)
                     std_score = result.get("std_score", 0)
                     best_score = max(result.get("cv_scores", [0]))
 
-                    f.write(f"| {model_name} | {mean_score:.4f} | {std_score:.4f} | {best_score:.4f} |\n")
+                    row = (
+                        f"| {model_name} | {mean_score:.4f} | "
+                        f"{std_score:.4f} | {best_score:.4f} |\n"
+                    )
+                    f.write(row)
 
                 f.write("\n")
 
@@ -111,16 +136,20 @@ class ReportingManager:
                 f.write("## Configuração Utilizada\n\n")
                 f.write("```json\n")
                 import json
-                f.write(json.dumps(self.config, indent=2, default=str))
+                config_json = json.dumps(self.config, indent=2, default=str)
+                f.write(config_json)
                 f.write("\n```\n")
 
-            logger.info(f"   📝 Markdown report saved: {report_path}")
+            logger.info("   📝 Markdown report saved: %s", report_path)
 
         except Exception as e:
-            logger.error(f"   ❌ Markdown report generation failed: {e}")
+            logger.error("   ❌ Markdown report generation failed: %s", e)
 
-    def _generate_docx_report(self, model_results: Dict[str, Any],
-                            feature_cols: List[str]) -> None:
+    def _generate_docx_report(
+        self,
+        model_results: Dict[str, Any],
+        feature_cols: List[str],
+    ) -> None:
         """Generate DOCX report."""
         try:
             from docx import Document
@@ -130,9 +159,14 @@ class ReportingManager:
 
             # Summary
             doc.add_heading("Resumo Executivo", level=1)
-            doc.add_paragraph(f"Total de Modelos Treinados: {len(model_results)}")
-            doc.add_paragraph(f"Total de Features: {len(feature_cols)}")
-            doc.add_paragraph(f"Melhor Acurácia: {self._get_best_score(model_results):.4f}")
+            total_models = len(model_results)
+            best_score = self._get_best_score(model_results)
+            txt_models = "Total de Modelos Treinados: " + str(total_models)
+            txt_features = "Total de Features: " + str(len(feature_cols))
+            txt_best = "Melhor Acurácia: " + f"{best_score:.4f}"
+            doc.add_paragraph(txt_models)
+            doc.add_paragraph(txt_features)
+            doc.add_paragraph(txt_best)
 
             # Model results table
             doc.add_heading("Resultados dos Modelos", level=1)
@@ -147,9 +181,11 @@ class ReportingManager:
             header_cells[3].text = "Melhor Score"
 
             # Data rows
-            for model_name, result in sorted(model_results.items(),
-                                           key=lambda x: x[1].get("mean_score", 0),
-                                           reverse=True):
+            for model_name, result in sorted(
+                model_results.items(),
+                key=lambda x: x[1].get("mean_score", 0),
+                reverse=True,
+            ):
                 row_cells = table.add_row().cells
                 row_cells[0].text = model_name
                 row_cells[1].text = f"{result.get('mean_score', 0):.4f}"
@@ -160,20 +196,29 @@ class ReportingManager:
             # Save document
             docx_path = self.reports_dir / "relatorio_final.docx"
             doc.save(docx_path)
-            logger.info(f"   📄 DOCX report saved: {docx_path}")
+            logger.info("   📄 DOCX report saved: %s", docx_path)
 
         except ImportError:
-            logger.warning("   ⚠️  python-docx not available, skipping DOCX report")
+            logger.warning("   ⚠️  python-docx not available; skipping DOCX")
         except Exception as e:
-            logger.error(f"   ❌ DOCX report generation failed: {e}")
+            logger.error("   ❌ DOCX report generation failed: %s", e)
 
-    def _generate_pdf_report(self, model_results: Dict[str, Any],
-                           feature_cols: List[str]) -> None:
+    def _generate_pdf_report(
+        self,
+        model_results: Dict[str, Any],
+        feature_cols: List[str],
+    ) -> None:
         """Generate PDF report."""
         try:
             from reportlab.lib import colors
             from reportlab.lib.pagesizes import letter
-            from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+            from reportlab.platypus import (
+                SimpleDocTemplate,
+                Table,
+                TableStyle,
+                Paragraph,
+                Spacer,
+            )
             from reportlab.lib.styles import getSampleStyleSheet
 
             pdf_path = self.reports_dir / "relatorio_final.pdf"
@@ -182,15 +227,17 @@ class ReportingManager:
             story = []
 
             # Title
-            title = Paragraph("Titanic ML Pipeline - Relatório Final", styles["Title"])
+            title_txt = "Titanic ML Pipeline - Relatório Final"
+            title = Paragraph(title_txt, styles["Title"])
             story.append(title)
             story.append(Spacer(1, 12))
 
             # Summary
+            best_score = self._get_best_score(model_results)
             summary_data = [
                 ["Total de Modelos Treinados:", str(len(model_results))],
                 ["Total de Features:", str(len(feature_cols))],
-                ["Melhor Acurácia:", f"{self._get_best_score(model_results):.4f}"],
+                ["Melhor Acurácia:", f"{best_score:.4f}"],
             ]
 
             summary_table = Table(summary_data)
@@ -209,16 +256,22 @@ class ReportingManager:
             story.append(Spacer(1, 12))
 
             # Model results table
-            model_data = [["Modelo", "Acurácia Média", "Desvio Padrão", "Melhor Score"]]
-            for model_name, result in sorted(model_results.items(),
-                                           key=lambda x: x[1].get("mean_score", 0),
-                                           reverse=True):
-                model_data.append([
-                    model_name,
-                    f"{result.get('mean_score', 0):.4f}",
-                    f"{result.get('std_score', 0):.4f}",
-                    f"{max(result.get('cv_scores', [0])):.4f}",
-                ])
+            model_data = [
+                ["Modelo", "Acurácia Média", "Desvio Padrão", "Melhor Score"]
+            ]
+            for model_name, result in sorted(
+                model_results.items(),
+                key=lambda x: x[1].get("mean_score", 0),
+                reverse=True,
+            ):
+                model_data.append(
+                    [
+                        model_name,
+                        f"{result.get('mean_score', 0):.4f}",
+                        f"{result.get('std_score', 0):.4f}",
+                        f"{max(result.get('cv_scores', [0])):.4f}",
+                    ]
+                )
 
             model_table = Table(model_data)
             model_table.setStyle(TableStyle([
@@ -236,15 +289,19 @@ class ReportingManager:
 
             # Build PDF
             doc.build(story)
-            logger.info(f"   📕 PDF report saved: {pdf_path}")
+            logger.info("   📕 PDF report saved: %s", pdf_path)
 
         except ImportError:
-            logger.warning("   ⚠️  reportlab not available, skipping PDF report")
+            logger.warning("   ⚠️  reportlab not available; skipping PDF")
         except Exception as e:
-            logger.error(f"   ❌ PDF report generation failed: {e}")
+            logger.error("   ❌ PDF report generation failed: %s", e)
 
-    def _generate_calibration_plots(self, model_results: Dict[str, Any],
-                                  X_train: Any, y_train: Any) -> None:
+    def _generate_calibration_plots(
+        self,
+        model_results: Dict[str, Any],
+        X_train: Any,
+        y_train: Any,
+    ) -> None:
         """Generate calibration plots for models."""
         try:
             from sklearn.calibration import calibration_curve
@@ -270,8 +327,20 @@ class ReportingManager:
 
                     # Create plot
                     plt.figure(figsize=(8, 6))
-                    plt.plot(prob_pred, prob_true, marker="o", linewidth=1, label=model_name)
-                    plt.plot([0, 1], [0, 1], linestyle="--", color="gray", label="Perfectly calibrated")
+                    plt.plot(
+                        prob_pred,
+                        prob_true,
+                        marker="o",
+                        linewidth=1,
+                        label=model_name,
+                    )
+                    plt.plot(
+                        [0, 1],
+                        [0, 1],
+                        linestyle="--",
+                        color="gray",
+                        label="Perfectly calibrated",
+                    )
 
                     plt.xlabel("Predicted probability")
                     plt.ylabel("True probability")
@@ -280,9 +349,7 @@ class ReportingManager:
                     plt.grid(True, alpha=0.3)
 
                     # Save plot
-                    plot_path = graficos_dir / (
-                        f"calibration_{model_name}.png"
-                    )
+                    plot_path = graficos_dir / f"calibration_{model_name}.png"
                     plt.savefig(plot_path, dpi=300, bbox_inches="tight")
                     plt.close()
 
@@ -291,8 +358,11 @@ class ReportingManager:
         except Exception as e:
             logger.error(f"   ❌ Calibration plot generation failed: {e}")
 
-    def _generate_feature_importance_plots(self, model_results: Dict[str, Any],
-                                         feature_cols: List[str]) -> None:
+    def _generate_feature_importance_plots(
+        self,
+        model_results: Dict[str, Any],
+        feature_cols: List[str],
+    ) -> None:
         """Generate feature importance plots."""
         try:
             import matplotlib.pyplot as plt
@@ -313,7 +383,9 @@ class ReportingManager:
                         if len(feature_cols) == len(importances):
                             feature_names = feature_cols
                         else:
-                            feature_names = [f"feature_{i}" for i in range(len(importances))]
+                            feature_names = [
+                                f"feature_{i}" for i in range(len(importances))
+                            ]
 
                         # Sort features by importance
                         indices = np.argsort(importances)[::-1]
@@ -321,38 +393,50 @@ class ReportingManager:
 
                         plt.figure(figsize=(10, 8))
                         plt.title(f"Feature Importances - {model_name}")
-                        plt.barh(range(top_n),
-                                importances[indices][:top_n],
-                                align="center")
+                        plt.barh(
+                            range(top_n),
+                            importances[indices][:top_n],
+                            align="center",
+                        )
 
-                        plt.yticks(range(top_n), [feature_names[i] for i in indices[:top_n]])
+                        ytick_labels = [
+                            feature_names[i]
+                            for i in indices[:top_n]
+                        ]
+                        plt.yticks(range(top_n), ytick_labels)
                         plt.xlabel("Relative Importance")
                         plt.gca().invert_yaxis()
                         plt.grid(True, alpha=0.3)
 
                         # Save plot
-                        plot_path = graficos_dir / f"feature_importance_{model_name}.png"
+                        fname = f"feature_importance_{model_name}.png"
+                        plot_path = graficos_dir / fname
                         plt.savefig(plot_path, dpi=300, bbox_inches="tight")
                         plt.close()
 
             logger.info("   📊 Feature importance plots generated")
 
         except Exception as e:
-            logger.error(f"   ❌ Feature importance plot generation failed: {e}")
+            logger.error("Feature importance generation failed: %s", e)
 
     def _get_best_score(self, model_results: Dict[str, Any]) -> float:
         """Get the best score from model results."""
         if not model_results:
             return 0.0
 
-        return max(result.get("mean_score", 0) for result in model_results.values())
+        return max(
+            result.get("mean_score", 0) for result in model_results.values()
+        )
 
 
 # Standalone functions for backward compatibility
 
-def generate_reports(model_results: Dict[str, Any],
-                    feature_cols: List[str],
-                    X_train: Any = None, y_train: Any = None) -> None:
+def generate_reports(
+    model_results: Dict[str, Any],
+    feature_cols: List[str],
+    X_train: Any = None,
+    y_train: Any = None,
+) -> None:
     """Standalone function to generate reports."""
     manager = ReportingManager({})
     manager.generate_reports(model_results, feature_cols, X_train, y_train)
@@ -371,30 +455,35 @@ def generate_roc_curves(model_results, X_train, y_train, feature_cols=None):
         plt.figure(figsize=(10, 8))
 
         for model_name, result in model_results.items():
-            if "trained_model" in result and hasattr(result["trained_model"], "predict_proba"):
+            if (
+                "trained_model" in result
+                and hasattr(result["trained_model"], "predict_proba")
+            ):
                 model = result["trained_model"]
-                # Determine which columns to pass to predict_proba.
-                # Prefer using the columns the model was trained with (feature_names_in_)
-                # when available, otherwise use the requested `feature_cols` if they exist
-                # in `X_train`. Fall back to `X_train` if no safe selection can be made.
-                X_for_pred = X_train
-                if hasattr(X_train, "select_dtypes") and feature_cols:
-                    expected = getattr(model, "feature_names_in_", None)
-                    if expected is not None:
-                        # If we can select the original training columns from X_train, do so.
-                        if set(expected).issubset(set(X_train.columns)):
-                            X_for_pred = X_train[list(expected)]
-                        else:
-                            # Can't reconstruct the original feature set from X_train;
-                            # use X_train as provided to avoid passing an incomplete set
-                            X_for_pred = X_train
+
+            # Determine which columns to pass to predict_proba.
+            # Prefer model.feature_names_in_ when available.
+            # Otherwise use feature_cols if present in X_train.
+            # Fallback: use X_train as provided.
+            X_for_pred = X_train
+            if hasattr(X_train, "select_dtypes") and feature_cols:
+                expected = getattr(model, "feature_names_in_", None)
+                if expected is not None:
+                    # If we can select the original training columns
+                    # from X_train, do so.
+                    if set(expected).issubset(set(X_train.columns)):
+                        X_for_pred = X_train[list(expected)]
                     else:
-                        # No feature name metadata on the model; use feature_cols
-                        # only if they are all present in X_train.
-                        if set(feature_cols).issubset(set(X_train.columns)):
-                            X_for_pred = X_train[feature_cols]
-                        else:
-                            X_for_pred = X_train
+                        # Can't reconstruct the original feature set from
+                        # X_train; use X_train as provided.
+                        X_for_pred = X_train
+                else:
+                    # No feature-name metadata on the model; use
+                    # feature_cols only if present in X_train.
+                    if set(feature_cols).issubset(set(X_train.columns)):
+                        X_for_pred = X_train[feature_cols]
+                    else:
+                        X_for_pred = X_train
                 y_pred_proba = model.predict_proba(X_for_pred)[:, 1]
                 fpr, tpr, _ = roc_curve(y_train, y_pred_proba)
                 roc_auc = auc(fpr, tpr)
@@ -426,16 +515,23 @@ def generate_feature_correlation_heatmap(train, feature_cols):
         corr_dir = Path("output/graficos/correlation")
 
         # Filtrar apenas colunas numéricas para correlação
-        numeric_cols = train[feature_cols].select_dtypes(include=[np.number]).columns.tolist()
+        numeric_cols = (
+            train[feature_cols]
+            .select_dtypes(include=[np.number])
+            .columns.tolist()
+        )
 
         if not numeric_cols:
-            logger.warning("   ⚠️  No numeric columns found for correlation heatmap")
+            logger.warning("   ⚠️  No numeric columns for correlation heatmap")
             return
 
         # Only create output directory when we actually will save a plot
         corr_dir.mkdir(parents=True, exist_ok=True)
 
-        logger.info(f"   📊 Using {len(numeric_cols)} numeric features for correlation heatmap")
+        logger.info(
+            "   📊 Using %d numeric features for correlation heatmap",
+            len(numeric_cols),
+        )
 
         corr_matrix = train[numeric_cols].corr()
         plt.figure(figsize=(14, 10))
@@ -447,7 +543,10 @@ def generate_feature_correlation_heatmap(train, feature_cols):
         plt.close()
         logger.info("   📊 Feature correlation heatmap generated")
     except Exception as e:
-        logger.error(f"   ❌ Feature correlation heatmap generation failed: {e}")
+        logger.error(
+            "   ❌ Feature correlation heatmap generation failed: %s",
+            e,
+        )
 
 
 def generate_model_performance_timeline(model_results):
