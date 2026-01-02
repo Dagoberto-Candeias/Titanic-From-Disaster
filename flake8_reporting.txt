@@ -1,0 +1,64 @@
+titanic_pipeline/core/reporting.py:52:80: E501 line too long (81 > 79 characters)
+titanic_pipeline/core/reporting.py:55:80: E501 line too long (84 > 79 characters)
+titanic_pipeline/core/reporting.py:61:33: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:71:80: E501 line too long (84 > 79 characters)
+titanic_pipeline/core/reporting.py:73:80: E501 line too long (96 > 79 characters)
+titanic_pipeline/core/reporting.py:77:80: E501 line too long (87 > 79 characters)
+titanic_pipeline/core/reporting.py:78:80: E501 line too long (86 > 79 characters)
+titanic_pipeline/core/reporting.py:89:80: E501 line too long (106 > 79 characters)
+titanic_pipeline/core/reporting.py:112:29: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:122:80: E501 line too long (82 > 79 characters)
+titanic_pipeline/core/reporting.py:124:80: E501 line too long (92 > 79 characters)
+titanic_pipeline/core/reporting.py:140:44: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:140:80: E501 line too long (83 > 79 characters)
+titanic_pipeline/core/reporting.py:141:44: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:155:80: E501 line too long (84 > 79 characters)
+titanic_pipeline/core/reporting.py:160:28: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:165:80: E501 line too long (98 > 79 characters)
+titanic_pipeline/core/reporting.py:174:80: E501 line too long (87 > 79 characters)
+titanic_pipeline/core/reporting.py:182:80: E501 line too long (83 > 79 characters)
+titanic_pipeline/core/reporting.py:201:80: E501 line too long (88 > 79 characters)
+titanic_pipeline/core/reporting.py:203:44: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:203:80: E501 line too long (83 > 79 characters)
+titanic_pipeline/core/reporting.py:204:44: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:231:80: E501 line too long (81 > 79 characters)
+titanic_pipeline/core/reporting.py:236:35: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:256:80: E501 line too long (90 > 79 characters)
+titanic_pipeline/core/reporting.py:260:80: E501 line too long (93 > 79 characters)
+titanic_pipeline/core/reporting.py:261:80: E501 line too long (104 > 79 characters)
+titanic_pipeline/core/reporting.py:280:42: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:301:80: E501 line too long (93 > 79 characters)
+titanic_pipeline/core/reporting.py:310:33: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:311:33: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:313:80: E501 line too long (93 > 79 characters)
+titanic_pipeline/core/reporting.py:319:80: E501 line too long (89 > 79 characters)
+titanic_pipeline/core/reporting.py:326:80: E501 line too long (80 > 79 characters)
+titanic_pipeline/core/reporting.py:333:80: E501 line too long (84 > 79 characters)
+titanic_pipeline/core/reporting.py:339:21: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:340:21: E128 continuation line under-indented for visual indent
+titanic_pipeline/core/reporting.py:359:80: E501 line too long (95 > 79 characters)
+titanic_pipeline/core/reporting.py:363:80: E501 line too long (83 > 79 characters)
+titanic_pipeline/core/reporting.py:397:67: F821 undefined name 'np'
+titanic_pipeline/core/reporting.py:397:80: E501 line too long (94 > 79 characters)
+titanic_pipeline/core/reporting.py:400:80: E501 line too long (85 > 79 characters)
+titanic_pipeline/core/reporting.py:403:80: E501 line too long (95 > 79 characters)
+titanic_pipeline/core/reporting.py:410:80: E501 line too long (98 > 79 characters)
+titanic_pipeline/core/reporting.py:414:80: E501 line too long (80 > 79 characters)
+titanic_pipeline/core/reporting.py:428:80: E501 line too long (83 > 79 characters)
+titanic_pipeline/core/reporting.py:435:80: E501 line too long (101 > 79 characters)
+titanic_pipeline/core/reporting.py:442:80: E501 line too long (84 > 79 characters)
+titanic_pipeline/core/reporting.py:493:80: E501 line too long (97 > 79 characters)
+titanic_pipeline/core/reporting.py:519:80: E501 line too long (81 > 79 characters)
+titanic_pipeline/core/reporting.py:520:80: E501 line too long (111 > 79 characters)
+titanic_pipeline/core/reporting.py:522:80: E501 line too long (94 > 79 characters)
+titanic_pipeline/core/reporting.py:558:80: E501 line too long (86 > 79 characters)
+titanic_pipeline/core/reporting.py:566:80: E501 line too long (115 > 79 characters)
+titanic_pipeline/core/reporting.py:569:80: E501 line too long (90 > 79 characters)
+titanic_pipeline/core/reporting.py:616:80: E501 line too long (109 > 79 characters)
+titanic_pipeline/core/reporting.py:628:80: E501 line too long (111 > 79 characters)
+titanic_pipeline/core/reporting.py:632:80: E501 line too long (86 > 79 characters)
+titanic_pipeline/core/reporting.py:633:80: E501 line too long (82 > 79 characters)
+titanic_pipeline/core/reporting.py:640:80: E501 line too long (82 > 79 characters)
+titanic_pipeline/core/reporting.py:650:80: E501 line too long (81 > 79 characters)
+titanic_pipeline/core/reporting.py:654:80: E501 line too long (81 > 79 characters)
+titanic_pipeline/core/reporting.py:662:80: E501 line too long (80 > 79 characters)
