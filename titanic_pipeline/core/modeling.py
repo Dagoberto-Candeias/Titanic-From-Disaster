@@ -35,9 +35,10 @@ logger = logging.getLogger(__name__)
 class ModelingManager:
     """Manages model training, optimization, and ensemble creation."""
 
-    def __init__(self, config: Dict[str, Any], model_configs: Dict[str, Dict[str, Any]]):
+    def __init__(self, config: Dict[str, Any], model_configs: Dict[str, Dict[str, Any]] = None, pre_configured_models: Dict[str, Any] = None):
         self.config = config
-        self.model_configs = model_configs
+        self.model_configs = model_configs or {}
+        self.pre_configured_models = pre_configured_models or {}
         self.parallel_processor = ParallelProcessor(max_workers=config["parallel_jobs"])
 
     def train_all_models(self, X_train: np.ndarray, y_train: np.ndarray) -> Dict[str, Any]:
@@ -86,18 +87,23 @@ class ModelingManager:
                           y_train: np.ndarray) -> Dict[str, Any]:
         """Train a single model with cross-validation and timeout protection."""
         try:
-            # Create model instance with optimized parameters
-            if model_name in self.model_configs:
-                model_params = self.model_configs[model_name].copy()
-                # Add performance optimizations for slow models
-                if model_name in ["SVC", "KNeighbors"]:
-                    model_params.update({
-                        "max_iter": 10000 if model_name == "SVC" else None,
-                        "n_jobs": -1 if model_name == "KNeighbors" else None
-                    })
-                model = model_class(**model_params)
+            # Use pre-configured model if available
+            if model_name in self.pre_configured_models:
+                model = self.pre_configured_models[model_name]
+                logger.info(f"   📋 Using pre-configured model for {model_name}")
             else:
-                model = model_class(random_state=self.config["random_state"])
+                # Create model instance with optimized parameters
+                if model_name in self.model_configs:
+                    model_params = self.model_configs[model_name].copy()
+                    # Add performance optimizations for slow models
+                    if model_name in ["SVC", "KNeighbors"]:
+                        model_params.update({
+                            "max_iter": 10000 if model_name == "SVC" else None,
+                            "n_jobs": -1 if model_name == "KNeighbors" else None
+                        })
+                    model = model_class(**model_params)
+                else:
+                    model = model_class(random_state=self.config["random_state"])
 
             # Timeout protection for slow models
             timeout_seconds = 300  # 5 minutes timeout

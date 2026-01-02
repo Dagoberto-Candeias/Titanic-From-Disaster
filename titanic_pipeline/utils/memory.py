@@ -84,12 +84,24 @@ def optimize_memory_usage(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
             non_na = col_data[~col_data.isna()].astype(np.float64)
 
             if not non_na.empty:
-                as32 = non_na.astype(np.float32).astype(np.float64)
-                # Use a conservative tolerance to preserve precision
-                if np.allclose(non_na.values, as32.values, rtol=1e-6, atol=1e-8):
-                    df[col] = df[col].astype(np.float32)
-                else:
+                # Heuristic: only downcast floats that have at most 6
+                # decimal places of precision. This protects columns that
+                # intentionally store high-precision values (e.g., many
+                # decimal digits) which should remain float64.
+                has_limited_precision = np.allclose(
+                    non_na.values, np.round(non_na.values, 6), rtol=0, atol=1e-12
+                )
+
+                if not has_limited_precision:
+                    # Preserve float64 for higher-precision columns
                     df[col] = df[col].astype(np.float64)
+                else:
+                    as32 = non_na.astype(np.float32).astype(np.float64)
+                    # Use a conservative tolerance to preserve precision
+                    if np.allclose(non_na.values, as32.values, rtol=1e-6, atol=1e-8):
+                        df[col] = df[col].astype(np.float32)
+                    else:
+                        df[col] = df[col].astype(np.float64)
             else:
                 # Column all NaNs — default to float32 to save memory
                 df[col] = df[col].astype(np.float32)

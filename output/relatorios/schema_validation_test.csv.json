@@ -1,6 +1,6 @@
 {
   "dataset_name": "test.csv",
-  "timestamp": "2025-12-07T11:50:31.187138",
+  "timestamp": "2026-01-01T23:38:54.224352",
   "total_rows": 418,
   "total_columns": 11,
   "expected_columns": [
@@ -33,16 +33,16 @@
   "extra_columns": [],
   "is_valid": true,
   "data_types": {
-    "PassengerId": "int64",
-    "Pclass": "int64",
+    "PassengerId": "int16",
+    "Pclass": "int8",
     "Name": "object",
-    "Sex": "object",
-    "Age": "float64",
-    "SibSp": "int64",
-    "Parch": "int64",
+    "Sex": "category",
+    "Age": "float32",
+    "SibSp": "int8",
+    "Parch": "int8",
     "Ticket": "object",
-    "Fare": "float64",
-    "Cabin": "object",
-    "Embarked": "object"
+    "Fare": "float32",
+    "Cabin": "category",
+    "Embarked": "category"
   }
 }

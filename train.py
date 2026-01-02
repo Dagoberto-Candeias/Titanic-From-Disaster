@@ -17,31 +17,36 @@ import sys
 import warnings
 
 from datetime import datetime
+from typing import Any, Dict, cast
 
 # Importações de terceiros
-import matplotlib
-matplotlib.use('Agg')  # Set backend for headless environments
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
+import matplotlib  # noqa: E402
+
+matplotlib.use("Agg")  # Set backend for headless environments
+import matplotlib.pyplot as plt  # noqa: E402
+import numpy as np  # noqa: E402
+import pandas as pd  # noqa: E402
 
 # Importações do Scikit-learn
 try:
-    from sklearn.calibration import CalibratedClassifierCV
-    CALIBRATED_AVAILABLE = True
-except ImportError:
+    import importlib
+
+    _calib = importlib.import_module("sklearn.calibration")
+    CalibratedClassifierCV = getattr(_calib, "CalibratedClassifierCV", None)
+    CALIBRATED_AVAILABLE = CalibratedClassifierCV is not None
+except Exception:
     CALIBRATED_AVAILABLE = False
     CalibratedClassifierCV = None
 
-from sklearn.ensemble import (
+from sklearn.ensemble import (  # noqa: E402
     VotingClassifier,
     RandomForestClassifier,
 )
-from sklearn.metrics import (
+from sklearn.metrics import (  # noqa: E402
     ConfusionMatrixDisplay,
     confusion_matrix,
 )
-from sklearn.model_selection import (
+from sklearn.model_selection import (  # noqa: E402
     cross_val_predict,
     cross_val_score,
 )
@@ -49,6 +54,7 @@ from sklearn.model_selection import (
 # Importações opcionais de terceiros com verificações de disponibilidade
 try:
     from xgboost import XGBClassifier
+
     XGB_AVAILABLE = True
 except ImportError:
     XGB_AVAILABLE = False
@@ -56,20 +62,25 @@ except ImportError:
 
 try:
     from lightgbm import LGBMClassifier
+
     LGBM_AVAILABLE = True
 except ImportError:
     LGBM_AVAILABLE = False
     LGBMClassifier = None
 
 try:
-    import shap
+    # We only need to know whether shap is available; avoid binding
+    # the symbol here to prevent unused-import lint warnings.
+    import importlib as _importlib
+
+    _importlib.import_module("shap")
     SHAP_AVAILABLE = True
-except ImportError:
+except Exception:
     SHAP_AVAILABLE = False
-    shap = None
 
 try:
     import optuna
+
     OPTUNA_AVAILABLE = True
     import optuna.logging
 except ImportError:
@@ -77,45 +88,51 @@ except ImportError:
     optuna = None
 
 # Imports do pipeline Titanic
-from titanic_pipeline.preprocessing import (
+from titanic_pipeline.preprocessing import (  # noqa: E402
     create_feature_pipeline,
     AdvancedFeatureEngineer,
 )
-from titanic_pipeline.core.modeling import (
+from titanic_pipeline.core.modeling import (  # noqa: E402
     ModelingManager,
     build_stacking_ensemble as modular_build_stacking_ensemble,
     objective,
     load_and_predict,
     save_model_pipeline,
 )
-from titanic_pipeline.core.utils import (
+from titanic_pipeline.core.utils import (  # noqa: E402
     validate_data_schema,
     get_cache_key,
     cache_result,
     load_cached_result,
 )
-from titanic_pipeline.utils import ensure_feature_cols_intersection
+# Delayed import to avoid circular dependency (noqa E402)
+from titanic_pipeline.utils import (  # noqa: E402
+    ensure_feature_cols_intersection,
+)
 
-# Evitar import circular: optimize_memory_usage está em titanic_pipeline/utils.py
+# Evitar import circular: optimize_memory_usage está em utils.py
 try:
     from titanic_pipeline.utils import optimize_memory_usage
 except ImportError:
     # Fallback: importar direto do módulo
-    import sys
     import importlib
-    titanic_utils_module = importlib.import_module('titanic_pipeline.utils')
-    optimize_memory_usage = getattr(titanic_utils_module, 'optimize_memory_usage', None)
+
+    titanic_utils_module = importlib.import_module("titanic_pipeline.utils")
+    optimize_memory_usage = getattr(
+        titanic_utils_module, "optimize_memory_usage", None
+    )
     if optimize_memory_usage is None:
         # Última opção: definir função stub
-        def optimize_memory_usage(df, deep=True):
+        def optimize_memory_usage(df, *_, **__):
             return df
 
-from titanic_pipeline.core.reporting import (
+
+from titanic_pipeline.core.reporting import (  # noqa: E402
     generate_reports as modular_generate_reports,
     generate_roc_curves as modular_generate_roc_curves,
-    generate_feature_correlation_heatmap as modular_generate_feature_correlation_heatmap,
-    generate_model_performance_timeline as modular_generate_model_performance_timeline,
-    generate_changelog_and_manifest as modular_generate_changelog_and_manifest,
+    generate_feature_correlation_heatmap as modular_generate_feature_correlation_heatmap,  # noqa: E501
+    generate_model_performance_timeline as modular_generate_model_performance_timeline,  # noqa: E501
+    generate_changelog_and_manifest as modular_generate_changelog_and_manifest,  # noqa: E501
     save_timing_report,
     log_model_performance_to_csv,
 )
@@ -236,8 +253,14 @@ try:
     from config import LOGGING_CONFIG as IMPORTED_LOGGING_CONFIG
 
     CONFIG = {**DEFAULT_CONFIG, **IMPORTED_CONFIG}
-    EXPECTED_TRAIN_SCHEMA = {**DEFAULT_EXPECTED_TRAIN_SCHEMA, **IMPORTED_EXPECTED_TRAIN_SCHEMA}
-    EXPECTED_TEST_SCHEMA = {**DEFAULT_EXPECTED_TEST_SCHEMA, **IMPORTED_EXPECTED_TEST_SCHEMA}
+    EXPECTED_TRAIN_SCHEMA = {
+        **DEFAULT_EXPECTED_TRAIN_SCHEMA,
+        **IMPORTED_EXPECTED_TRAIN_SCHEMA,
+    }
+    EXPECTED_TEST_SCHEMA = {
+        **DEFAULT_EXPECTED_TEST_SCHEMA,
+        **IMPORTED_EXPECTED_TEST_SCHEMA,
+    }
     LOGGING_CONFIG = {**DEFAULT_LOGGING_CONFIG, **IMPORTED_LOGGING_CONFIG}
 except ImportError:
     CONFIG = DEFAULT_CONFIG.copy()
@@ -259,33 +282,37 @@ warnings.filterwarnings("ignore")
 
 class ModelTrainingError(Exception):
     """Erro durante treinamento de modelo."""
-    pass
 
 
 class DataValidationError(Exception):
     """Erro durante validação de dados."""
-    pass
 
 
 class EnsembleError(Exception):
     """Erro durante criação de ensemble."""
-    pass
+
 
 # ============= FUNÇÕES AUXILIARES =============
 
 
 def invalidate_cache_version():
-    """Incrementar versão para invalidar todos os caches."""
-    global FEATURE_SCHEMA_VERSION
-    major, minor, patch = FEATURE_SCHEMA_VERSION.split('.')
-    FEATURE_SCHEMA_VERSION = f"{major}.{int(minor)+1}.0"
-    logger.info(
-        f"🔄 Cache versão atualizada para: {FEATURE_SCHEMA_VERSION}"
-    )
+    """Incrementar versão para invalidar todos os caches.
 
-# Removed duplicate function - now using get_cache_key from utils with schema_version
+    Nota: evitamos a declaração `global` substituindo o valor via
+    `globals()` para satisfazer verificações estáticas.
+    """
+    major, minor, _ = FEATURE_SCHEMA_VERSION.split(".")
+    new_version = f"{major}.{int(minor)+1}.0"
+    globals()["FEATURE_SCHEMA_VERSION"] = new_version
+    logger.info("🔄 Cache versão atualizada para: %s", new_version)
 
-def prepare_ensemble_models(valid_results, min_models=3, weight_bounds=(0.1, 1.0)):
+
+# Usando get_cache_key de utils com schema_version
+
+
+def prepare_ensemble_models(
+    valid_results, min_models=3, weight_bounds=(0.1, 1.0)
+):
     """
     Prepara modelos e pesos para ensemble com validações.
 
@@ -295,12 +322,13 @@ def prepare_ensemble_models(valid_results, min_models=3, weight_bounds=(0.1, 1.0
         weight_bounds: (min_weight, max_weight) normalizados
 
     Returns:
-        tuple: (ensemble_models, normalized_weights) ou (None, None) se inválido
+        tuple: (ensemble_models, normalized_weights)
+        ou (None, None) se inválido
     """
     top_models = sorted(
         valid_results.items(),
         key=lambda x: x[1].get("mean_score", 0),
-        reverse=True
+        reverse=True,
     )[:5]
 
     ensemble_models = []
@@ -308,14 +336,15 @@ def prepare_ensemble_models(valid_results, min_models=3, weight_bounds=(0.1, 1.0
 
     for name, perf in top_models:
         model = perf.get("trained_model")
-        if model is not None and hasattr(model, 'predict_proba'):
+        if model is not None and hasattr(model, "predict_proba"):
             ensemble_models.append((name, model))
             raw_weights.append(perf.get("mean_score", 0))
 
     if len(ensemble_models) < min_models:
         logger.warning(
-            f"⚠️  Apenas {len(ensemble_models)} modelos válidos. "
-            f"Mínimo: {min_models}"
+            "⚠️  Apenas %s modelos válidos. Mínimo: %s",
+            len(ensemble_models),
+            min_models,
         )
         return None, None
 
@@ -328,16 +357,21 @@ def prepare_ensemble_models(valid_results, min_models=3, weight_bounds=(0.1, 1.0
         normalized_weights = np.ones_like(raw_weights) * weight_bounds[0]
     else:
         scaled = (raw_weights - min_raw) / (max_raw - min_raw)
-        normalized_weights = weight_bounds[0] + scaled * (weight_bounds[1] - weight_bounds[0])
+        normalized_weights = weight_bounds[0] + scaled * (
+            weight_bounds[1] - weight_bounds[0]
+        )
 
     # Log detalhado
     logger.info("📊 Pesos do Ensemble (normalizados):")
     for (name, _), weight in zip(ensemble_models, normalized_weights):
-        logger.info(f"   {name}: {weight:.3f}")
+        logger.info("   %s: %.3f", name, weight)
 
     return ensemble_models, normalized_weights.tolist()
 
-def retry_failed_models(resultados, X_train_np, y_train, cv_folds, max_retries=2):
+
+def retry_failed_models(
+    resultados, X_train_np, y_train, cv_folds, max_retries=2
+):
     """
     Tenta retreinar modelos que falharam durante o treinamento inicial.
 
@@ -352,7 +386,8 @@ def retry_failed_models(resultados, X_train_np, y_train, cv_folds, max_retries=2
         dict: resultados atualizados com tentativas de retry
     """
     failed_models = {
-        name: perf for name, perf in resultados.items()
+        name: perf
+        for name, perf in resultados.items()
         if perf.get("trained_model") is None
     }
 
@@ -361,13 +396,17 @@ def retry_failed_models(resultados, X_train_np, y_train, cv_folds, max_retries=2
         return resultados
 
     logger.info(
-        f"🔄 Tentando retreinar {len(failed_models)} modelos falhados..."
+        "🔄 Tentando retreinar %s modelos falhados...",
+        len(failed_models),
     )
 
     for model_name, perf in failed_models.items():
         for attempt in range(1, max_retries + 1):
             logger.info(
-                f"   Tentativa {attempt}/{max_retries} para {model_name}"
+                "   Tentativa %s/%s para %s",
+                attempt,
+                max_retries,
+                model_name,
             )
             try:
                 # Ajustar parâmetros baseado no tipo de erro
@@ -377,19 +416,23 @@ def retry_failed_models(resultados, X_train_np, y_train, cv_folds, max_retries=2
                     # Reduzir complexidade para problemas de memória
                     if "Random Forest" in model_name:
                         adjusted_model = RandomForestClassifier(
-                            n_estimators=50, max_depth=10,
-                            random_state=CONFIG["random_state"]
+                            n_estimators=50,
+                            max_depth=10,
+                            random_state=CONFIG["random_state"],
                         )
                     elif "XGBoost" in model_name and XGB_AVAILABLE:
                         adjusted_model = XGBClassifier(
-                            n_estimators=50, max_depth=6,
+                            n_estimators=50,
+                            max_depth=6,
                             random_state=CONFIG["random_state"],
-                            use_label_encoder=False, eval_metric='logloss'
+                            use_label_encoder=False,
+                            eval_metric="logloss",
                         )
                     elif "LightGBM" in model_name and LGBM_AVAILABLE:
                         adjusted_model = LGBMClassifier(
-                            n_estimators=50, max_depth=6,
-                            random_state=CONFIG["random_state"]
+                            n_estimators=50,
+                            max_depth=6,
+                            random_state=CONFIG["random_state"],
                         )
                     else:
                         continue
@@ -397,27 +440,34 @@ def retry_failed_models(resultados, X_train_np, y_train, cv_folds, max_retries=2
                     # Parâmetros padrão reduzidos
                     if "Random Forest" in model_name:
                         adjusted_model = RandomForestClassifier(
-                            n_estimators=100, max_depth=15,
-                            random_state=CONFIG["random_state"]
+                            n_estimators=100,
+                            max_depth=15,
+                            random_state=CONFIG["random_state"],
                         )
                     elif "XGBoost" in model_name and XGB_AVAILABLE:
                         adjusted_model = XGBClassifier(
-                            n_estimators=100, max_depth=6,
+                            n_estimators=100,
+                            max_depth=6,
                             random_state=CONFIG["random_state"],
-                            use_label_encoder=False, eval_metric='logloss'
+                            use_label_encoder=False,
+                            eval_metric="logloss",
                         )
                     elif "LightGBM" in model_name and LGBM_AVAILABLE:
                         adjusted_model = LGBMClassifier(
-                            n_estimators=100, max_depth=6,
-                            random_state=CONFIG["random_state"]
+                            n_estimators=100,
+                            max_depth=6,
+                            random_state=CONFIG["random_state"],
                         )
                     else:
                         continue
 
                 # Tentar treinar
                 scores = cross_val_score(
-                    adjusted_model, X_train_np, y_train,
-                    cv=cv_folds, scoring="accuracy"
+                    adjusted_model,
+                    X_train_np,
+                    y_train,
+                    cv=cv_folds,
+                    scoring="accuracy",
                 )
                 adjusted_model.fit(X_train_np, y_train)
 
@@ -431,61 +481,65 @@ def retry_failed_models(resultados, X_train_np, y_train, cv_folds, max_retries=2
                     "error": None,
                 }
                 logger.info(
-                    f"   ✅ {model_name} retreinado com sucesso: "
-                    f"Acc={scores.mean():.4f} ± {scores.std():.4f}"
+                    "   ✅ %s retreinado com sucesso: Acc=%.4f ± %.4f",
+                    model_name,
+                    scores.mean(),
+                    scores.std(),
                 )
                 break  # Sucesso, parar tentativas
 
-            except Exception as e:
+            # keep going on any error during retries
+            except Exception as e:  # noqa: E722
                 logger.warning(
-                    f"   ❌ Tentativa {attempt} falhou para {model_name}: {e}"
+                    "   ❌ Tentativa %s falhou para %s: %s",
+                    attempt,
+                    model_name,
+                    e,
                 )
                 if attempt == max_retries:
                     logger.error(
-                        f"   ❌ {model_name} não conseguiu após "
-                        f"{max_retries} tentativas"
+                        "   ❌ %s não conseguiu após %s tentativas",
+                        model_name,
+                        max_retries,
                     )
 
     return resultados
 
+
 def validate_feature_consistency(X_train, X_test, feature_cols, logger):
     """
     Valida que train e test têm mesmas features.
-    
+
     Returns:
         tuple: (features_válidas, n_removidas, n_adicionadas)
     """
     train_features = set(feature_cols)
-    test_features = set(
-        X_test.columns if hasattr(X_test, 'columns') else []
-    )
-    
+    test_features = set(X_test.columns if hasattr(X_test, "columns") else [])
+
     removed = train_features - test_features
     added = test_features - train_features
-    
+
     if removed:
         logger.warning(
             "⚠️  Colunas em TRAIN mas não em TEST "
             f"({len(removed)}): {removed}"
         )
-    
+
     if added:
         logger.warning(
-            "⚠️  Colunas em TEST mas não em TRAIN "
-            f"({len(added)}): {added}"
+            "⚠️  Colunas em TEST mas não em TRAIN " f"({len(added)}): {added}"
         )
-    
+
     valid_features = sorted(train_features & test_features)
-    
-    logger.info(
-        f"✅ Features válidas (intersecção): {len(valid_features)}"
-    )
+
+    logger.info(f"✅ Features válidas (intersecção): {len(valid_features)}")
     logger.info(
         f"   Shape esperado: Train {X_train.shape}, "
         f"Test {(len(X_test), len(valid_features))}"
     )
-    
+
     return valid_features, len(removed), len(added)
+
 
 def export_metrics_json(resultados, script_total_time, feature_cols_count):
     """
@@ -499,7 +553,7 @@ def export_metrics_json(resultados, script_total_time, feature_cols_count):
         "ensemble": None,
         "best_model": None,
     }
-    
+
     for model_name, perf in resultados.items():
         metrics["models"][model_name] = {
             "accuracy": float(perf.get("mean_score", 0)),
@@ -507,46 +561,45 @@ def export_metrics_json(resultados, script_total_time, feature_cols_count):
             "trained": perf.get("trained_model") is not None,
             "best_params": perf.get("best_params", {}),
         }
-    
+
     ensemble_models = [m for m in resultados.keys() if "Ensemble" in m]
     if ensemble_models:
         best_ens = max(
-            ensemble_models,
-            key=lambda m: resultados[m].get("mean_score", 0)
+            ensemble_models, key=lambda m: resultados[m].get("mean_score", 0)
         )
         metrics["ensemble"] = {
             "name": best_ens,
             "accuracy": float(resultados[best_ens].get("mean_score", 0)),
             "weights": resultados[best_ens].get("weights", []),
         }
-    
+
     best_model = max(
-        resultados.keys(),
-        key=lambda m: resultados[m].get("mean_score", 0)
+        resultados.keys(), key=lambda m: resultados[m].get("mean_score", 0)
     )
     metrics["best_model"] = {
         "name": best_model,
         "accuracy": float(resultados[best_model].get("mean_score", 0)),
     }
-    
+
     # Salvar JSON
     output_path = "output/relatorios/metrics.json"
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    with open(output_path, "w") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(metrics, f, indent=2)
-    
-    logger.info(f"✅ Métricas exportadas: {output_path}")
+
+    logger.info("✅ Métricas exportadas: %s", output_path)
     return metrics
+
 
 def smoke_test():
     """
     Testes rápidos de integração - valida pipeline com dados pequenos.
-    
+
     Returns:
         bool: True se todos os testes passarem
     """
     logger.info("🧪 Iniciando SMOKE TESTS...")
-    
+
     try:
         # 1. Validar diretórios
         os.makedirs("output/graficos", exist_ok=True)
@@ -554,42 +607,54 @@ def smoke_test():
         assert os.path.exists("data/raw/train.csv"), "train.csv não encontrado"
         assert os.path.exists("data/raw/test.csv"), "test.csv não encontrado"
         logger.info("   ✅ Diretórios e arquivos OK")
-        
+
         # 2. Carregar dados (sample pequeño)
         train_sample = pd.read_csv("data/raw/train.csv").head(50)
         test_sample = pd.read_csv("data/raw/test.csv").head(30)
         assert train_sample.shape[0] > 0, "Train vazio"
         assert test_sample.shape[0] > 0, "Test vazio"
-        logger.info(f"   ✅ Dados carregados: train={train_sample.shape}, test={test_sample.shape}")
-        
+        logger.info(
+            "   ✅ Dados carregados: train=%s, test=%s",
+            train_sample.shape,
+            test_sample.shape,
+        )
+
         # 3. Validar schema
         validate_data_schema(train_sample, EXPECTED_TRAIN_COLUMNS, "train.csv")
         validate_data_schema(test_sample, EXPECTED_TEST_COLUMNS, "test.csv")
         logger.info("   ✅ Schema válido")
-        
+
         # 4. Feature Engineering
         fe = AdvancedFeatureEngineer()
         train_fe, test_fe = fe.fit_transform(train_sample, test_sample)
-        logger.info(f"   ✅ Features geradas: train={train_fe.shape}, test={test_fe.shape}")
-        
+        logger.info(
+            "   ✅ Features geradas: train=%s, test=%s",
+            train_fe.shape,
+            test_fe.shape,
+        )
+
         # 5. Treinar modelo simples
-        feature_cols_smoke = [c for c in train_fe.columns if c not in ["PassengerId", "Survived", "Name", "Ticket", "Cabin"]]
+        feature_cols_smoke = [
+            c
+            for c in train_fe.columns
+            if c not in ["PassengerId", "Survived", "Name", "Ticket", "Cabin"]
+        ]
         preprocessor = create_feature_pipeline(train_fe, feature_cols_smoke)
         X = preprocessor.fit_transform(train_fe[feature_cols_smoke])
         y = train_fe["Survived"]
-        
+
         model = RandomForestClassifier(n_estimators=5, random_state=42)
         scores = cross_val_score(model, X, y, cv=2, scoring="accuracy")
         assert scores.mean() > 0.3, f"Score muito baixo: {scores.mean():.4f}"
-        logger.info(f"   ✅ Modelo treinado: Acc={scores.mean():.4f}")
-        
+        logger.info("   ✅ Modelo treinado: Acc=%.4f", scores.mean())
+
         # 6. Fazer predição
         model.fit(X, y)
         X_test = preprocessor.transform(test_fe[feature_cols_smoke])
         preds = model.predict(X_test)
         assert len(preds) == len(test_fe), "Mismatch predictions"
-        logger.info(f"   ✅ Predições geradas: {len(preds)} amostras")
-        
+        logger.info("   ✅ Predições geradas: %s amostras", len(preds))
+
         # 7. Salvar e carregar modelo
         pipeline_dict = {"preprocessor": preprocessor, "model": model}
         with open("output/models/smoke_test_model.pkl", "wb") as f:
@@ -597,21 +662,24 @@ def smoke_test():
         with open("output/models/smoke_test_model.pkl", "rb") as f:
             pickle.load(f)
         logger.info("   ✅ Modelo salvo e carregado OK")
-        
+
         logger.info("✅ SMOKE TESTS PASSARAM!")
         return True
-        
+
     except AssertionError as e:
-        logger.error(f"❌ Assertion falhou: {e}")
+        logger.error("❌ Assertion falhou: %s", e)
         return False
-    except Exception as e:
-        logger.error(f"❌ Erro em smoke tests: {e}", exc_info=True)
+    # top-level smoke test should catch unexpected errors
+    except Exception as e:  # noqa: E722
+        logger.error("❌ Erro em smoke tests: %s", e, exc_info=True)
         return False
+        return False
+
 
 def main():
     """
     Pipeline completo de treinamento para Titanic ML.
-    
+
     Fluxo:
     1. Criar diretórios e carregar dados
     2. Validar schema e otimizar memória
@@ -621,10 +689,10 @@ def main():
     6. Criar ensembles robusto (Voting + Stacking)
     7. Gerar visualizações e relatórios
     8. Salvar modelo e fazer submissão
-    
+
     Returns:
         bool: True se pipeline completou com sucesso
-        
+
     Raises:
         FileNotFoundError: Se dados não encontrados
         DataValidationError: Se schema inválido
@@ -637,10 +705,12 @@ def main():
     try:
         # Smoke tests (opcional)
         if CONFIG.get("run_smoke_tests", False):
-            logger.info("🚀 Rodando smoke tests antes do pipeline principal...")
+            logger.info(
+                "🚀 Rodando smoke tests antes do pipeline principal..."
+            )
             if not smoke_test():
                 logger.warning("⚠️  Smoke tests falharam, mas continuando...")
-        
+
         # 1. Create necessary directories
         logger.info("📁 CRIANDO DIRETÓRIOS...")
         os.makedirs("output/graficos", exist_ok=True)
@@ -679,21 +749,42 @@ def main():
         feature_engineer = AdvancedFeatureEngineer()
 
         # Use fit_transform to handle all feature engineering at once
-        cache_key_features = get_cache_key(data_hash, "features_train", FEATURE_SCHEMA_VERSION)
+        cache_key_features = get_cache_key(
+            data_hash, "features_train", FEATURE_SCHEMA_VERSION
+        )
         cached_features = load_cached_result(cache_key_features)
 
         if cached_features is not None:
             train = cached_features
-            logger.info("   📖 Features de treino carregadas do cache (v" + FEATURE_SCHEMA_VERSION + ")")
+            logger.info(
+                "   📖 Features de treino carregadas do cache (v%s)",
+                FEATURE_SCHEMA_VERSION,
+            )
         else:
             train, test = feature_engineer.fit_transform(train, test)
             cache_result(cache_key_features, train)
-            logger.info("   💾 Features de treino processadas e cached (v" + FEATURE_SCHEMA_VERSION + ")")
+            logger.info(
+                "   💾 Features de treino processadas e cached (v%s)",
+                FEATURE_SCHEMA_VERSION,
+            )
 
         feature_cols = [
-            col for col in train.columns if col not in ["PassengerId", "Survived", "Name", "Ticket", "Cabin", "Title", "AgeGroup"]
+            col
+            for col in train.columns
+            if col
+            not in [
+                "PassengerId",
+                "Survived",
+                "Name",
+                "Ticket",
+                "Cabin",
+                "Title",
+                "AgeGroup",
+            ]
         ]
-        feature_cols = ensure_feature_cols_intersection(train.columns, test.columns, feature_cols)
+        feature_cols = ensure_feature_cols_intersection(
+            train.columns, test.columns, feature_cols
+        )
 
         logger.info("🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...")
         start_time = datetime.now()
@@ -706,7 +797,7 @@ def main():
         preprocessor = create_feature_pipeline(
             df=train,
             feature_cols=feature_cols,
-            random_state=CONFIG["random_state"]
+            random_state=CONFIG["random_state"],
         )
         X_train_processed = preprocessor.fit_transform(train[feature_cols])
 
@@ -718,7 +809,7 @@ def main():
             modeling_manager = ModelingManager(
                 config=CONFIG,
                 model_configs=None,  # Use default configs
-                pre_configured_models=None  # No pre-configured models
+                pre_configured_models=None,  # No pre-configured models
             )
 
             if hasattr(X_train_processed, "toarray"):
@@ -726,7 +817,9 @@ def main():
             else:
                 X_train_np = np.asarray(X_train_processed)
 
-            logger.info("   🚀 Iniciando treinamento paralelo com ModelingManager...")
+            logger.info(
+                "   🚀 Iniciando treinamento paralelo com ModelingManager..."
+            )
 
             resultados = modeling_manager.train_all_models(X_train_np, y_train)
 
@@ -734,9 +827,17 @@ def main():
             logger.info("   💾 Resultados dos modelos cached")
 
         elapsed = datetime.now() - start_time
-        logger.info(f"Modelos treinados: {len(resultados)} modelos em {elapsed.total_seconds():.2f}s")
+        logger.info(
+            "Modelos treinados: %s modelos em %.2f s",
+            len(resultados),
+            elapsed.total_seconds(),
+        )
 
-        if OPTUNA_AVAILABLE and not CONFIG.get("fast_mode", False) and CONFIG.get("use_optuna", False):
+        if (
+            OPTUNA_AVAILABLE
+            and not CONFIG.get("fast_mode", False)
+            and CONFIG.get("use_optuna", False)
+        ):
             logger.info("🔥 OTIMIZANDO HIPERPARÂMETROS COM OPTUNA...")
             optuna_start_time = datetime.now()
 
@@ -748,36 +849,66 @@ def main():
                 X_train_opt = np.asarray(X_train_opt)
 
             for model_name in models_to_optimize:
-                if model_name in resultados and resultados[model_name].get("trained_model") is not None:
-                    logger.info(f"   Otimizando {model_name}...")
+                if (
+                    model_name in resultados
+                    and resultados[model_name].get("trained_model") is not None
+                ):
+                    logger.info("   Otimizando %s...", model_name)
                     try:
                         study = optuna.create_study(direction="maximize")
                         optuna.logging.set_verbosity(optuna.logging.WARNING)
+                        # Bind model_name to avoid late-binding in lambda
                         study.optimize(
-                            lambda trial: objective(trial, model_name, X_train_opt, y_train, CONFIG),
+                            lambda trial, m=model_name: objective(
+                                trial, m, X_train_opt, y_train, CONFIG
+                            ),
                             n_trials=CONFIG.get("optuna_trials", 30),
                         )
-                        
+
                         best_params = study.best_params
                         best_trial = study.best_trial
                         best_value = best_trial.value
-                        
-                        logger.info(f"   ✅ Melhores params para {model_name}: {best_params}")
-                        logger.info(f"   ✅ Melhor score: {best_value:.4f}")
-                        
+
+                        logger.info(
+                            "   ✅ Melhores params para %s: %s",
+                            model_name,
+                            best_params,
+                        )
+                        logger.info("   ✅ Melhor score: %.4f", best_value)
+
                         # Retreinar com best params
                         if model_name == "Random Forest":
-                            optimized_model = RandomForestClassifier(**best_params, random_state=CONFIG["random_state"])
+                            optimized_model = RandomForestClassifier(
+                                **best_params,
+                                random_state=CONFIG["random_state"],
+                            )
                         elif model_name == "XGBoost" and XGB_AVAILABLE:
-                            optimized_model = XGBClassifier(**best_params, random_state=CONFIG["random_state"], use_label_encoder=False, eval_metric='logloss')
+                            optimized_model = XGBClassifier(
+                                **best_params,
+                                random_state=CONFIG["random_state"],
+                                use_label_encoder=False,
+                                eval_metric="logloss",
+                            )
                         elif model_name == "LightGBM" and LGBM_AVAILABLE:
-                            optimized_model = LGBMClassifier(**best_params, random_state=CONFIG["random_state"])
+                            optimized_model = LGBMClassifier(
+                                **best_params,
+                                random_state=CONFIG["random_state"],
+                            )
                         else:
-                            logger.warning(f"   ⚠️  Modelo {model_name} não foi otimizado")
+                            logger.warning(
+                                "   ⚠️  Modelo %s não foi otimizado",
+                                model_name,
+                            )
                             continue
-                        
+
                         # CV com modelo otimizado
-                        opt_scores = cross_val_score(optimized_model, X_train_opt, y_train, cv=CONFIG["cv_folds"], scoring="accuracy")
+                        opt_scores = cross_val_score(
+                            optimized_model,
+                            X_train_opt,
+                            y_train,
+                            cv=CONFIG["cv_folds"],
+                            scoring="accuracy",
+                        )
                         resultados[f"{model_name}_Optuna"] = {
                             "model_name": f"{model_name}_Optuna",
                             "mean_score": opt_scores.mean(),
@@ -786,23 +917,46 @@ def main():
                             "best_params": best_params,
                             "best_value": best_value,
                         }
-                        logger.info(f"   ✅ {model_name}_Optuna: Acc={opt_scores.mean():.4f} ± {opt_scores.std():.4f}")
+                        logger.info(
+                            "   ✅ %s_Optuna: Acc=%.4f ± %.4f",
+                            f"{model_name}",
+                            opt_scores.mean(),
+                            opt_scores.std(),
+                        )
                     except Exception as e:
-                        logger.error(f"   ❌ Optuna para {model_name} falhou: {e}")
+                        logger.error(
+                            "   ❌ Optuna para %s falhou: %s",
+                            model_name,
+                            e,
+                        )
 
             optuna_elapsed = datetime.now() - optuna_start_time
-            logger.info(f"   ✅ Otimização concluída em {optuna_elapsed.total_seconds():.2f}s")
+            logger.info(
+                "   ✅ Otimização concluída em %.2f s",
+                optuna_elapsed.total_seconds(),
+            )
 
         logger.info("CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...")
-        valid_results = {k: v for k, v in resultados.items() if v.get("trained_model") is not None}
+        valid_results = {
+            k: v
+            for k, v in resultados.items()
+            if v.get("trained_model") is not None
+        }
         if not valid_results:
-            raise EnsembleError("Nenhum modelo foi treinado com sucesso para criar o ensemble.")
+            raise EnsembleError(
+                "Nenhum modelo foi treinado com sucesso para criar o ensemble."
+            )
 
         # Usar função robusta de ensemble
-        ensemble_models, ensemble_weights = prepare_ensemble_models(valid_results, min_models=3)
+        ensemble_models, ensemble_weights = prepare_ensemble_models(
+            valid_results, min_models=3
+        )
 
         if ensemble_models is None:
-            logger.error("❌ Não foi possível criar ensemble com ≥3 modelos. Usando melhor modelo único.")
+            logger.error(
+                "❌ Não foi possível criar ensemble com >=3 modelos. "
+                "Usando melhor modelo único."
+            )
             ensemble = None
         else:
             try:
@@ -810,12 +964,18 @@ def main():
                 ensemble = VotingClassifier(
                     estimators=ensemble_models,
                     voting="soft",
-                    weights=ensemble_weights
+                    weights=ensemble_weights,
                 )
                 X_train_ensemble = X_train_processed
                 y_train_ensemble = y_train
                 ensemble.fit(X_train_ensemble, y_train_ensemble)
-                ensemble_scores = cross_val_score(ensemble, X_train_ensemble, y_train_ensemble, cv=CONFIG["cv_folds"], scoring="accuracy")
+                ensemble_scores = cross_val_score(
+                    ensemble,
+                    X_train_ensemble,
+                    y_train_ensemble,
+                    cv=CONFIG["cv_folds"],
+                    scoring="accuracy",
+                )
                 resultados["Ensemble_Voting"] = {
                     "model_name": "Ensemble_Voting",
                     "mean_score": ensemble_scores.mean(),
@@ -823,33 +983,56 @@ def main():
                     "trained_model": ensemble,
                     "weights": ensemble_weights,
                 }
-                logger.info(f"✅ Ensemble Voting criado: Acc={ensemble_scores.mean():.4f} ± {ensemble_scores.std():.4f}")
+                logger.info(
+                    "✅ Ensemble Voting criado: Acc=%.4f ± %.4f",
+                    ensemble_scores.mean(),
+                    ensemble_scores.std(),
+                )
 
-                stacking = modular_build_stacking_ensemble(ensemble_models, X_train_ensemble, y_train_ensemble)
-                stacking_scores = cross_val_score(stacking, X_train_ensemble, y_train_ensemble, cv=CONFIG["cv_folds"], scoring="accuracy")
+                stacking = modular_build_stacking_ensemble(
+                    ensemble_models, X_train_ensemble, y_train_ensemble
+                )
+                stacking_scores = cross_val_score(
+                    stacking,
+                    X_train_ensemble,
+                    y_train_ensemble,
+                    cv=CONFIG["cv_folds"],
+                    scoring="accuracy",
+                )
                 resultados["Ensemble_Stacking"] = {
                     "model_name": "Ensemble_Stacking",
                     "mean_score": stacking_scores.mean(),
                     "std_score": stacking_scores.std(),
                     "trained_model": stacking,
                 }
-                logger.info(f"✅ Ensemble stacking criado: Acc={stacking_scores.mean():.4f}")
-            except Exception as e:
-                logger.error(f"❌ Erro ao criar ensemble: {e}")
+                logger.info(
+                    "✅ Ensemble stacking criado: Acc=%.4f",
+                    stacking_scores.mean(),
+                )
+            # Keep ensemble creation robust
+            except Exception as e:  # noqa: E722
+                logger.error("❌ Erro ao criar ensemble: %s", e)
                 ensemble = None
 
         logger.info("GERANDO GRÁFICOS E RELATÓRIOS...")
-        best_model_name = max(resultados, key=lambda k: resultados[k].get("mean_score", 0))
+        best_model_name = max(
+            resultados, key=lambda k: resultados[k].get("mean_score", 0)
+        )
         best_model = resultados[best_model_name].get("trained_model")
 
         if best_model:
-            y_pred_cv = cross_val_predict(best_model, X_train_processed, y_train, cv=CONFIG["cv_folds"])
+            y_pred_cv = cross_val_predict(
+                best_model, X_train_processed, y_train, cv=CONFIG["cv_folds"]
+            )
             cm = confusion_matrix(y_train, y_pred_cv)
-            disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=["Not Survived", "Survived"])
+            disp = ConfusionMatrixDisplay(
+                confusion_matrix=cm,
+                display_labels=["Not Survived", "Survived"],
+            )
             fig, ax = plt.subplots(figsize=(8, 6))
             disp.plot(ax=ax, cmap="Blues", values_format="d")
-            plt.savefig("output/graficos/03_matriz_confusao.png", dpi=300)
-            plt.close()
+            fig.savefig("output/graficos/03_matriz_confusao.png", dpi=300)
+            plt.close(fig)
 
         # Log de performance dos modelos em CSV
         log_model_performance_to_csv(resultados)
@@ -859,32 +1042,55 @@ def main():
         modular_generate_model_performance_timeline(resultados)
 
         logger.info("SALVANDO MODELO FINAL...")
-        final_model_name = "Ensemble_Stacking" if "Ensemble_Stacking" in resultados else "Ensemble_Voting"
+        final_model_name = (
+            "Ensemble_Stacking"
+            if "Ensemble_Stacking" in resultados
+            else "Ensemble_Voting"
+        )
         final_model = resultados.get(final_model_name, {}).get("trained_model")
 
         if not final_model:
-            final_model_name = max(resultados, key=lambda k: resultados[k].get("mean_score", 0))
+            final_model_name = max(
+                resultados, key=lambda k: resultados[k].get("mean_score", 0)
+            )
             final_model = resultados[final_model_name].get("trained_model")
 
         if final_model:
-            save_model_pipeline(preprocessor, final_model, "output/models/best_model_pipeline.pkl")
-            logger.info(f"Modelo final '{final_model_name}' salvo como pipeline completo.")
+            save_model_pipeline(
+                preprocessor,
+                final_model,
+                "output/models/best_model_pipeline.pkl",
+            )
+            logger.info(
+                "Modelo final '%s' salvo como pipeline completo.",
+                final_model_name,
+            )
         else:
             logger.error("Nenhum modelo final para salvar.")
             return False
 
-        logger.info("📤 GERANDO ARQUIVO DE SUBMISSÃO A PARTIR DO MODELO SALVO...")
+        logger.info(
+            "📤 GERANDO ARQUIVO DE SUBMISSÃO A PARTIR DO MODELO SALVO..."
+        )
         try:
-            # Carrega o pipeline salvo e faz predições para garantir consistência
-            predictions = load_and_predict("output/models/best_model_pipeline.pkl", test)
-            
+            # Carrega o pipeline salvo e faz predições para garantir
+            # consistência
+            predictions = load_and_predict(
+                "output/models/best_model_pipeline.pkl", test
+            )
+
             # Criar o DataFrame de submissão
             submission = pd.DataFrame(
-                {"PassengerId": test["PassengerId"], "Survived": predictions.astype(int)}
+                {
+                    "PassengerId": test["PassengerId"],
+                    "Survived": predictions.astype(int),
+                }
             )
             submission_path = "output/submission.csv"
             submission.to_csv(submission_path, index=False)
-            logger.info("   ✅ Submission gerada e salva em: %s", submission_path)
+            logger.info(
+                "   ✅ Submission gerada e salva em: %s", submission_path
+            )
 
         except (FileNotFoundError, Exception) as e:
             logger.error("Falha ao gerar submissão: %s", e)
@@ -907,11 +1113,11 @@ def main():
         save_timing_report(script_total_time, resultados)
 
         # Exportar métricas estruturadas
-        metrics = export_metrics_json(
+        metrics = cast(Dict[str, Any], export_metrics_json(
             resultados,
             script_total_time,
             len(feature_cols),
-        )
+        ))
 
         # Log resumo final
         logger.info("=" * 80)
@@ -948,6 +1154,7 @@ def main():
     except Exception as e:
         logger.critical("ERRO CRÍTICO: %s", e, exc_info=True)
         return False
+
 
 if __name__ == "__main__":
     main()

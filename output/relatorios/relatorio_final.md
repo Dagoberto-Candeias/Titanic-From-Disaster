@@ -4,32 +4,32 @@
 
 - **Total de Modelos Treinados:** 20
 - **Total de Features:** 7
-- **Melhor Acurácia:** 0.8418
+- **Melhor Acurácia:** 0.8328
 
 ## Resultados dos Modelos
 
 | Modelo | Acurácia Média | Desvio Padrão | Melhor Score |
 |--------|---------------|---------------|--------------|
-| Ensemble_Voting | 0.8418 | 0.0447 | 0.0000 |
-| Ensemble_Stacking | 0.8329 | 0.0372 | 0.0000 |
-| Gradient Boosting | 0.8239 | 0.0379 | 0.8983 |
-| LightGBM | 0.8229 | 0.0534 | 0.8814 |
-| Bagging | 0.8206 | 0.0487 | 0.8983 |
-| SVC | 0.8205 | 0.0404 | 0.8833 |
-| XGBoost | 0.8127 | 0.0453 | 0.8814 |
-| Random Forest | 0.8105 | 0.0479 | 0.9153 |
-| KNN | 0.8093 | 0.0355 | 0.8644 |
-| AdaBoost | 0.8047 | 0.0245 | 0.8667 |
-| Logistic Regression | 0.7980 | 0.0306 | 0.8644 |
-| Extra Trees | 0.7959 | 0.0555 | 0.9153 |
-| Ridge Classifier | 0.7923 | 0.0334 | 0.8667 |
-| LDA | 0.7923 | 0.0334 | 0.8667 |
-| Linear SVC | 0.7912 | 0.0315 | 0.8667 |
-| Decision Tree | 0.7881 | 0.0537 | 0.8983 |
-| Bernoulli NB | 0.7799 | 0.0353 | 0.8833 |
-| SGD Classifier | 0.7332 | 0.0638 | 0.8136 |
-| Gaussian NB | 0.6711 | 0.0376 | 0.7500 |
-| QDA | 0.6162 | 0.0062 | 0.6271 |
+| SVC | 0.8328 | 0.0425 | 0.9167 |
+| Gradient Boosting | 0.8295 | 0.0424 | 0.9000 |
+| Ensemble_Voting | 0.8283 | 0.0412 | 0.0000 |
+| Ridge Classifier | 0.8271 | 0.0371 | 0.9000 |
+| Linear SVC | 0.8238 | 0.0396 | 0.9000 |
+| Logistic Regression | 0.8238 | 0.0388 | 0.9153 |
+| LDA | 0.8227 | 0.0389 | 0.8833 |
+| Ensemble_Stacking | 0.8227 | 0.0286 | 0.0000 |
+| AdaBoost | 0.8215 | 0.0335 | 0.9000 |
+| Random Forest | 0.8205 | 0.0493 | 0.9153 |
+| KNN | 0.8162 | 0.0561 | 0.8983 |
+| LightGBM | 0.8104 | 0.0511 | 0.8833 |
+| Bagging | 0.8094 | 0.0480 | 0.8983 |
+| XGBoost | 0.8060 | 0.0459 | 0.8814 |
+| Extra Trees | 0.8026 | 0.0536 | 0.9153 |
+| SGD Classifier | 0.7758 | 0.0445 | 0.8475 |
+| Decision Tree | 0.7656 | 0.0668 | 0.8814 |
+| Bernoulli NB | 0.7533 | 0.0518 | 0.8136 |
+| Gaussian NB | 0.4512 | 0.0193 | 0.5000 |
+| QDA | 0.4097 | 0.0154 | 0.4333 |
 
 ## Features Utilizadas
 

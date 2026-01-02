@@ -894,3 +894,1149 @@ ValueError: numerical_imputer deve ser 'simple', 'knn' ou 'iterative'. Recebido:
 2025-12-07 11:54:13,193 - __main__ - INFO - 📁 Saídas: submission.csv, métricas.json, gráficos, relatórios
 2025-12-07 11:54:13,193 - __main__ - INFO - ================================================================================
 2025-12-07 11:54:13,193 - __main__ - INFO - ✅ SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!
+2025-12-31 19:16:22,558 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-31\test_load_and_predict_success0\test_model.pkl
+2025-12-31 19:16:22,562 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2025-12-31 19:16:22,570 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2025-12-31 19:16:22,575 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2025-12-31 19:16:22,578 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2025-12-31 19:16:22,578 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2025-12-31 19:16:22,585 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2025-12-31 19:16:22,585 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2025-12-31 19:16:22,665 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2025-12-31 19:16:22,693 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2025-12-31 19:16:22,722 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2025-12-31 19:16:22,731 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2025-12-31 19:16:22,762 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2025-12-31 19:16:22,767 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2025-12-31 19:16:22,807 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2025-12-31 19:16:22,822 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2025-12-31 19:16:22,832 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-31\test_log_model_performance_to_0\model_performance_log.csv
+2025-12-31 19:16:24,258 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.5% reduction)
+2025-12-31 19:16:24,279 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 02:22:02,826 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-32\test_load_and_predict_success0\test_model.pkl
+2026-01-01 02:22:02,830 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 02:22:02,834 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 02:22:02,844 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 02:22:02,850 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 02:22:02,858 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 02:22:02,863 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 02:22:02,869 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 02:22:02,871 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 02:22:02,873 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 02:22:02,873 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 02:22:02,877 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 02:22:02,877 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 02:22:02,926 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 02:22:02,930 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 02:22:02,936 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 02:22:02,942 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 02:22:02,947 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 02:22:02,950 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 02:22:02,967 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 02:22:02,973 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 02:22:02,979 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-32\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 02:22:03,011 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (28.8% reduction)
+2026-01-01 02:22:04,231 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 02:22:04,238 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 11:55:24,834 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-33\test_load_and_predict_success0\test_model.pkl
+2026-01-01 11:55:24,838 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 11:55:24,843 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 11:55:24,853 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 11:55:24,860 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 11:55:24,866 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 11:55:24,870 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 11:55:24,877 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 11:55:24,881 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 11:55:24,883 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 11:55:24,883 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 11:55:24,886 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 11:55:24,886 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 11:55:24,937 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 11:55:24,943 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 11:55:24,948 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 11:55:24,952 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 11:55:24,958 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 11:55:24,962 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 11:55:24,978 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 11:55:24,988 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 11:55:25,017 - titanic_pipeline.core.reporting - ERROR -    ❌ ROC curve generation failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Parch
+- SibSp
+
+2026-01-01 11:55:25,309 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 11:55:27,115 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 11:55:27,123 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-33\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 11:55:27,167 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 11:55:27,178 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 11:55:27,185 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 13:13:55,744 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-34\test_load_and_predict_success0\test_model.pkl
+2026-01-01 13:13:55,746 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 13:13:55,750 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 13:13:55,762 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 13:13:55,770 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 13:13:55,776 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 13:13:55,781 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 13:13:55,790 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 13:13:55,793 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 13:13:55,796 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 13:13:55,796 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 13:13:55,799 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 13:13:55,799 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 13:13:55,856 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 13:13:55,859 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 13:13:55,864 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 13:13:55,868 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 13:13:55,873 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 13:13:55,876 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 13:13:55,891 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 13:13:55,899 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 13:13:55,931 - titanic_pipeline.core.reporting - ERROR -    ❌ ROC curve generation failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Parch
+- SibSp
+
+2026-01-01 13:13:57,264 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 13:13:57,872 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 13:13:57,877 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-34\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 13:13:57,900 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 13:13:57,910 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 13:13:57,919 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 13:37:25,451 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-35\test_load_and_predict_success0\test_model.pkl
+2026-01-01 13:37:25,454 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 13:37:25,459 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 13:37:25,470 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 13:37:25,478 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 13:37:25,487 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 13:37:25,492 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 13:37:25,495 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 13:37:25,498 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 13:37:25,501 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 13:37:25,502 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 13:37:25,505 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 13:37:25,505 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 13:37:25,552 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 13:37:25,556 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 13:37:25,561 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 13:37:25,567 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 13:37:25,573 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 13:37:25,575 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 13:37:25,587 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 13:37:25,594 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 13:37:25,624 - titanic_pipeline.core.reporting - ERROR -    ❌ ROC curve generation failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Parch
+- SibSp
+
+2026-01-01 13:37:27,033 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 13:37:27,606 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 13:37:27,615 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-35\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 13:37:27,636 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 13:37:27,647 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 13:37:27,657 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 13:56:57,166 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-36\test_load_and_predict_success0\test_model.pkl
+2026-01-01 13:56:57,170 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 13:56:57,175 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 13:56:57,186 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 13:56:57,192 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 13:56:57,199 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 13:56:57,205 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 13:56:57,209 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 13:56:57,212 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 13:56:57,215 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 13:56:57,215 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 13:56:57,222 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 13:56:57,222 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 13:56:57,274 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 13:56:57,280 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 13:56:57,286 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 13:56:57,290 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 13:56:57,294 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 13:56:57,299 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 13:56:57,315 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 13:56:57,322 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 13:56:57,356 - titanic_pipeline.core.reporting - ERROR -    ❌ ROC curve generation failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Parch
+- SibSp
+
+2026-01-01 13:56:58,850 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 13:56:59,433 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 13:56:59,442 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-36\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 13:56:59,462 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 13:56:59,470 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 13:56:59,478 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 14:02:53,478 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-37\test_load_and_predict_success0\test_model.pkl
+2026-01-01 14:02:53,483 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 14:02:53,488 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 14:02:53,499 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 14:02:53,509 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 14:02:53,515 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 14:02:53,519 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 14:02:53,524 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 14:02:53,528 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 14:02:53,531 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 14:02:53,532 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 14:02:53,537 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 14:02:53,538 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 14:02:53,588 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 14:02:53,593 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 14:02:53,599 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 14:02:53,602 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 14:02:53,608 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 14:02:53,610 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 14:02:53,624 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 14:02:53,633 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 14:02:53,664 - titanic_pipeline.core.reporting - ERROR -    ❌ ROC curve generation failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Parch
+- SibSp
+
+2026-01-01 14:02:55,230 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 14:02:55,820 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 14:02:55,825 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-37\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 14:02:55,846 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 14:02:55,856 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 14:02:55,867 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 16:00:25,629 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-38\test_load_and_predict_success0\test_model.pkl
+2026-01-01 16:00:25,633 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 16:00:25,638 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 16:00:25,649 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 16:00:25,656 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 16:00:25,665 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 16:00:25,671 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 16:00:25,676 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 16:00:25,678 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 16:00:25,680 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 16:00:25,680 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 16:00:25,685 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 16:00:25,686 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 16:00:25,732 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 16:00:25,738 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 16:00:25,742 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 16:00:25,746 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 16:00:25,751 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 16:00:25,759 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 16:00:25,771 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 16:00:25,777 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 16:00:25,807 - titanic_pipeline.core.reporting - ERROR -    ❌ ROC curve generation failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Parch
+- SibSp
+
+2026-01-01 16:00:27,324 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 16:00:27,328 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 16:00:27,926 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 16:00:27,933 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-38\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 16:00:27,969 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 16:00:27,978 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 16:00:27,989 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 20:04:34,633 - __main__ - INFO - ================================================================================
+2026-01-01 20:04:34,633 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-01 20:04:34,634 - __main__ - INFO - ================================================================================
+2026-01-01 20:04:34,634 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-01 20:04:34,634 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-01 20:04:34,635 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-01 20:04:34,686 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-01 20:04:34,687 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-01 20:04:34,692 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-01 20:04:34,693 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-01 20:04:34,693 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-01 20:04:34,698 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-01 20:04:34,699 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-01 20:04:34,699 - __main__ - INFO -    ✅ Schema válido
+2026-01-01 20:04:34,699 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:34,700 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-01 20:04:34,700 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-01 20:04:42,866 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 20:04:42,870 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 20:04:42,875 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 20:04:42,880 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 20:04:42,888 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 20:04:42,897 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 20:04:42,907 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 20:04:42,913 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 20:04:42,917 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 20:04:42,923 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 20:04:42,927 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 20:04:42,933 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 20:04:42,943 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 20:04:42,949 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 20:04:43,666 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-01 20:04:43,669 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:43,669 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-01 20:04:43,689 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-01 20:04:43,714 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:43,715 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-01 20:04:43,737 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-01 20:04:43,759 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:43,760 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-01 20:04:43,784 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-01 20:04:43,800 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:43,801 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-01 20:04:43,820 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-01 20:04:43,836 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:43,836 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-01 20:04:43,856 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-01 20:04:43,873 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:43,873 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-01 20:04:43,894 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-01 20:04:43,911 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-01 20:04:43,911 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-01 20:04:43,912 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-01 20:04:43,912 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-01 20:04:43,913 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:43,914 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-01 20:04:43,915 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-01 20:04:43,915 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-01 20:04:43,982 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-01 20:04:44,010 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-01 20:04:44,028 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-01 20:04:44,029 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-01 20:04:44,029 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-01 20:04:44,031 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-01 20:04:44,041 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-01 20:04:44,061 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-01 20:04:44,074 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-01 20:04:44,082 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-01 20:04:44,085 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-01 20:04:44,085 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-01 20:04:44,086 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-01 20:04:44,088 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-01 20:04:44,088 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-01 20:04:44,089 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-01 20:04:44,089 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:44,089 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-01 20:04:44,090 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-01 20:04:52,066 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 20:04:52,076 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 20:04:52,130 - titanic_pipeline.preprocessing - WARNING - Parallel failed for _extract_deck on train: Cannot setitem on a Categorical with a new category (U), set the categories first. Fallback to sequential.
+2026-01-01 20:04:52,910 - titanic_pipeline.preprocessing - WARNING - Parallel processing failed: Cannot setitem on a Categorical with a new category (U), set the categories first. Using sequential.
+2026-01-01 20:04:52,912 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 20:04:52,921 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 20:04:52,921 - titanic_pipeline.preprocessing - INFO - Applied _create_family_features sequentially.
+2026-01-01 20:04:52,926 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 20:04:52,930 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 20:04:52,930 - titanic_pipeline.preprocessing - INFO - Applied _extract_title sequentially.
+2026-01-01 20:04:52,931 - titanic_pipeline.preprocessing - WARNING - Failed to apply _extract_deck: Cannot setitem on a Categorical with a new category (U), set the categories first. Skipping.
+2026-01-01 20:04:52,934 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 20:04:52,937 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 20:04:52,937 - titanic_pipeline.preprocessing - INFO - Applied _extract_ticket_prefix sequentially.
+2026-01-01 20:04:52,941 - titanic_pipeline.preprocessing - WARNING - Failed to apply _create_interactions: Object with dtype category cannot perform the numpy op add. Skipping.
+2026-01-01 20:04:52,953 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 20:04:52,963 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 20:04:52,963 - titanic_pipeline.preprocessing - INFO - Applied _create_bins sequentially.
+2026-01-01 20:04:52,968 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 20:04:52,972 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 20:04:52,972 - titanic_pipeline.preprocessing - INFO - Applied _create_missing_indicators sequentially.
+2026-01-01 20:04:52,974 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:52,975 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-01 20:04:53,007 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-01 20:04:53,123 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:04:53,164 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-01 20:04:53,195 - __main__ - CRITICAL - ❌ ERRO CRÍTICO NO PIPELINE DE TREINAMENTO: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\train.py", line 690, in main
+    train, test = feature_engineer.fit_transform(train, test)
+                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\titanic_pipeline\preprocessing.py", line 1015, in fit_transform
+    train_processed, test_processed = self._apply_target_encoding(
+                                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        train_processed, test_processed
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\titanic_pipeline\preprocessing.py", line 1061, in _apply_target_encoding
+    return apply_target_encoding(train, test, self.target_col)
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\titanic_pipeline\preprocessing.py", line 431, in apply_target_encoding
+    encoded_train = kfold_target_encode(train, col, target)
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\titanic_pipeline\preprocessing.py", line 741, in kfold_target_encode
+    encoded[val_idx] = val_fold[col_name].map(smoothed_means).fillna(global_mean)
+                       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\dcm\anaconda3\Lib\site-packages\pandas\core\generic.py", line 7349, in fillna
+    new_data = self._mgr.fillna(
+        value=value, limit=limit, inplace=inplace, downcast=downcast
+    )
+  File "C:\Users\dcm\anaconda3\Lib\site-packages\pandas\core\internals\base.py", line 186, in fillna
+    return self.apply_with_block(
+           ~~~~~~~~~~~~~~~~~~~~~^
+        "fillna",
+        ^^^^^^^^^
+    ...<5 lines>...
+        already_warned=_AlreadyWarned(),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\dcm\anaconda3\Lib\site-packages\pandas\core\internals\managers.py", line 363, in apply
+    applied = getattr(b, f)(**kwargs)
+  File "C:\Users\dcm\anaconda3\Lib\site-packages\pandas\core\internals\blocks.py", line 2334, in fillna
+    new_values = self.values.fillna(value=value, method=None, limit=limit)
+  File "C:\Users\dcm\anaconda3\Lib\site-packages\pandas\core\arrays\_mixins.py", line 376, in fillna
+    self._validate_setitem_value(value)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\dcm\anaconda3\Lib\site-packages\pandas\core\arrays\categorical.py", line 1589, in _validate_setitem_value
+    return self._validate_scalar(value)
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "C:\Users\dcm\anaconda3\Lib\site-packages\pandas\core\arrays\categorical.py", line 1614, in _validate_scalar
+    raise TypeError(
+    ...<2 lines>...
+    ) from None
+TypeError: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first
+2026-01-01 20:49:34,427 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-39\test_load_and_predict_success0\test_model.pkl
+2026-01-01 20:49:34,431 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 20:49:34,435 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 20:49:34,443 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 20:49:34,450 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 20:49:34,456 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 20:49:34,460 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 20:49:34,465 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 20:49:34,468 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 20:49:34,470 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 20:49:34,470 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 20:49:34,475 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 20:49:34,475 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 20:49:34,527 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 20:49:34,534 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 20:49:34,540 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 20:49:34,544 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 20:49:34,548 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 20:49:34,551 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 20:49:34,563 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 20:49:34,574 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 20:49:34,578 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 20:49:34,578 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-01 20:49:34,590 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-01 20:49:34,621 - titanic_pipeline.core.reporting - ERROR -    ❌ ROC curve generation failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Parch
+- SibSp
+
+2026-01-01 20:49:36,199 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 20:49:36,203 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 20:49:36,798 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 20:49:36,810 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-39\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 20:49:36,845 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 20:49:36,852 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 20:49:36,860 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 21:55:16,671 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-40\test_load_and_predict_success0\test_model.pkl
+2026-01-01 21:55:16,674 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 21:55:16,677 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 21:55:16,689 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 21:55:16,697 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 21:55:16,704 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 21:55:16,709 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 21:55:16,714 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 21:55:16,717 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 21:55:16,719 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 21:55:16,719 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 21:55:16,722 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 21:55:16,722 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 21:55:16,769 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 21:55:16,773 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 21:55:16,780 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 21:55:16,785 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 21:55:16,788 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 21:55:16,791 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 21:55:16,804 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 21:55:16,812 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 21:55:16,818 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 21:55:16,818 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-01 21:55:16,830 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-01 21:55:16,862 - titanic_pipeline.core.reporting - ERROR -    ❌ ROC curve generation failed: The feature names should match those that were passed during fit.
+Feature names seen at fit time, yet now missing:
+- Parch
+- SibSp
+
+2026-01-01 21:55:18,210 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 21:55:18,216 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 21:55:18,828 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 21:55:18,837 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-40\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 21:55:18,862 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 21:55:18,872 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 21:55:18,880 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 21:57:12,516 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-42\test_load_and_predict_success0\test_model.pkl
+2026-01-01 21:57:12,518 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 21:57:12,522 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 21:57:12,532 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 21:57:12,539 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 21:57:12,545 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 21:57:12,549 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 21:57:12,555 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 21:57:12,557 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 21:57:12,559 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 21:57:12,559 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 21:57:12,562 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 21:57:12,562 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 21:57:12,607 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 21:57:12,611 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 21:57:12,617 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 21:57:12,622 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 21:57:12,626 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 21:57:12,629 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 21:57:12,641 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 21:57:12,647 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 21:57:12,652 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 21:57:12,652 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-01 21:57:12,661 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-01 21:57:13,319 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-01 21:57:13,586 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 21:57:13,590 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns found for correlation heatmap
+2026-01-01 21:57:14,119 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 21:57:14,128 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-42\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 21:57:14,149 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 21:57:14,158 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 21:57:14,167 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 22:46:30,515 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-43\test_load_and_predict_success0\test_model.pkl
+2026-01-01 22:46:30,518 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 22:46:30,522 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 22:46:30,536 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 22:46:30,543 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 22:46:30,551 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 22:46:30,558 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 22:46:30,564 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 22:46:30,568 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 22:46:30,570 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 22:46:30,571 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 22:46:30,575 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 22:46:30,575 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 22:46:30,636 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 22:46:30,643 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:46:30,649 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 22:46:30,653 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 22:46:30,662 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:46:30,667 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 22:46:30,681 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 22:46:30,689 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 22:46:30,696 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:46:30,697 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-01 22:46:30,709 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-01 22:46:31,520 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-01 22:46:31,914 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 22:46:31,921 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 22:46:32,573 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 22:46:32,585 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-43\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 22:46:32,611 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 22:46:32,621 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 22:46:32,634 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 22:46:55,546 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-44\test_load_and_predict_success0\test_model.pkl
+2026-01-01 22:46:55,550 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 22:46:55,561 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 22:46:55,582 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 22:46:55,596 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 22:46:55,613 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 22:46:55,623 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 22:46:55,630 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 22:46:55,639 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 22:46:55,643 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 22:46:55,644 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 22:46:55,657 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 22:46:55,657 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 22:46:55,728 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 22:46:55,736 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:46:55,744 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 22:46:55,751 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 22:46:55,761 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:46:55,764 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 22:46:55,792 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 22:46:55,808 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 22:46:55,823 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:46:55,824 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-01 22:46:55,844 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-01 22:46:56,795 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-01 22:46:57,575 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 22:46:57,621 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 22:46:58,417 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 22:46:58,427 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-44\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 22:46:58,455 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 22:46:58,472 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 22:46:58,486 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 22:50:54,268 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-46\test_load_and_predict_success0\test_model.pkl
+2026-01-01 22:50:54,271 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 22:50:54,276 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 22:50:54,290 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 22:50:54,297 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 22:50:54,306 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 22:50:54,311 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 22:50:54,317 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 22:50:54,320 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 22:50:54,323 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 22:50:54,324 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 22:50:54,327 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 22:50:54,328 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 22:50:54,374 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 22:50:54,379 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:50:54,389 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 22:50:54,395 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 22:50:54,402 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:50:54,406 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 22:50:54,417 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 22:50:54,426 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 22:50:54,429 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:50:54,430 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-01 22:50:54,443 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-01 22:50:55,159 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-01 22:50:55,473 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 22:50:55,479 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 22:50:56,068 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 22:50:56,078 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-46\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 22:50:56,104 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 22:50:56,115 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 22:50:56,122 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 22:52:38,291 - __main__ - INFO - ================================================================================
+2026-01-01 22:52:38,291 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-01 22:52:38,291 - __main__ - INFO - ================================================================================
+2026-01-01 22:52:38,291 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-01 22:52:38,291 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-01 22:52:38,292 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-01 22:52:38,304 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-01 22:52:38,304 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-01 22:52:38,306 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-01 22:52:38,306 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-01 22:52:38,307 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-01 22:52:38,310 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-01 22:52:38,312 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-01 22:52:38,313 - __main__ - INFO -    ✅ Schema válido
+2026-01-01 22:52:38,313 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:52:38,313 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-01 22:52:38,314 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-01 22:52:49,138 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 22:52:49,143 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:52:49,148 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 22:52:49,154 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 22:52:49,161 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 22:52:49,176 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 22:52:49,182 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 22:52:49,190 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 22:52:49,194 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:52:49,200 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 22:52:49,206 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 22:52:49,211 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 22:52:49,227 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 22:52:49,233 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 22:52:50,083 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-01 22:52:50,086 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:52:50,086 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-01 22:52:50,113 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-01 22:52:50,119 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:52:50,119 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-01 22:52:50,155 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-01 22:52:50,160 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:52:50,160 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-01 22:52:50,195 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-01 22:52:50,202 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:52:50,202 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-01 22:52:50,227 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-01 22:52:50,236 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:52:50,236 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-01 22:52:50,259 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-01 22:52:50,266 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:52:50,267 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-01 22:52:50,294 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-01 22:52:50,301 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-01 22:52:50,302 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-01 22:52:50,302 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-01 22:52:50,303 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-01 22:52:50,303 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:52:50,305 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-01 22:52:50,305 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-01 22:52:50,306 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-01 22:52:50,382 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-01 22:52:50,425 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-01 22:52:50,450 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-01 22:52:50,450 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-01 22:52:50,451 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-01 22:52:50,453 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-01 22:52:50,460 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-01 22:52:50,482 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-01 22:52:50,494 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-01 22:52:50,500 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-01 22:52:50,502 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-01 22:52:50,503 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-01 22:52:50,503 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-01 22:52:50,507 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-01 22:52:50,507 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-01 22:52:50,508 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-01 22:52:50,508 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:52:50,508 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-01 22:52:50,508 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-01 22:53:00,918 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 22:53:00,927 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:53:00,954 - titanic_pipeline.preprocessing - WARNING - Parallel failed for _extract_deck on train: Cannot setitem on a Categorical with a new category (U), set the categories first. Fallback to sequential.
+2026-01-01 22:53:01,781 - titanic_pipeline.preprocessing - WARNING - Parallel processing failed: Cannot setitem on a Categorical with a new category (U), set the categories first. Using sequential.
+2026-01-01 22:53:01,785 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 22:53:01,794 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 22:53:01,795 - titanic_pipeline.preprocessing - INFO - Applied _create_family_features sequentially.
+2026-01-01 22:53:01,800 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:53:01,806 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 22:53:01,806 - titanic_pipeline.preprocessing - INFO - Applied _extract_title sequentially.
+2026-01-01 22:53:01,807 - titanic_pipeline.preprocessing - WARNING - Failed to apply _extract_deck: Cannot setitem on a Categorical with a new category (U), set the categories first. Skipping.
+2026-01-01 22:53:01,809 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 22:53:01,812 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 22:53:01,812 - titanic_pipeline.preprocessing - INFO - Applied _extract_ticket_prefix sequentially.
+2026-01-01 22:53:01,817 - titanic_pipeline.preprocessing - WARNING - Failed to apply _create_interactions: Object with dtype category cannot perform the numpy op add. Skipping.
+2026-01-01 22:53:01,827 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 22:53:01,836 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 22:53:01,836 - titanic_pipeline.preprocessing - INFO - Applied _create_bins sequentially.
+2026-01-01 22:53:01,840 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 22:53:01,844 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 22:53:01,844 - titanic_pipeline.preprocessing - INFO - Applied _create_missing_indicators sequentially.
+2026-01-01 22:53:01,846 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:53:01,849 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-01 22:53:01,877 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-01 22:53:01,882 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:53:01,882 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-01 22:53:01,918 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-01 22:53:01,941 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Sex: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-01 22:53:01,942 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:53:01,943 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-01 22:53:01,979 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-01 22:53:01,999 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Embarked: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-01 22:53:02,000 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:53:02,001 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-01 22:53:02,027 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-01 22:53:02,045 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:53:02,045 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-01 22:53:02,077 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-01 22:53:02,097 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-01 22:53:02,098 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-01 22:53:02,098 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-01 22:53:02,103 - __main__ - INFO -    💾 Features de treino processadas e cached (v1.0.0)
+2026-01-01 22:53:02,103 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-01 22:53:02,104 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 22:53:02,109 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_TicketPrefix_te']
+2026-01-01 22:53:02,109 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'TicketPrefix', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-01 22:53:02,110 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-01 22:53:02,151 - __main__ - INFO -    🚀 Iniciando treinamento paralelo com 1 jobs...
+2026-01-01 22:53:17,281 - __main__ - INFO -    ✅ Random Forest concluído
+2026-01-01 22:53:23,527 - __main__ - INFO -    ✅ Gradient Boosting concluído
+2026-01-01 22:53:27,763 - __main__ - INFO -    ✅ Extra Trees concluído
+2026-01-01 22:53:33,628 - __main__ - INFO -    ✅ AdaBoost concluído
+2026-01-01 22:53:45,519 - __main__ - INFO -    ✅ Bagging concluído
+2026-01-01 22:53:45,806 - __main__ - INFO -    ✅ Logistic Regression concluído
+2026-01-01 22:53:46,022 - __main__ - INFO -    ✅ SGD Classifier concluído
+2026-01-01 22:53:46,160 - __main__ - INFO -    ✅ Ridge Classifier concluído
+2026-01-01 22:53:49,099 - __main__ - INFO -    ✅ SVC concluído
+2026-01-01 22:53:49,304 - __main__ - INFO -    ✅ Linear SVC concluído
+2026-01-01 22:53:49,711 - __main__ - INFO -    ✅ KNN concluído
+2026-01-01 22:53:49,905 - __main__ - INFO -    ✅ Decision Tree concluído
+2026-01-01 22:53:49,979 - __main__ - INFO -    ✅ Gaussian NB concluído
+2026-01-01 22:53:50,078 - __main__ - INFO -    ✅ Bernoulli NB concluído
+2026-01-01 22:53:50,340 - __main__ - INFO -    ✅ LDA concluído
+2026-01-01 22:53:50,521 - __main__ - INFO -    ✅ QDA concluído
+2026-01-01 22:53:51,788 - __main__ - INFO -    ✅ XGBoost concluído
+2026-01-01 22:53:52,935 - __main__ - INFO -    ✅ LightGBM concluído
+2026-01-01 22:53:53,733 - __main__ - INFO -    💾 Resultados dos modelos cached
+2026-01-01 22:53:53,733 - __main__ - INFO - Modelos treinados: 18 modelos em 51.63s
+2026-01-01 22:53:53,734 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-01 22:53:53,734 - __main__ - INFO - 📊 Pesos do Ensemble (normalizados):
+2026-01-01 22:53:53,734 - __main__ - INFO -    SVC: 1.000
+2026-01-01 22:53:53,734 - __main__ - INFO -    Gradient Boosting: 0.672
+2026-01-01 22:53:53,735 - __main__ - INFO -    Logistic Regression: 0.100
+2026-01-01 22:54:03,484 - __main__ - INFO - ✅ Ensemble Voting criado: Acc=0.8327 ± 0.0450
+2026-01-01 22:54:50,349 - __main__ - INFO - ✅ Ensemble stacking criado: Acc=0.8249
+2026-01-01 22:54:50,350 - __main__ - INFO - GERANDO GRÁFICOS E RELATÓRIOS...
+2026-01-01 22:54:53,699 - titanic_pipeline.core.reporting - INFO - Model performance logged to output/reports/model_performance.csv
+2026-01-01 22:54:54,279 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-01 22:54:54,502 - titanic_pipeline.core.reporting - INFO -    📊 Using 16 numeric features for correlation heatmap
+2026-01-01 22:54:55,825 - titanic_pipeline.core.reporting - INFO -    📊 Feature correlation heatmap generated
+2026-01-01 22:54:56,853 - titanic_pipeline.core.reporting - INFO -    📊 Model performance timeline generated
+2026-01-01 22:54:56,854 - __main__ - INFO - SALVANDO MODELO FINAL...
+2026-01-01 22:54:56,874 - titanic_pipeline.core.modeling - INFO - Pipeline saved to output/models/best_model_pipeline.pkl
+2026-01-01 22:54:56,874 - __main__ - INFO - Modelo final 'Ensemble_Stacking' salvo como pipeline completo.
+2026-01-01 22:54:56,875 - __main__ - INFO - 📤 GERANDO ARQUIVO DE SUBMISSÃO A PARTIR DO MODELO SALVO...
+2026-01-01 22:54:56,908 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from output/models/best_model_pipeline.pkl
+2026-01-01 22:54:57,018 - titanic_pipeline.core.modeling - INFO - Predictions generated for 418 samples
+2026-01-01 22:54:57,070 - __main__ - INFO -    ✅ Submission gerada e salva em: output/submission.csv
+2026-01-01 22:54:57,084 - titanic_pipeline.core.reporting - INFO -    📝 Markdown report saved: output\relatorios\relatorio_final.md
+2026-01-01 22:54:57,085 - titanic_pipeline.core.reporting - ERROR -    ❌ Report generation failed: ReportingManager._generate_docx_report() takes 3 positional arguments but 5 were given
+2026-01-01 22:54:57,089 - titanic_pipeline.core.reporting - INFO -    📝 Changelog and manifest generated
+2026-01-01 22:54:57,091 - titanic_pipeline.core.reporting - INFO -    ⏱️  Timing report saved
+2026-01-01 22:54:57,094 - __main__ - INFO - ✅ Métricas exportadas: output/relatorios/metrics.json
+2026-01-01 22:54:57,095 - __main__ - INFO - ================================================================================
+2026-01-01 22:54:57,096 - __main__ - INFO - 📊 RESUMO FINAL DO PIPELINE TITANIC ML
+2026-01-01 22:54:57,096 - __main__ - INFO - ================================================================================
+2026-01-01 22:54:57,096 - __main__ - INFO - ⏱️  Tempo total: 138.79s
+2026-01-01 22:54:57,097 - __main__ - INFO - 🤖 Modelos treinados: 20/20
+2026-01-01 22:54:57,097 - __main__ - INFO - 🏆 Melhor modelo: SVC (Acc: 0.8328)
+2026-01-01 22:54:57,097 - __main__ - INFO - 🎯 Ensemble: Ensemble_Voting (Acc: 0.8327)
+2026-01-01 22:54:57,098 - __main__ - INFO - ✨ Features: 23
+2026-01-01 22:54:57,098 - __main__ - INFO - 📁 Saídas: submission.csv, métricas.json, gráficos, relatórios
+2026-01-01 22:54:57,098 - __main__ - INFO - ================================================================================
+2026-01-01 22:54:57,099 - __main__ - INFO - ✅ SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!
+2026-01-01 23:38:44,340 - __main__ - INFO - ================================================================================
+2026-01-01 23:38:44,341 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-01 23:38:44,341 - __main__ - INFO - ================================================================================
+2026-01-01 23:38:44,341 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-01 23:38:44,342 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-01 23:38:44,342 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-01 23:38:44,354 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-01 23:38:44,354 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-01 23:38:44,356 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-01 23:38:44,356 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-01 23:38:44,357 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-01 23:38:44,359 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-01 23:38:44,360 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-01 23:38:44,360 - __main__ - INFO -    ✅ Schema válido
+2026-01-01 23:38:44,363 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:38:44,365 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-01 23:38:44,365 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-01 23:38:52,981 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 23:38:52,985 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 23:38:52,990 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 23:38:52,995 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 23:38:53,003 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 23:38:53,015 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 23:38:53,024 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 23:38:53,030 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 23:38:53,035 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 23:38:53,040 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 23:38:53,044 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 23:38:53,051 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 23:38:53,065 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 23:38:53,075 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 23:38:53,818 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-01 23:38:53,820 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:38:53,820 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-01 23:38:53,848 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-01 23:38:53,856 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:38:53,857 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-01 23:38:53,879 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-01 23:38:53,885 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:38:53,886 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-01 23:38:53,915 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-01 23:38:53,921 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:38:53,921 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-01 23:38:53,948 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-01 23:38:53,955 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:38:53,955 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-01 23:38:53,981 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-01 23:38:53,987 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:38:53,987 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-01 23:38:54,014 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-01 23:38:54,032 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-01 23:38:54,033 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-01 23:38:54,033 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-01 23:38:54,035 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-01 23:38:54,036 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:38:54,037 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-01 23:38:54,038 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-01 23:38:54,038 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-01 23:38:54,114 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-01 23:38:54,146 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-01 23:38:54,165 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-01 23:38:54,166 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-01 23:38:54,167 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-01 23:38:54,170 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-01 23:38:54,178 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-01 23:38:54,199 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-01 23:38:54,214 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-01 23:38:54,218 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-01 23:38:54,220 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-01 23:38:54,222 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-01 23:38:54,223 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-01 23:38:54,226 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-01 23:38:54,227 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-01 23:38:54,227 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-01 23:38:54,228 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:38:54,228 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-01 23:38:54,231 - __main__ - INFO -    📖 Features de treino carregadas do cache (v1.0.0)
+2026-01-01 23:38:54,231 - titanic_pipeline.utils.validation - WARNING - ⚠️  Removed features not in both datasets: {'feat_Fare_missing', 'FamilySize', 'feat_Title_te', 'TicketPrefix', 'feat_Pclass_te', 'feat_TicketPrefix_te', 'feat_Cabin_missing', 'feat_Embarked_missing', 'IsAlone', 'feat_Sex_te', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_Embarked_te', 'feat_Age_missing', 'feat_FareCategory_v2', 'feat_AgeBin'}
+2026-01-01 23:38:54,232 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-01 23:38:54,319 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:38:54,321 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']
+2026-01-01 23:38:54,321 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked']
+2026-01-01 23:38:54,322 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-01 23:38:54,340 - __main__ - INFO - Resultados dos modelos carregados do cache
+2026-01-01 23:38:54,341 - __main__ - INFO - Modelos treinados: 18 modelos em 0.11s
+2026-01-01 23:38:54,341 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-01 23:38:54,342 - __main__ - INFO - 📊 Pesos do Ensemble (normalizados):
+2026-01-01 23:38:54,343 - __main__ - INFO -    SVC: 1.000
+2026-01-01 23:38:54,343 - __main__ - INFO -    Gradient Boosting: 0.672
+2026-01-01 23:38:54,343 - __main__ - INFO -    Logistic Regression: 0.100
+2026-01-01 23:39:01,074 - __main__ - INFO - ✅ Ensemble Voting criado: Acc=0.8283 ± 0.0412
+2026-01-01 23:39:33,055 - __main__ - INFO - ✅ Ensemble stacking criado: Acc=0.8227
+2026-01-01 23:39:33,055 - __main__ - INFO - GERANDO GRÁFICOS E RELATÓRIOS...
+2026-01-01 23:39:35,812 - titanic_pipeline.core.reporting - INFO - Model performance logged to output/reports/model_performance.csv
+2026-01-01 23:39:36,389 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-01 23:39:36,654 - titanic_pipeline.core.reporting - INFO -    📊 Using 5 numeric features for correlation heatmap
+2026-01-01 23:39:37,607 - titanic_pipeline.core.reporting - INFO -    📊 Feature correlation heatmap generated
+2026-01-01 23:39:38,418 - titanic_pipeline.core.reporting - INFO -    📊 Model performance timeline generated
+2026-01-01 23:39:38,419 - __main__ - INFO - SALVANDO MODELO FINAL...
+2026-01-01 23:39:38,428 - titanic_pipeline.core.modeling - INFO - Pipeline saved to output/models/best_model_pipeline.pkl
+2026-01-01 23:39:38,428 - __main__ - INFO - Modelo final 'Ensemble_Stacking' salvo como pipeline completo.
+2026-01-01 23:39:38,429 - __main__ - INFO - 📤 GERANDO ARQUIVO DE SUBMISSÃO A PARTIR DO MODELO SALVO...
+2026-01-01 23:39:38,465 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from output/models/best_model_pipeline.pkl
+2026-01-01 23:39:38,507 - titanic_pipeline.core.modeling - INFO - Predictions generated for 418 samples
+2026-01-01 23:39:38,514 - __main__ - INFO -    ✅ Submission gerada e salva em: output/submission.csv
+2026-01-01 23:39:38,516 - titanic_pipeline.core.reporting - INFO -    📝 Markdown report saved: output\relatorios\relatorio_final.md
+2026-01-01 23:39:38,517 - titanic_pipeline.core.reporting - ERROR -    ❌ Report generation failed: ReportingManager._generate_docx_report() takes 3 positional arguments but 5 were given
+2026-01-01 23:39:38,519 - titanic_pipeline.core.reporting - INFO -    📝 Changelog and manifest generated
+2026-01-01 23:39:38,521 - titanic_pipeline.core.reporting - INFO -    ⏱️  Timing report saved
+2026-01-01 23:39:38,525 - __main__ - INFO - ✅ Métricas exportadas: output/relatorios/metrics.json
+2026-01-01 23:39:38,526 - __main__ - INFO - ================================================================================
+2026-01-01 23:39:38,526 - __main__ - INFO - 📊 RESUMO FINAL DO PIPELINE TITANIC ML
+2026-01-01 23:39:38,527 - __main__ - INFO - ================================================================================
+2026-01-01 23:39:38,527 - __main__ - INFO - ⏱️  Tempo total: 54.17s
+2026-01-01 23:39:38,527 - __main__ - INFO - 🤖 Modelos treinados: 20/20
+2026-01-01 23:39:38,528 - __main__ - INFO - 🏆 Melhor modelo: SVC (Acc: 0.8328)
+2026-01-01 23:39:38,528 - __main__ - INFO - 🎯 Ensemble: Ensemble_Voting (Acc: 0.8283)
+2026-01-01 23:39:38,528 - __main__ - INFO - ✨ Features: 7
+2026-01-01 23:39:38,529 - __main__ - INFO - 📁 Saídas: submission.csv, métricas.json, gráficos, relatórios
+2026-01-01 23:39:38,529 - __main__ - INFO - ================================================================================
+2026-01-01 23:39:38,530 - __main__ - INFO - ✅ SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!
+2026-01-01 23:40:56,375 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-47\test_load_and_predict_success0\test_model.pkl
+2026-01-01 23:40:56,378 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 23:40:56,384 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 23:40:56,401 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 23:40:56,410 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 23:40:56,419 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 23:40:56,428 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 23:40:56,434 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 23:40:56,438 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 23:40:56,441 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 23:40:56,442 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 23:40:56,446 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 23:40:56,446 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 23:40:56,503 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 23:40:56,509 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 23:40:56,515 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 23:40:56,520 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 23:40:56,528 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 23:40:56,532 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 23:40:56,548 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 23:40:56,559 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 23:40:56,565 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:40:56,565 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-01 23:40:56,577 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-01 23:40:57,387 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-01 23:40:57,807 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 23:40:59,423 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 23:41:00,010 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 23:41:00,021 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-47\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 23:41:00,066 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 23:41:00,076 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 23:41:00,086 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 23:42:24,848 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-48\test_load_and_predict_success0\test_model.pkl
+2026-01-01 23:42:24,851 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 23:42:24,855 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 23:42:24,867 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 23:42:24,873 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 23:42:24,879 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 23:42:24,884 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 23:42:24,888 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 23:42:24,890 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 23:42:24,892 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 23:42:24,892 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 23:42:24,897 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 23:42:24,898 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 23:42:24,939 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 23:42:24,943 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 23:42:24,951 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 23:42:24,956 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 23:42:24,959 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 23:42:24,964 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 23:42:24,973 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 23:42:24,981 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 23:42:24,985 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:42:24,985 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-01 23:42:24,993 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-01 23:42:25,681 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-01 23:42:25,938 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 23:42:25,942 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 23:42:26,454 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 23:42:26,462 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-48\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 23:42:26,484 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 23:42:26,494 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 23:42:26,502 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-01 23:43:56,310 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-49\test_load_and_predict_success0\test_model.pkl
+2026-01-01 23:43:56,313 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-01 23:43:56,317 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-01 23:43:56,327 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-01 23:43:56,332 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-01 23:43:56,338 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-01 23:43:56,344 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-01 23:43:56,350 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-01 23:43:56,353 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-01 23:43:56,356 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-01 23:43:56,357 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-01 23:43:56,360 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-01 23:43:56,361 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-01 23:43:56,404 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-01 23:43:56,410 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 23:43:56,414 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-01 23:43:56,418 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-01 23:43:56,424 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-01 23:43:56,426 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-01 23:43:56,435 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-01 23:43:56,443 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-01 23:43:56,446 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-01 23:43:56,447 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-01 23:43:56,460 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-01 23:43:57,173 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-01 23:43:57,525 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 23:43:57,532 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-01 23:43:58,348 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-01 23:43:58,402 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-49\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-01 23:43:58,462 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-01 23:43:58,496 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-01 23:43:58,505 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-02 00:26:11,062 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-50\test_load_and_predict_success0\test_model.pkl
+2026-01-02 00:26:11,065 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-02 00:26:11,069 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-02 00:26:11,079 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-02 00:26:11,087 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-02 00:26:11,094 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-02 00:26:11,100 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-02 00:26:11,104 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-02 00:26:11,106 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-02 00:26:11,108 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-02 00:26:11,108 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-02 00:26:11,113 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-02 00:26:11,113 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-02 00:26:11,156 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 00:26:11,161 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 00:26:11,167 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 00:26:11,171 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 00:26:11,174 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 00:26:11,178 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 00:26:11,187 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 00:26:11,196 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 00:26:11,199 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 00:26:11,200 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-02 00:26:11,215 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-02 00:26:11,880 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-02 00:26:12,142 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-02 00:26:12,146 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-02 00:26:12,656 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-02 00:26:12,664 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-50\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-02 00:26:12,686 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-02 00:26:12,698 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-02 00:26:12,705 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-02 00:30:37,077 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-51\test_load_and_predict_success0\test_model.pkl
+2026-01-02 00:30:37,081 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-02 00:30:37,086 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-02 00:30:37,098 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-02 00:30:37,104 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-02 00:30:37,109 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-02 00:30:37,116 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-02 00:30:37,122 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-02 00:30:37,125 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-02 00:30:37,127 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-02 00:30:37,127 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-02 00:30:37,134 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-02 00:30:37,134 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-02 00:30:37,180 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 00:30:37,184 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 00:30:37,189 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 00:30:37,193 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 00:30:37,199 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 00:30:37,201 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 00:30:37,212 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 00:30:37,222 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 00:30:37,225 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 00:30:37,226 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-02 00:30:37,237 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-02 00:30:37,949 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-02 00:30:38,230 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-02 00:30:38,235 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-02 00:30:38,750 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-02 00:30:38,758 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-51\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-02 00:30:38,779 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-02 00:30:38,787 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-02 00:30:38,797 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-02 00:58:17,919 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-52\test_load_and_predict_success0\test_model.pkl
+2026-01-02 00:58:17,922 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-02 00:58:17,928 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-02 00:58:17,953 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-02 00:58:17,968 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-02 00:58:17,981 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-02 00:58:17,995 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-02 00:58:18,006 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-02 00:58:18,012 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-02 00:58:18,015 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-02 00:58:18,015 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-02 00:58:18,027 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-02 00:58:18,027 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-02 00:58:18,098 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 00:58:18,103 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 00:58:18,111 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 00:58:18,117 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 00:58:18,123 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 00:58:18,127 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 00:58:18,145 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 00:58:18,157 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 00:58:18,163 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 00:58:18,164 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-02 00:58:18,180 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-02 00:58:19,049 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-02 00:58:19,397 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-02 00:58:19,402 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-02 00:58:20,096 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-02 00:58:20,106 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-52\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-02 00:58:20,136 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-02 00:58:20,150 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-02 00:58:20,161 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-02 01:25:38,780 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-53\test_load_and_predict_success0\test_model.pkl
+2026-01-02 01:25:38,783 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-02 01:25:38,787 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-02 01:25:38,797 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-02 01:25:38,803 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-02 01:25:38,808 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-02 01:25:38,815 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-02 01:25:38,819 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-02 01:25:38,822 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-02 01:25:38,824 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-02 01:25:38,825 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-02 01:25:38,830 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-02 01:25:38,830 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-02 01:25:38,877 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 01:25:38,881 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 01:25:38,890 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 01:25:38,894 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 01:25:38,898 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 01:25:38,903 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 01:25:38,914 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 01:25:38,922 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 01:25:38,926 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 01:25:38,926 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-02 01:25:38,937 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-02 01:25:39,679 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-02 01:25:39,983 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-02 01:25:39,987 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-02 01:25:40,519 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-02 01:25:40,530 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-53\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-02 01:25:40,552 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-02 01:25:40,567 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-02 01:25:40,578 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
+2026-01-02 01:27:06,578 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-54\test_load_and_predict_success0\test_model.pkl
+2026-01-02 01:27:06,581 - titanic_pipeline.core.modeling - INFO - Predictions generated for 2 samples
+2026-01-02 01:27:06,585 - titanic_pipeline.core.modeling - ERROR - Error loading pipeline or making predictions: [Errno 2] No such file or directory: 'non_existent_model.pkl'
+2026-01-02 01:27:06,595 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (11.7% reduction)
+2026-01-02 01:27:06,601 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (13.3% reduction)
+2026-01-02 01:27:06,606 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (18.9% reduction)
+2026-01-02 01:27:06,613 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (5.2% reduction)
+2026-01-02 01:27:06,618 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (0.0% reduction)
+2026-01-02 01:27:06,620 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test_basic
+2026-01-02 01:27:06,622 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test_basic: 2 linhas, 2 colunas
+2026-01-02 01:27:06,622 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test_basic.json
+2026-01-02 01:27:06,627 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['A', 'B']
+2026-01-02 01:27:06,627 - titanic_pipeline.core.preprocessing - INFO - Numerical features: []
+2026-01-02 01:27:06,670 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 01:27:06,673 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 01:27:06,680 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 01:27:06,684 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 01:27:06,689 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 01:27:06,693 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 01:27:06,704 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 01:27:06,712 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 01:27:06,716 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 01:27:06,716 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna cat
+2026-01-02 01:27:06,730 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_cat.json
+2026-01-02 01:27:07,360 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-02 01:27:07,630 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-02 01:27:07,634 - titanic_pipeline.core.reporting - WARNING -    ⚠️  No numeric columns for correlation heatmap
+2026-01-02 01:27:08,177 - titanic_pipeline.core.reporting - INFO -    📊 SHAP comparison plot generated
+2026-01-02 01:27:08,184 - titanic_pipeline.core.reporting - INFO - Model performance logged to C:\Users\dcm\AppData\Local\Temp\pytest-of-dcm\pytest-54\test_log_model_performance_to_0\model_performance_log.csv
+2026-01-02 01:27:08,211 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (26.4% reduction)
+2026-01-02 01:27:08,222 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.00 MB to 0.00 MB (2.0% reduction)
+2026-01-02 01:27:08,231 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.07 MB to 0.06 MB (8.3% reduction)
