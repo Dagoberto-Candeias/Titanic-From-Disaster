@@ -2379,3 +2379,1449 @@ Feature names seen at fit time, yet now missing:
 2026-01-02 01:45:45,242 - __main__ - INFO - Saídas: submission.csv, métricas.json
 2026-01-02 01:45:45,242 - __main__ - INFO - ================================================================================
 2026-01-02 01:45:45,243 - __main__ - INFO - ✅ SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!
+2026-01-02 13:45:39,228 - __main__ - INFO - ================================================================================
+2026-01-02 13:45:39,228 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-02 13:45:39,228 - __main__ - INFO - ================================================================================
+2026-01-02 13:45:39,228 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-02 13:45:39,228 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-02 13:45:39,230 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-02 13:45:39,242 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-02 13:45:39,242 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 13:45:39,245 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-02 13:45:39,245 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 13:45:39,245 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 13:45:39,248 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-02 13:45:39,248 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 13:45:39,248 - __main__ - INFO -    ✅ Schema válido
+2026-01-02 13:45:39,249 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 13:45:39,249 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 13:45:39,249 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 13:45:49,112 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 13:45:49,117 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 13:45:49,125 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 13:45:49,129 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 13:45:49,136 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 13:45:49,147 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 13:45:49,158 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 13:45:49,163 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 13:45:49,167 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 13:45:49,173 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 13:45:49,178 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 13:45:49,183 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 13:45:49,195 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 13:45:49,205 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 13:45:50,314 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-02 13:45:50,317 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 13:45:50,317 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 13:45:50,342 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 13:45:50,368 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 13:45:50,368 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 13:45:50,409 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 13:45:50,429 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 13:45:50,429 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 13:45:50,460 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 13:45:50,480 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 13:45:50,480 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 13:45:50,516 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 13:45:50,540 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 13:45:50,541 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-02 13:45:50,574 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-02 13:45:50,595 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 13:45:50,595 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 13:45:50,620 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 13:45:50,638 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 13:45:50,639 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 13:45:50,639 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 13:45:50,639 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-02 13:45:50,640 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 13:45:50,642 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-02 13:45:50,643 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 13:45:50,643 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 13:45:50,736 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-02 13:45:50,774 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-02 13:45:50,798 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-02 13:45:50,800 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-02 13:45:50,801 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-02 13:45:50,803 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-02 13:45:50,811 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-02 13:45:50,831 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-02 13:45:50,843 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-02 13:45:50,849 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 13:45:50,852 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-02 13:45:50,853 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 13:45:50,853 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 13:45:50,856 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-02 13:45:50,856 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 13:45:50,857 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-02 13:45:50,857 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 13:45:50,858 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 13:45:50,862 - __main__ - INFO -    📖 Features de treino carregadas do cache (v1.0.0)
+2026-01-02 13:45:50,863 - titanic_pipeline.utils.validation - WARNING - ⚠️  Removed features not in both datasets: {'feat_TicketPrefix_te', 'feat_AgeBin', 'TicketPrefix', 'feat_AgeCategory_v2', 'feat_Sex_te', 'feat_Embarked_missing', 'feat_Age_missing', 'FamilySize', 'feat_FareBin', 'feat_Cabin_missing', 'feat_Embarked_te', 'feat_Fare_missing', 'feat_Title_te', 'IsAlone', 'feat_Pclass_te', 'feat_FareCategory_v2'}
+2026-01-02 13:45:50,865 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-02 13:45:50,993 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 13:45:50,994 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']
+2026-01-02 13:45:50,994 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked']
+2026-01-02 13:45:50,994 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 13:45:51,017 - __main__ - INFO - Resultados dos modelos carregados do cache
+2026-01-02 13:45:51,017 - __main__ - INFO - Modelos treinados: 18 modelos em 0.15 s
+2026-01-02 13:45:51,018 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-02 13:45:51,018 - __main__ - INFO - 📊 Pesos do Ensemble (normalizados):
+2026-01-02 13:45:51,019 - __main__ - INFO -    SVC: 1.000
+2026-01-02 13:45:51,019 - __main__ - INFO -    Gradient Boosting: 0.672
+2026-01-02 13:45:51,019 - __main__ - INFO -    Logistic Regression: 0.100
+2026-01-02 13:45:59,614 - __main__ - INFO - ✅ Ensemble Voting criado: Acc=0.8283 ± 0.0412
+2026-01-02 13:46:40,874 - __main__ - INFO - ✅ Ensemble stacking criado: Acc=0.8227
+2026-01-02 13:46:40,874 - __main__ - INFO - GERANDO GRÁFICOS E RELATÓRIOS...
+2026-01-02 13:46:43,857 - titanic_pipeline.core.reporting - INFO - Model performance logged to output/reports/model_performance.csv
+2026-01-02 13:46:44,482 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-02 13:46:44,757 - titanic_pipeline.core.reporting - INFO -    📊 Using 5 numeric features for correlation heatmap
+2026-01-02 13:46:45,753 - titanic_pipeline.core.reporting - INFO -    📊 Feature correlation heatmap generated
+2026-01-02 13:46:46,665 - titanic_pipeline.core.reporting - INFO -    📊 Model performance timeline generated
+2026-01-02 13:46:46,665 - __main__ - INFO - SALVANDO MODELO FINAL...
+2026-01-02 13:46:46,675 - titanic_pipeline.core.modeling - INFO - Pipeline saved to output/models/best_model_pipeline.pkl
+2026-01-02 13:46:46,676 - __main__ - INFO - Modelo final 'Ensemble_Stacking' salvo como pipeline completo.
+2026-01-02 13:46:46,676 - __main__ - INFO - 📤 GERANDO ARQUIVO DE SUBMISSÃO A PARTIR DO MODELO SALVO...
+2026-01-02 13:46:46,709 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from output/models/best_model_pipeline.pkl
+2026-01-02 13:46:46,746 - titanic_pipeline.core.modeling - INFO - Predictions generated for 418 samples
+2026-01-02 13:46:46,769 - __main__ - INFO -    ✅ Submission gerada e salva em: output/submission.csv
+2026-01-02 13:46:46,771 - titanic_pipeline.core.reporting - INFO -    📝 Markdown report saved: output\relatorios\relatorio_final.md
+2026-01-02 13:46:47,729 - titanic_pipeline.core.reporting - INFO -    📄 DOCX report saved: output\relatorios\relatorio_final.docx
+2026-01-02 13:46:48,306 - titanic_pipeline.core.reporting - INFO -    📕 PDF report saved: output\relatorios\relatorio_final.pdf
+2026-01-02 13:46:48,329 - titanic_pipeline.core.reporting - ERROR -    ❌ Calibration plot generation failed: X has 11 features, but RandomForestClassifier is expecting 86 features as input.
+2026-01-02 13:46:53,855 - titanic_pipeline.core.reporting - INFO -    📊 Feature importance plots generated
+2026-01-02 13:46:53,857 - titanic_pipeline.core.reporting - INFO -    📝 Changelog and manifest generated
+2026-01-02 13:46:53,859 - titanic_pipeline.core.reporting - INFO -    ⏱️  Timing report saved
+2026-01-02 13:46:53,861 - __main__ - INFO - ✅ Métricas exportadas: output/relatorios/metrics.json
+2026-01-02 13:46:53,863 - __main__ - INFO - ================================================================================
+2026-01-02 13:46:53,863 - __main__ - INFO - 📊 RESUMO FINAL DO PIPELINE TITANIC ML
+2026-01-02 13:46:53,864 - __main__ - INFO - ================================================================================
+2026-01-02 13:46:53,864 - __main__ - INFO - ⏱️  Tempo total: 67.54s
+2026-01-02 13:46:53,865 - __main__ - INFO - Modelos: 20/20
+2026-01-02 13:46:53,865 - __main__ - INFO - 🏆 Melhor modelo: SVC (Acc: 0.8328)
+2026-01-02 13:46:53,865 - __main__ - INFO - 🎯 Ensemble: Ensemble_Voting (Acc: 0.8283)
+2026-01-02 13:46:53,866 - __main__ - INFO - ✨ Features: 7
+2026-01-02 13:46:53,866 - __main__ - INFO - Saídas: submission.csv, métricas.json
+2026-01-02 13:46:53,867 - __main__ - INFO - ================================================================================
+2026-01-02 13:46:53,867 - __main__ - INFO - ✅ SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!
+2026-01-02 16:32:09,068 - __main__ - INFO - ================================================================================
+2026-01-02 16:32:09,068 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-02 16:32:09,069 - __main__ - INFO - ================================================================================
+2026-01-02 16:32:09,069 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-02 16:32:09,069 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-02 16:32:09,070 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-02 16:32:09,086 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-02 16:32:09,087 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 16:32:09,089 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-02 16:32:09,089 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 16:32:09,090 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 16:32:09,095 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-02 16:32:09,095 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 16:32:09,096 - __main__ - INFO -    ✅ Schema válido
+2026-01-02 16:32:09,096 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 16:32:09,097 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 16:32:09,097 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 16:32:17,938 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 16:32:17,942 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 16:32:17,949 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 16:32:17,954 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 16:32:17,962 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 16:32:17,975 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 16:32:17,984 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 16:32:17,990 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 16:32:17,994 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 16:32:18,001 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 16:32:18,006 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 16:32:18,012 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 16:32:18,024 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 16:32:18,033 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 16:32:18,881 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-02 16:32:18,883 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 16:32:18,884 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 16:32:18,908 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 16:32:18,930 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 16:32:18,931 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 16:32:18,956 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 16:32:18,973 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 16:32:18,973 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 16:32:18,994 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 16:32:19,012 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 16:32:19,012 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 16:32:19,030 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 16:32:19,049 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 16:32:19,050 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-02 16:32:19,074 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-02 16:32:19,090 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 16:32:19,091 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 16:32:19,115 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 16:32:19,138 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 16:32:19,139 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 16:32:19,139 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 16:32:19,139 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-02 16:32:19,140 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 16:32:19,141 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-02 16:32:19,141 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 16:32:19,142 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 16:32:19,215 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-02 16:32:19,255 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-02 16:32:19,283 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-02 16:32:19,284 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-02 16:32:19,285 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-02 16:32:19,286 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-02 16:32:19,300 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-02 16:32:19,326 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-02 16:32:19,342 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-02 16:32:19,347 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 16:32:19,350 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-02 16:32:19,353 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 16:32:19,354 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 16:32:19,357 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-02 16:32:19,358 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 16:32:19,358 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-02 16:32:19,359 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 16:32:19,359 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 16:32:19,384 - __main__ - INFO -    📖 Features de treino carregadas do cache (v1.0.0)
+2026-01-02 16:32:19,387 - titanic_pipeline.utils.validation - WARNING - ⚠️  Removed features not in both datasets: {'feat_FareBin', 'FamilySize', 'feat_AgeCategory_v2', 'feat_Cabin_missing', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_TicketPrefix_te', 'feat_Embarked_te', 'feat_Sex_te', 'feat_Fare_missing', 'TicketPrefix', 'feat_Title_te', 'feat_Embarked_missing', 'feat_Pclass_te', 'IsAlone', 'feat_AgeBin'}
+2026-01-02 16:32:19,388 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-02 16:32:19,529 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 16:32:19,531 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare']
+2026-01-02 16:32:19,532 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked']
+2026-01-02 16:32:19,532 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 16:32:19,553 - __main__ - INFO - Resultados dos modelos carregados do cache
+2026-01-02 16:32:19,553 - __main__ - INFO - Modelos treinados: 18 modelos em 0.17 s
+2026-01-02 16:32:19,554 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-02 16:32:19,555 - __main__ - INFO - 📊 Pesos do Ensemble (normalizados):
+2026-01-02 16:32:19,556 - __main__ - INFO -    SVC: 1.000
+2026-01-02 16:32:19,557 - __main__ - INFO -    Gradient Boosting: 0.672
+2026-01-02 16:32:19,557 - __main__ - INFO -    Logistic Regression: 0.100
+2026-01-02 16:32:26,518 - __main__ - INFO - ✅ Ensemble Voting criado: Acc=0.8283 ± 0.0412
+2026-01-02 16:32:58,470 - __main__ - INFO - ✅ Ensemble stacking criado: Acc=0.8227
+2026-01-02 16:32:58,471 - __main__ - INFO - GERANDO GRÁFICOS E RELATÓRIOS...
+2026-01-02 16:33:01,231 - titanic_pipeline.core.reporting - INFO - Model performance logged to output/reports/model_performance.csv
+2026-01-02 16:33:01,824 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-02 16:33:02,105 - titanic_pipeline.core.reporting - INFO -    📊 Using 5 numeric features for correlation heatmap
+2026-01-02 16:33:03,075 - titanic_pipeline.core.reporting - INFO -    📊 Feature correlation heatmap generated
+2026-01-02 16:33:03,937 - titanic_pipeline.core.reporting - INFO -    📊 Model performance timeline generated
+2026-01-02 16:33:03,938 - __main__ - INFO - SALVANDO MODELO FINAL...
+2026-01-02 16:33:03,947 - titanic_pipeline.core.modeling - INFO - Pipeline saved to output/models/best_model_pipeline.pkl
+2026-01-02 16:33:03,947 - __main__ - INFO - Modelo final 'Ensemble_Stacking' salvo como pipeline completo.
+2026-01-02 16:33:03,947 - __main__ - INFO - 📤 GERANDO ARQUIVO DE SUBMISSÃO A PARTIR DO MODELO SALVO...
+2026-01-02 16:33:03,989 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from output/models/best_model_pipeline.pkl
+2026-01-02 16:33:04,027 - titanic_pipeline.core.modeling - INFO - Predictions generated for 418 samples
+2026-01-02 16:33:04,032 - __main__ - INFO -    ✅ Submission gerada e salva em: output/submission.csv
+2026-01-02 16:33:04,036 - titanic_pipeline.core.reporting - INFO -    📝 Markdown report saved: output\relatorios\relatorio_final.md
+2026-01-02 16:33:04,273 - titanic_pipeline.core.reporting - INFO -    📄 DOCX report saved: output\relatorios\relatorio_final.docx
+2026-01-02 16:33:04,522 - titanic_pipeline.core.reporting - INFO -    📕 PDF report saved: output\relatorios\relatorio_final.pdf
+2026-01-02 16:33:04,525 - titanic_pipeline.core.reporting - ERROR -    ❌ Calibration plot generation failed: X has 11 features, but RandomForestClassifier is expecting 86 features as input.
+2026-01-02 16:33:09,563 - titanic_pipeline.core.reporting - INFO -    📊 Feature importance plots generated
+2026-01-02 16:33:09,565 - titanic_pipeline.core.reporting - INFO -    📝 Changelog and manifest generated
+2026-01-02 16:33:09,567 - titanic_pipeline.core.reporting - INFO -    ⏱️  Timing report saved
+2026-01-02 16:33:09,568 - __main__ - INFO - ✅ Métricas exportadas: output/relatorios/metrics.json
+2026-01-02 16:33:09,571 - __main__ - INFO - ================================================================================
+2026-01-02 16:33:09,572 - __main__ - INFO - 📊 RESUMO FINAL DO PIPELINE TITANIC ML
+2026-01-02 16:33:09,572 - __main__ - INFO - ================================================================================
+2026-01-02 16:33:09,573 - __main__ - INFO - ⏱️  Tempo total: 54.96s
+2026-01-02 16:33:09,574 - __main__ - INFO - Modelos: 20/20
+2026-01-02 16:33:09,575 - __main__ - INFO - 🏆 Melhor modelo: SVC (Acc: 0.8328)
+2026-01-02 16:33:09,575 - __main__ - INFO - 🎯 Ensemble: Ensemble_Voting (Acc: 0.8283)
+2026-01-02 16:33:09,576 - __main__ - INFO - ✨ Features: 7
+2026-01-02 16:33:09,577 - __main__ - INFO - Saídas: submission.csv, métricas.json
+2026-01-02 16:33:09,577 - __main__ - INFO - ================================================================================
+2026-01-02 16:33:09,577 - __main__ - INFO - ✅ SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!
+2026-01-02 18:36:59,801 - __main__ - INFO - ================================================================================
+2026-01-02 18:36:59,801 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-02 18:36:59,802 - __main__ - INFO - ================================================================================
+2026-01-02 18:36:59,802 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-02 18:36:59,802 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-02 18:36:59,803 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-02 18:36:59,852 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-02 18:36:59,854 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 18:36:59,858 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-02 18:36:59,858 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 18:36:59,858 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 18:36:59,861 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-02 18:36:59,861 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 18:36:59,861 - __main__ - INFO -    ✅ Schema válido
+2026-01-02 18:36:59,862 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:36:59,862 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 18:36:59,862 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 18:37:09,822 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:37:09,828 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:37:09,835 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 18:37:09,842 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:37:09,849 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 18:37:09,863 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:37:09,871 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:37:09,878 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:37:09,882 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:37:09,888 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 18:37:09,894 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:37:09,900 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 18:37:09,912 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:37:09,920 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:37:10,777 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-02 18:37:10,779 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:10,779 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 18:37:10,802 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 18:37:10,826 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:10,826 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 18:37:10,850 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 18:37:10,869 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:10,869 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 18:37:10,896 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 18:37:10,914 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:10,914 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 18:37:10,939 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 18:37:10,959 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:10,959 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-02 18:37:10,985 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-02 18:37:11,005 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:11,006 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 18:37:11,030 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 18:37:11,051 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 18:37:11,051 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 18:37:11,052 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 18:37:11,052 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-02 18:37:11,052 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:11,055 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-02 18:37:11,055 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 18:37:11,056 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 18:37:11,139 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-02 18:37:11,275 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-02 18:37:11,655 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-02 18:37:11,737 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-02 18:37:11,742 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-02 18:37:11,798 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-02 18:37:11,819 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-02 18:37:11,896 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-02 18:37:11,910 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-02 18:37:11,920 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 18:37:11,924 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-02 18:37:11,924 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 18:37:11,925 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 18:37:11,945 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-02 18:37:11,946 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 18:37:11,947 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-02 18:37:11,948 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:11,948 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 18:37:11,948 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 18:37:21,216 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:37:21,227 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:37:21,263 - titanic_pipeline.preprocessing - WARNING - Parallel failed for _extract_deck on train: Cannot setitem on a Categorical with a new category (U), set the categories first. Fallback to sequential.
+2026-01-02 18:37:22,158 - titanic_pipeline.preprocessing - WARNING - Parallel processing failed: Cannot setitem on a Categorical with a new category (U), set the categories first. Using sequential.
+2026-01-02 18:37:22,161 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:37:22,163 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:37:22,164 - titanic_pipeline.preprocessing - INFO - Applied _create_family_features sequentially.
+2026-01-02 18:37:22,168 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:37:22,173 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:37:22,173 - titanic_pipeline.preprocessing - INFO - Applied _extract_title sequentially.
+2026-01-02 18:37:22,175 - titanic_pipeline.preprocessing - WARNING - Failed to apply _extract_deck: Cannot setitem on a Categorical with a new category (U), set the categories first. Skipping.
+2026-01-02 18:37:22,177 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:37:22,180 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:37:22,180 - titanic_pipeline.preprocessing - INFO - Applied _extract_ticket_prefix sequentially.
+2026-01-02 18:37:22,185 - titanic_pipeline.preprocessing - WARNING - Failed to apply _create_interactions: Object with dtype category cannot perform the numpy op add. Skipping.
+2026-01-02 18:37:22,193 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:37:22,203 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:37:22,203 - titanic_pipeline.preprocessing - INFO - Applied _create_bins sequentially.
+2026-01-02 18:37:22,207 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:37:22,212 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:37:22,213 - titanic_pipeline.preprocessing - INFO - Applied _create_missing_indicators sequentially.
+2026-01-02 18:37:22,215 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:22,215 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 18:37:22,249 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 18:37:22,269 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:22,270 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 18:37:22,300 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 18:37:22,318 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Sex: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 18:37:22,319 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:22,319 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 18:37:22,351 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 18:37:22,369 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Embarked: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 18:37:22,370 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:22,371 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 18:37:22,399 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 18:37:22,418 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:22,418 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 18:37:22,448 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 18:37:22,468 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 18:37:22,469 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 18:37:22,469 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 18:37:22,470 - __main__ - INFO -    💾 Features de treino processadas e cached (v1.0.0)
+2026-01-02 18:37:22,471 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-02 18:37:22,474 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:37:22,476 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_TicketPrefix_te']
+2026-01-02 18:37:22,477 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'TicketPrefix', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 18:37:22,477 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 18:37:22,508 - __main__ - INFO -    🚀 Iniciando treinamento paralelo com ModelingManager...
+2026-01-02 18:37:22,508 - titanic_pipeline.core.modeling - INFO -    🔄 Training models in parallel...
+2026-01-02 18:37:22,995 - titanic_pipeline.core.modeling - INFO -    📊 Available models: ['RandomForest', 'LogisticRegression', 'SVC', 'KNeighbors', 'GaussianNB', 'MLPClassifier', 'GradientBoosting', 'ExtraTrees', 'AdaBoost', 'Bagging', 'SGDClassifier', 'RidgeClassifier', 'LinearSVC', 'DecisionTree', 'BernoulliNB', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'XGBoost', 'LightGBM', 'CatBoost']
+2026-01-02 18:37:23,018 - titanic_pipeline.core.modeling - ERROR -    ❌ RandomForest training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,023 - titanic_pipeline.core.modeling - ERROR -    ❌ LogisticRegression training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,024 - titanic_pipeline.core.modeling - ERROR -    ❌ SVC training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,025 - titanic_pipeline.core.modeling - ERROR -    ❌ KNeighbors training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,028 - titanic_pipeline.core.modeling - ERROR -    ❌ GaussianNB training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,029 - titanic_pipeline.core.modeling - ERROR -    ❌ MLPClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,030 - titanic_pipeline.core.modeling - ERROR -    ❌ GradientBoosting training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,031 - titanic_pipeline.core.modeling - ERROR -    ❌ ExtraTrees training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,032 - titanic_pipeline.core.modeling - ERROR -    ❌ AdaBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,034 - titanic_pipeline.core.modeling - ERROR -    ❌ Bagging training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,036 - titanic_pipeline.core.modeling - ERROR -    ❌ SGDClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,038 - titanic_pipeline.core.modeling - ERROR -    ❌ RidgeClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,041 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearSVC training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,043 - titanic_pipeline.core.modeling - ERROR -    ❌ DecisionTree training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,045 - titanic_pipeline.core.modeling - ERROR -    ❌ BernoulliNB training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,046 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearDiscriminantAnalysis training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,048 - titanic_pipeline.core.modeling - ERROR -    ❌ QuadraticDiscriminantAnalysis training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,049 - titanic_pipeline.core.modeling - ERROR -    ❌ XGBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,051 - titanic_pipeline.core.modeling - ERROR -    ❌ LightGBM training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:23,053 - titanic_pipeline.core.modeling - ERROR -    ❌ CatBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:37:35,673 - __main__ - INFO -    💾 Resultados dos modelos cached
+2026-01-02 18:37:35,674 - __main__ - INFO - Modelos treinados: 0 modelos em 13.20 s
+2026-01-02 18:37:35,677 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-02 18:37:35,681 - __main__ - CRITICAL - ERRO CRÍTICO: Nenhum modelo foi treinado com sucesso para criar o ensemble.
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\train.py", line 946, in main
+    raise EnsembleError(
+        "Nenhum modelo foi treinado com sucesso para criar o ensemble."
+    )
+EnsembleError: Nenhum modelo foi treinado com sucesso para criar o ensemble.
+2026-01-02 18:39:50,620 - __main__ - INFO - ================================================================================
+2026-01-02 18:39:50,621 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-02 18:39:50,621 - __main__ - INFO - ================================================================================
+2026-01-02 18:39:50,621 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-02 18:39:50,622 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-02 18:39:50,622 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-02 18:39:50,636 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-02 18:39:50,637 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 18:39:50,640 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-02 18:39:50,640 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 18:39:50,641 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 18:39:50,643 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-02 18:39:50,643 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 18:39:50,643 - __main__ - INFO -    ✅ Schema válido
+2026-01-02 18:39:50,644 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:39:50,647 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 18:39:50,648 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 18:40:00,149 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:40:00,154 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:40:00,163 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 18:40:00,168 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:40:00,176 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 18:40:00,190 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:40:00,196 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:40:00,204 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:40:00,209 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:40:00,214 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 18:40:00,220 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:40:00,226 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 18:40:00,237 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:40:00,245 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:40:01,059 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-02 18:40:01,062 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:01,062 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 18:40:01,089 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 18:40:01,095 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:01,097 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 18:40:01,123 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 18:40:01,129 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:01,129 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 18:40:01,158 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 18:40:01,163 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:01,163 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 18:40:01,187 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 18:40:01,194 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:01,195 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-02 18:40:01,220 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-02 18:40:01,227 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:01,227 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 18:40:01,254 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 18:40:01,272 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 18:40:01,273 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 18:40:01,273 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 18:40:01,274 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-02 18:40:01,274 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:01,276 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-02 18:40:01,276 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 18:40:01,277 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 18:40:01,340 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-02 18:40:01,369 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-02 18:40:01,389 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-02 18:40:01,390 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-02 18:40:01,390 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-02 18:40:01,392 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-02 18:40:01,399 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-02 18:40:01,418 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-02 18:40:01,431 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-02 18:40:01,436 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 18:40:01,441 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-02 18:40:01,441 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 18:40:01,442 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 18:40:01,445 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-02 18:40:01,445 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 18:40:01,445 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-02 18:40:01,446 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:01,446 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 18:40:01,447 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 18:40:09,365 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:40:09,376 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:40:09,405 - titanic_pipeline.preprocessing - WARNING - Parallel failed for _extract_deck on train: Cannot setitem on a Categorical with a new category (U), set the categories first. Fallback to sequential.
+2026-01-02 18:40:10,220 - titanic_pipeline.preprocessing - WARNING - Parallel processing failed: Cannot setitem on a Categorical with a new category (U), set the categories first. Using sequential.
+2026-01-02 18:40:10,224 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:40:10,227 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:40:10,227 - titanic_pipeline.preprocessing - INFO - Applied _create_family_features sequentially.
+2026-01-02 18:40:10,241 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:40:10,245 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:40:10,245 - titanic_pipeline.preprocessing - INFO - Applied _extract_title sequentially.
+2026-01-02 18:40:10,247 - titanic_pipeline.preprocessing - WARNING - Failed to apply _extract_deck: Cannot setitem on a Categorical with a new category (U), set the categories first. Skipping.
+2026-01-02 18:40:10,250 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:40:10,253 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:40:10,253 - titanic_pipeline.preprocessing - INFO - Applied _extract_ticket_prefix sequentially.
+2026-01-02 18:40:10,258 - titanic_pipeline.preprocessing - WARNING - Failed to apply _create_interactions: Object with dtype category cannot perform the numpy op add. Skipping.
+2026-01-02 18:40:10,270 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:40:10,281 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:40:10,281 - titanic_pipeline.preprocessing - INFO - Applied _create_bins sequentially.
+2026-01-02 18:40:10,286 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:40:10,290 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:40:10,292 - titanic_pipeline.preprocessing - INFO - Applied _create_missing_indicators sequentially.
+2026-01-02 18:40:10,295 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:10,295 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 18:40:10,323 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 18:40:10,333 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:10,333 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 18:40:10,361 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 18:40:10,367 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Sex: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 18:40:10,369 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:10,369 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 18:40:10,399 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 18:40:10,402 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Embarked: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 18:40:10,403 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:10,404 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 18:40:10,433 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 18:40:10,439 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:10,441 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 18:40:10,467 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 18:40:10,472 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 18:40:10,474 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 18:40:10,475 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 18:40:10,475 - __main__ - INFO -    💾 Features de treino processadas e cached (v1.0.0)
+2026-01-02 18:40:10,476 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-02 18:40:10,476 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:40:10,478 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_TicketPrefix_te']
+2026-01-02 18:40:10,479 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'TicketPrefix', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 18:40:10,479 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 18:40:10,504 - __main__ - INFO -    🚀 Iniciando treinamento paralelo com ModelingManager...
+2026-01-02 18:40:10,505 - titanic_pipeline.core.modeling - INFO -    🔄 Training models in parallel...
+2026-01-02 18:40:10,683 - titanic_pipeline.core.modeling - INFO -    📊 Available models: ['RandomForest', 'LogisticRegression', 'SVC', 'KNeighbors', 'GaussianNB', 'MLPClassifier', 'GradientBoosting', 'ExtraTrees', 'AdaBoost', 'Bagging', 'SGDClassifier', 'RidgeClassifier', 'LinearSVC', 'DecisionTree', 'BernoulliNB', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'XGBoost', 'LightGBM', 'CatBoost']
+2026-01-02 18:40:10,699 - titanic_pipeline.core.modeling - ERROR -    ❌ RandomForest training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,702 - titanic_pipeline.core.modeling - ERROR -    ❌ LogisticRegression training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,703 - titanic_pipeline.core.modeling - ERROR -    ❌ SVC training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,705 - titanic_pipeline.core.modeling - ERROR -    ❌ KNeighbors training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,706 - titanic_pipeline.core.modeling - ERROR -    ❌ GaussianNB training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,708 - titanic_pipeline.core.modeling - ERROR -    ❌ MLPClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,710 - titanic_pipeline.core.modeling - ERROR -    ❌ GradientBoosting training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,711 - titanic_pipeline.core.modeling - ERROR -    ❌ ExtraTrees training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,713 - titanic_pipeline.core.modeling - ERROR -    ❌ AdaBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,715 - titanic_pipeline.core.modeling - ERROR -    ❌ Bagging training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,717 - titanic_pipeline.core.modeling - ERROR -    ❌ SGDClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,718 - titanic_pipeline.core.modeling - ERROR -    ❌ RidgeClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,720 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearSVC training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,721 - titanic_pipeline.core.modeling - ERROR -    ❌ DecisionTree training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,722 - titanic_pipeline.core.modeling - ERROR -    ❌ BernoulliNB training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,724 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearDiscriminantAnalysis training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,726 - titanic_pipeline.core.modeling - ERROR -    ❌ QuadraticDiscriminantAnalysis training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,729 - titanic_pipeline.core.modeling - ERROR -    ❌ XGBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,731 - titanic_pipeline.core.modeling - ERROR -    ❌ LightGBM training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:10,732 - titanic_pipeline.core.modeling - ERROR -    ❌ CatBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:40:19,783 - __main__ - INFO -    💾 Resultados dos modelos cached
+2026-01-02 18:40:19,783 - __main__ - INFO - Modelos treinados: 0 modelos em 9.31 s
+2026-01-02 18:40:19,784 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-02 18:40:19,784 - __main__ - CRITICAL - ERRO CRÍTICO: Nenhum modelo foi treinado com sucesso para criar o ensemble.
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\train.py", line 946, in main
+    raise EnsembleError(
+        "Nenhum modelo foi treinado com sucesso para criar o ensemble."
+    )
+EnsembleError: Nenhum modelo foi treinado com sucesso para criar o ensemble.
+2026-01-02 18:41:25,877 - __main__ - INFO - ================================================================================
+2026-01-02 18:41:25,879 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-02 18:41:25,879 - __main__ - INFO - ================================================================================
+2026-01-02 18:41:25,880 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-02 18:41:25,880 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-02 18:41:25,881 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-02 18:41:25,901 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-02 18:41:25,901 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 18:41:25,907 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-02 18:41:25,910 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 18:41:25,913 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 18:41:25,917 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-02 18:41:25,918 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 18:41:25,918 - __main__ - INFO -    ✅ Schema válido
+2026-01-02 18:41:25,920 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:25,921 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 18:41:25,922 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 18:41:34,894 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:41:34,899 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:41:34,904 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 18:41:34,907 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:41:34,915 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 18:41:34,930 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:41:34,940 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:41:34,945 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:41:34,949 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:41:34,956 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 18:41:34,961 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:41:34,966 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 18:41:34,976 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:41:34,983 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:41:35,954 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-02 18:41:35,975 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:35,984 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 18:41:36,027 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 18:41:36,047 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:36,047 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 18:41:36,089 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 18:41:36,098 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:36,103 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 18:41:36,142 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 18:41:36,149 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:36,152 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 18:41:36,186 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 18:41:36,191 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:36,192 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-02 18:41:36,227 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-02 18:41:36,235 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:36,235 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 18:41:36,270 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 18:41:36,275 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 18:41:36,275 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 18:41:36,276 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 18:41:36,276 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-02 18:41:36,276 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:36,278 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-02 18:41:36,279 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 18:41:36,281 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 18:41:36,363 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-02 18:41:36,401 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-02 18:41:36,426 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-02 18:41:36,427 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-02 18:41:36,427 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-02 18:41:36,430 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-02 18:41:36,443 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-02 18:41:36,461 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-02 18:41:36,475 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-02 18:41:36,479 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 18:41:36,484 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-02 18:41:36,484 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 18:41:36,484 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 18:41:36,488 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-02 18:41:36,488 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 18:41:36,488 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-02 18:41:36,489 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:36,489 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 18:41:36,490 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 18:41:45,384 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:41:45,392 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:41:45,421 - titanic_pipeline.preprocessing - WARNING - Parallel failed for _extract_deck on train: Cannot setitem on a Categorical with a new category (U), set the categories first. Fallback to sequential.
+2026-01-02 18:41:46,225 - titanic_pipeline.preprocessing - WARNING - Parallel processing failed: Cannot setitem on a Categorical with a new category (U), set the categories first. Using sequential.
+2026-01-02 18:41:46,228 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:41:46,232 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:41:46,233 - titanic_pipeline.preprocessing - INFO - Applied _create_family_features sequentially.
+2026-01-02 18:41:46,238 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:41:46,242 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:41:46,244 - titanic_pipeline.preprocessing - INFO - Applied _extract_title sequentially.
+2026-01-02 18:41:46,245 - titanic_pipeline.preprocessing - WARNING - Failed to apply _extract_deck: Cannot setitem on a Categorical with a new category (U), set the categories first. Skipping.
+2026-01-02 18:41:46,248 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:41:46,250 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:41:46,251 - titanic_pipeline.preprocessing - INFO - Applied _extract_ticket_prefix sequentially.
+2026-01-02 18:41:46,257 - titanic_pipeline.preprocessing - WARNING - Failed to apply _create_interactions: Object with dtype category cannot perform the numpy op add. Skipping.
+2026-01-02 18:41:46,267 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:41:46,277 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:41:46,277 - titanic_pipeline.preprocessing - INFO - Applied _create_bins sequentially.
+2026-01-02 18:41:46,281 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:41:46,284 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:41:46,285 - titanic_pipeline.preprocessing - INFO - Applied _create_missing_indicators sequentially.
+2026-01-02 18:41:46,288 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:46,290 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 18:41:46,320 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 18:41:46,325 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:46,326 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 18:41:46,353 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 18:41:46,358 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Sex: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 18:41:46,360 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:46,360 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 18:41:46,395 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 18:41:46,400 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Embarked: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 18:41:46,402 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:46,402 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 18:41:46,428 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 18:41:46,435 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:46,435 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 18:41:46,460 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 18:41:46,467 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 18:41:46,467 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 18:41:46,468 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 18:41:46,468 - __main__ - INFO -    💾 Features de treino processadas e cached (v1.0.0)
+2026-01-02 18:41:46,468 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-02 18:41:46,470 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:41:46,474 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_TicketPrefix_te']
+2026-01-02 18:41:46,475 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'TicketPrefix', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 18:41:46,475 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 18:41:46,525 - __main__ - INFO -    🚀 Iniciando treinamento paralelo com ModelingManager...
+2026-01-02 18:41:46,573 - titanic_pipeline.core.modeling - INFO -    🔄 Training models in parallel...
+2026-01-02 18:41:46,942 - titanic_pipeline.core.modeling - INFO -    📊 Available models: ['RandomForest', 'LogisticRegression', 'SVC', 'KNeighbors', 'GaussianNB', 'MLPClassifier', 'GradientBoosting', 'ExtraTrees', 'AdaBoost', 'Bagging', 'SGDClassifier', 'RidgeClassifier', 'LinearSVC', 'DecisionTree', 'BernoulliNB', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'XGBoost', 'LightGBM', 'CatBoost']
+2026-01-02 18:41:46,959 - titanic_pipeline.core.modeling - ERROR -    ❌ RandomForest training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,961 - titanic_pipeline.core.modeling - ERROR -    ❌ LogisticRegression training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,962 - titanic_pipeline.core.modeling - ERROR -    ❌ SVC training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,965 - titanic_pipeline.core.modeling - ERROR -    ❌ KNeighbors training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,966 - titanic_pipeline.core.modeling - ERROR -    ❌ GaussianNB training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,968 - titanic_pipeline.core.modeling - ERROR -    ❌ MLPClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,969 - titanic_pipeline.core.modeling - ERROR -    ❌ GradientBoosting training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,970 - titanic_pipeline.core.modeling - ERROR -    ❌ ExtraTrees training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,971 - titanic_pipeline.core.modeling - ERROR -    ❌ AdaBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,973 - titanic_pipeline.core.modeling - ERROR -    ❌ Bagging training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,974 - titanic_pipeline.core.modeling - ERROR -    ❌ SGDClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,976 - titanic_pipeline.core.modeling - ERROR -    ❌ RidgeClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,977 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearSVC training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,978 - titanic_pipeline.core.modeling - ERROR -    ❌ DecisionTree training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,981 - titanic_pipeline.core.modeling - ERROR -    ❌ BernoulliNB training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,983 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearDiscriminantAnalysis training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,984 - titanic_pipeline.core.modeling - ERROR -    ❌ QuadraticDiscriminantAnalysis training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,986 - titanic_pipeline.core.modeling - ERROR -    ❌ XGBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,987 - titanic_pipeline.core.modeling - ERROR -    ❌ LightGBM training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:46,988 - titanic_pipeline.core.modeling - ERROR -    ❌ CatBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:41:56,117 - __main__ - INFO -    💾 Resultados dos modelos cached
+2026-01-02 18:41:56,118 - __main__ - INFO - Modelos treinados: 0 modelos em 9.65 s
+2026-01-02 18:41:56,118 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-02 18:41:56,119 - __main__ - CRITICAL - ERRO CRÍTICO: Nenhum modelo foi treinado com sucesso para criar o ensemble.
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\train.py", line 946, in main
+    raise EnsembleError(
+        "Nenhum modelo foi treinado com sucesso para criar o ensemble."
+    )
+EnsembleError: Nenhum modelo foi treinado com sucesso para criar o ensemble.
+2026-01-02 18:45:31,472 - __main__ - INFO - ================================================================================
+2026-01-02 18:45:31,473 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-02 18:45:31,473 - __main__ - INFO - ================================================================================
+2026-01-02 18:45:31,473 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-02 18:45:31,473 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-02 18:45:31,474 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-02 18:45:31,486 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-02 18:45:31,486 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 18:45:31,489 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-02 18:45:31,489 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 18:45:31,489 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 18:45:31,494 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-02 18:45:31,495 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 18:45:31,495 - __main__ - INFO -    ✅ Schema válido
+2026-01-02 18:45:31,495 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:31,496 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 18:45:31,496 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 18:45:41,772 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:45:41,777 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:45:41,785 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 18:45:41,790 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:45:41,799 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 18:45:41,814 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:45:41,823 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:45:41,829 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:45:41,833 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:45:41,842 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 18:45:41,847 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:45:41,853 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 18:45:41,864 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:45:41,874 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:45:42,691 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-02 18:45:42,693 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:42,693 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 18:45:42,728 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 18:45:42,735 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:42,735 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 18:45:42,762 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 18:45:42,767 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:42,768 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 18:45:42,798 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 18:45:42,803 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:42,804 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 18:45:42,835 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 18:45:42,842 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:42,842 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-02 18:45:42,872 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-02 18:45:42,877 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:42,877 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 18:45:42,900 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 18:45:42,906 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 18:45:42,907 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 18:45:42,907 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 18:45:42,908 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-02 18:45:42,908 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:42,910 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-02 18:45:42,910 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 18:45:42,911 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 18:45:42,998 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-02 18:45:43,039 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-02 18:45:43,063 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-02 18:45:43,064 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-02 18:45:43,065 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-02 18:45:43,067 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-02 18:45:43,076 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-02 18:45:43,094 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-02 18:45:43,111 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-02 18:45:43,119 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 18:45:43,124 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-02 18:45:43,124 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 18:45:43,125 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 18:45:43,128 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-02 18:45:43,128 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 18:45:43,129 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-02 18:45:43,129 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:43,130 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 18:45:43,130 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 18:45:53,373 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:45:53,382 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:45:53,413 - titanic_pipeline.preprocessing - WARNING - Parallel failed for _extract_deck on train: Cannot setitem on a Categorical with a new category (U), set the categories first. Fallback to sequential.
+2026-01-02 18:45:54,268 - titanic_pipeline.preprocessing - WARNING - Parallel processing failed: Cannot setitem on a Categorical with a new category (U), set the categories first. Using sequential.
+2026-01-02 18:45:54,270 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:45:54,273 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 18:45:54,273 - titanic_pipeline.preprocessing - INFO - Applied _create_family_features sequentially.
+2026-01-02 18:45:54,278 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:45:54,283 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 18:45:54,283 - titanic_pipeline.preprocessing - INFO - Applied _extract_title sequentially.
+2026-01-02 18:45:54,285 - titanic_pipeline.preprocessing - WARNING - Failed to apply _extract_deck: Cannot setitem on a Categorical with a new category (U), set the categories first. Skipping.
+2026-01-02 18:45:54,288 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:45:54,291 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 18:45:54,292 - titanic_pipeline.preprocessing - INFO - Applied _extract_ticket_prefix sequentially.
+2026-01-02 18:45:54,296 - titanic_pipeline.preprocessing - WARNING - Failed to apply _create_interactions: Object with dtype category cannot perform the numpy op add. Skipping.
+2026-01-02 18:45:54,306 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:45:54,316 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 18:45:54,316 - titanic_pipeline.preprocessing - INFO - Applied _create_bins sequentially.
+2026-01-02 18:45:54,320 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:45:54,325 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 18:45:54,326 - titanic_pipeline.preprocessing - INFO - Applied _create_missing_indicators sequentially.
+2026-01-02 18:45:54,329 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:54,329 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 18:45:54,355 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 18:45:54,361 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:54,362 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 18:45:54,393 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 18:45:54,397 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Sex: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 18:45:54,399 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:54,402 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 18:45:54,436 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 18:45:54,440 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Embarked: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 18:45:54,441 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:54,444 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 18:45:54,473 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 18:45:54,477 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:54,477 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 18:45:54,503 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 18:45:54,509 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 18:45:54,509 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 18:45:54,509 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 18:45:54,510 - __main__ - INFO -    💾 Features de treino processadas e cached (v1.0.0)
+2026-01-02 18:45:54,510 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-02 18:45:54,511 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 18:45:54,512 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_TicketPrefix_te']
+2026-01-02 18:45:54,512 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'TicketPrefix', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 18:45:54,513 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 18:45:54,543 - __main__ - INFO -    🚀 Iniciando treinamento paralelo com ModelingManager...
+2026-01-02 18:45:54,544 - titanic_pipeline.core.modeling - INFO -    🔄 Training models in parallel...
+2026-01-02 18:45:54,747 - titanic_pipeline.core.modeling - INFO -    📊 Available models: ['RandomForest', 'LogisticRegression', 'SVC', 'KNeighbors', 'GaussianNB', 'MLPClassifier', 'GradientBoosting', 'ExtraTrees', 'AdaBoost', 'Bagging', 'SGDClassifier', 'RidgeClassifier', 'LinearSVC', 'DecisionTree', 'BernoulliNB', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'XGBoost', 'LightGBM', 'CatBoost']
+2026-01-02 18:45:54,764 - titanic_pipeline.core.modeling - ERROR -    ❌ RandomForest training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,766 - titanic_pipeline.core.modeling - ERROR -    ❌ LogisticRegression training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,768 - titanic_pipeline.core.modeling - ERROR -    ❌ SVC training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,770 - titanic_pipeline.core.modeling - ERROR -    ❌ KNeighbors training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,771 - titanic_pipeline.core.modeling - ERROR -    ❌ GaussianNB training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,773 - titanic_pipeline.core.modeling - ERROR -    ❌ MLPClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,774 - titanic_pipeline.core.modeling - ERROR -    ❌ GradientBoosting training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,776 - titanic_pipeline.core.modeling - ERROR -    ❌ ExtraTrees training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,777 - titanic_pipeline.core.modeling - ERROR -    ❌ AdaBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,779 - titanic_pipeline.core.modeling - ERROR -    ❌ Bagging training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,780 - titanic_pipeline.core.modeling - ERROR -    ❌ SGDClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,782 - titanic_pipeline.core.modeling - ERROR -    ❌ RidgeClassifier training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,784 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearSVC training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,787 - titanic_pipeline.core.modeling - ERROR -    ❌ DecisionTree training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,789 - titanic_pipeline.core.modeling - ERROR -    ❌ BernoulliNB training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,791 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearDiscriminantAnalysis training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,792 - titanic_pipeline.core.modeling - ERROR -    ❌ QuadraticDiscriminantAnalysis training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,793 - titanic_pipeline.core.modeling - ERROR -    ❌ XGBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,794 - titanic_pipeline.core.modeling - ERROR -    ❌ LightGBM training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:45:54,796 - titanic_pipeline.core.modeling - ERROR -    ❌ CatBoost training failed: cannot pickle '_thread.lock' object
+2026-01-02 18:46:06,548 - __main__ - INFO -    💾 Resultados dos modelos cached
+2026-01-02 18:46:06,549 - __main__ - INFO - Modelos treinados: 0 modelos em 12.04 s
+2026-01-02 18:46:06,549 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-02 18:46:06,549 - __main__ - CRITICAL - ERRO CRÍTICO: Nenhum modelo foi treinado com sucesso para criar o ensemble.
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\train.py", line 946, in main
+    raise EnsembleError(
+        "Nenhum modelo foi treinado com sucesso para criar o ensemble."
+    )
+EnsembleError: Nenhum modelo foi treinado com sucesso para criar o ensemble.
+2026-01-02 19:09:37,996 - __main__ - INFO - ================================================================================
+2026-01-02 19:09:37,996 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-02 19:09:37,996 - __main__ - INFO - ================================================================================
+2026-01-02 19:09:37,996 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-02 19:09:37,996 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-02 19:09:37,997 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-02 19:09:38,007 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-02 19:09:38,007 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 19:09:38,011 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-02 19:09:38,012 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 19:09:38,013 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 19:09:38,016 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-02 19:09:38,016 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 19:09:38,017 - __main__ - INFO -    ✅ Schema válido
+2026-01-02 19:09:38,017 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:09:38,017 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 19:09:38,018 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 19:09:48,679 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 19:09:48,684 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 19:09:48,692 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 19:09:48,698 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 19:09:48,705 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 19:09:48,723 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 19:09:48,734 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 19:09:48,740 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 19:09:48,747 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 19:09:48,754 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 19:09:48,759 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 19:09:48,766 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 19:09:48,783 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 19:09:48,794 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 19:09:50,082 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-02 19:09:50,084 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:09:50,085 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 19:09:50,117 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 19:09:50,128 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:09:50,129 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 19:09:50,158 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 19:09:50,164 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:09:50,164 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 19:09:50,193 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 19:09:50,199 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:09:50,200 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 19:09:50,227 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 19:09:50,237 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:09:50,238 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-02 19:09:50,268 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-02 19:09:50,274 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:09:50,274 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 19:09:50,309 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 19:09:50,315 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 19:09:50,317 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 19:09:50,317 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 19:09:50,318 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-02 19:09:50,318 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:09:50,320 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-02 19:09:50,321 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 19:09:50,321 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 19:09:50,413 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-02 19:09:50,453 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-02 19:09:50,484 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-02 19:09:50,485 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-02 19:09:50,486 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-02 19:09:50,488 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-02 19:09:50,501 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-02 19:09:50,516 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-02 19:09:50,532 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-02 19:09:50,539 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 19:09:50,543 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-02 19:09:50,543 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 19:09:50,544 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 19:09:50,550 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-02 19:09:50,551 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 19:09:50,551 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-02 19:09:50,552 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:09:50,552 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 19:09:50,553 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 19:09:59,164 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 19:09:59,173 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 19:09:59,201 - titanic_pipeline.preprocessing - WARNING - Parallel failed for _extract_deck on train: Cannot setitem on a Categorical with a new category (U), set the categories first. Fallback to sequential.
+2026-01-02 19:10:00,017 - titanic_pipeline.preprocessing - WARNING - Parallel processing failed: Cannot setitem on a Categorical with a new category (U), set the categories first. Using sequential.
+2026-01-02 19:10:00,019 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 19:10:00,024 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 19:10:00,027 - titanic_pipeline.preprocessing - INFO - Applied _create_family_features sequentially.
+2026-01-02 19:10:00,034 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 19:10:00,038 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 19:10:00,039 - titanic_pipeline.preprocessing - INFO - Applied _extract_title sequentially.
+2026-01-02 19:10:00,040 - titanic_pipeline.preprocessing - WARNING - Failed to apply _extract_deck: Cannot setitem on a Categorical with a new category (U), set the categories first. Skipping.
+2026-01-02 19:10:00,044 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 19:10:00,046 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 19:10:00,047 - titanic_pipeline.preprocessing - INFO - Applied _extract_ticket_prefix sequentially.
+2026-01-02 19:10:00,051 - titanic_pipeline.preprocessing - WARNING - Failed to apply _create_interactions: Object with dtype category cannot perform the numpy op add. Skipping.
+2026-01-02 19:10:00,063 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 19:10:00,074 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 19:10:00,074 - titanic_pipeline.preprocessing - INFO - Applied _create_bins sequentially.
+2026-01-02 19:10:00,078 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 19:10:00,081 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 19:10:00,082 - titanic_pipeline.preprocessing - INFO - Applied _create_missing_indicators sequentially.
+2026-01-02 19:10:00,085 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:10:00,087 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 19:10:00,121 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 19:10:00,126 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:10:00,127 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 19:10:00,154 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 19:10:00,158 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Sex: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 19:10:00,160 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:10:00,162 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 19:10:00,193 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 19:10:00,198 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Embarked: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 19:10:00,199 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:10:00,199 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 19:10:00,229 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 19:10:00,234 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:10:00,234 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 19:10:00,259 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 19:10:00,266 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 19:10:00,267 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 19:10:00,267 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 19:10:00,267 - __main__ - INFO -    💾 Features de treino processadas e cached (v1.0.0)
+2026-01-02 19:10:00,268 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-02 19:10:00,268 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 19:10:00,270 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_TicketPrefix_te']
+2026-01-02 19:10:00,271 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'TicketPrefix', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 19:10:00,271 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 19:10:00,297 - __main__ - INFO -    🚀 Iniciando treinamento paralelo com ModelingManager...
+2026-01-02 19:10:00,297 - titanic_pipeline.core.modeling - INFO -    🔄 Training models sequentially to avoid pickling issues...
+2026-01-02 19:10:00,489 - titanic_pipeline.core.modeling - INFO -    📊 Available models: ['RandomForest', 'LogisticRegression', 'SVC', 'KNeighbors', 'GaussianNB', 'MLPClassifier', 'GradientBoosting', 'ExtraTrees', 'AdaBoost', 'Bagging', 'SGDClassifier', 'RidgeClassifier', 'LinearSVC', 'DecisionTree', 'BernoulliNB', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'XGBoost', 'LightGBM', 'CatBoost']
+2026-01-02 19:10:01,783 - titanic_pipeline.core.modeling - INFO -    ✅ RandomForest trained: 0.8047
+2026-01-02 19:10:01,880 - titanic_pipeline.core.modeling - INFO -    ✅ LogisticRegression trained: 0.8159
+2026-01-02 19:10:02,037 - titanic_pipeline.core.modeling - INFO -    ✅ SVC trained: 0.8283
+2026-01-02 19:10:02,037 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training KNeighbors: KNeighborsClassifier.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 19:10:02,037 - titanic_pipeline.core.modeling - ERROR -    ❌ KNeighbors training failed: KNeighborsClassifier.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 19:10:02,038 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training GaussianNB: GaussianNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 19:10:02,038 - titanic_pipeline.core.modeling - ERROR -    ❌ GaussianNB training failed: GaussianNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 19:10:05,432 - titanic_pipeline.core.modeling - INFO -    ✅ MLPClassifier trained: 0.8092
+2026-01-02 19:10:06,759 - titanic_pipeline.core.modeling - INFO -    ✅ GradientBoosting trained: 0.8025
+2026-01-02 19:10:07,679 - titanic_pipeline.core.modeling - INFO -    ✅ ExtraTrees trained: 0.7823
+2026-01-02 19:10:08,369 - titanic_pipeline.core.modeling - INFO -    ✅ AdaBoost trained: 0.8182
+2026-01-02 19:10:08,645 - titanic_pipeline.core.modeling - INFO -    ✅ Bagging trained: 0.7957
+2026-01-02 19:10:08,698 - titanic_pipeline.core.modeling - INFO -    ✅ SGDClassifier trained: 0.7508
+2026-01-02 19:10:08,766 - titanic_pipeline.core.modeling - INFO -    ✅ RidgeClassifier trained: 0.8227
+2026-01-02 19:10:08,814 - titanic_pipeline.core.modeling - INFO -    ✅ LinearSVC trained: 0.8171
+2026-01-02 19:10:08,865 - titanic_pipeline.core.modeling - INFO -    ✅ DecisionTree trained: 0.7609
+2026-01-02 19:10:08,865 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training BernoulliNB: BernoulliNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 19:10:08,866 - titanic_pipeline.core.modeling - ERROR -    ❌ BernoulliNB training failed: BernoulliNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 19:10:08,866 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training LinearDiscriminantAnalysis: LinearDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 19:10:08,866 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearDiscriminantAnalysis training failed: LinearDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 19:10:08,867 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training QuadraticDiscriminantAnalysis: QuadraticDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 19:10:08,868 - titanic_pipeline.core.modeling - ERROR -    ❌ QuadraticDiscriminantAnalysis training failed: QuadraticDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 19:10:09,171 - titanic_pipeline.core.modeling - INFO -    ✅ XGBoost trained: 0.7980
+2026-01-02 19:10:09,643 - titanic_pipeline.core.modeling - INFO -    ✅ LightGBM trained: 0.8047
+2026-01-02 19:10:25,362 - titanic_pipeline.core.modeling - INFO -    ✅ CatBoost trained: 0.8103
+2026-01-02 19:10:25,362 - __main__ - INFO -    💾 Resultados dos modelos cached
+2026-01-02 19:10:25,363 - __main__ - INFO - Modelos treinados: 15 modelos em 25.09 s
+2026-01-02 19:10:25,363 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-02 19:10:25,363 - __main__ - WARNING - ⚠️  Apenas 2 modelos válidos. Mínimo: 3
+2026-01-02 19:10:25,363 - __main__ - ERROR - ❌ Não foi possível criar ensemble com >=3 modelos. Usando melhor modelo único.
+2026-01-02 19:10:25,364 - __main__ - INFO - GERANDO GRÁFICOS E RELATÓRIOS...
+2026-01-02 19:10:26,005 - titanic_pipeline.core.reporting - INFO - Model performance logged to output/reports/model_performance.csv
+2026-01-02 19:10:26,632 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-02 19:10:26,788 - titanic_pipeline.core.reporting - INFO -    📊 Using 16 numeric features for correlation heatmap
+2026-01-02 19:10:28,806 - titanic_pipeline.core.reporting - INFO -    📊 Feature correlation heatmap generated
+2026-01-02 19:10:29,618 - titanic_pipeline.core.reporting - INFO -    📊 Model performance timeline generated
+2026-01-02 19:10:29,618 - __main__ - INFO - SALVANDO MODELO FINAL...
+2026-01-02 19:10:29,621 - titanic_pipeline.core.modeling - INFO - Pipeline saved to output/models/best_model_pipeline.pkl
+2026-01-02 19:10:29,622 - __main__ - INFO - Modelo final 'SVC' salvo como pipeline completo.
+2026-01-02 19:10:29,622 - __main__ - INFO - 📤 GERANDO ARQUIVO DE SUBMISSÃO A PARTIR DO MODELO SALVO...
+2026-01-02 19:10:29,652 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from output/models/best_model_pipeline.pkl
+2026-01-02 19:10:29,703 - titanic_pipeline.core.modeling - INFO - Predictions generated for 418 samples
+2026-01-02 19:10:29,709 - __main__ - INFO -    ✅ Submission gerada e salva em: output/submission.csv
+2026-01-02 19:10:29,712 - titanic_pipeline.core.reporting - INFO -    📝 Markdown report saved: output\relatorios\relatorio_final.md
+2026-01-02 19:10:29,977 - titanic_pipeline.core.reporting - INFO -    📄 DOCX report saved: output\relatorios\relatorio_final.docx
+2026-01-02 19:10:30,217 - titanic_pipeline.core.reporting - INFO -    📕 PDF report saved: output\relatorios\relatorio_final.pdf
+2026-01-02 19:10:34,650 - titanic_pipeline.core.reporting - WARNING - Feature mismatch for LightGBM, using all available features
+2026-01-02 19:10:35,698 - titanic_pipeline.core.reporting - INFO -    📊 Calibration plots generated
+2026-01-02 19:10:41,472 - titanic_pipeline.core.reporting - INFO -    📊 Feature importance plots generated
+2026-01-02 19:10:41,475 - titanic_pipeline.core.reporting - INFO -    📝 Changelog and manifest generated
+2026-01-02 19:10:41,476 - titanic_pipeline.core.reporting - INFO -    ⏱️  Timing report saved
+2026-01-02 19:10:41,478 - __main__ - INFO - ✅ Métricas exportadas: output/relatorios/metrics.json
+2026-01-02 19:10:41,478 - __main__ - INFO - ================================================================================
+2026-01-02 19:10:41,478 - __main__ - INFO - 📊 RESUMO FINAL DO PIPELINE TITANIC ML
+2026-01-02 19:10:41,479 - __main__ - INFO - ================================================================================
+2026-01-02 19:10:41,479 - __main__ - INFO - ⏱️  Tempo total: 51.71s
+2026-01-02 19:10:41,480 - __main__ - INFO - Modelos: 15/15
+2026-01-02 19:10:41,481 - __main__ - INFO - 🏆 Melhor modelo: SVC (Acc: 0.8283)
+2026-01-02 19:10:41,481 - __main__ - INFO - 🎯 Ensemble: Nenhum (Acc: N/A)
+2026-01-02 19:10:41,481 - __main__ - INFO - ✨ Features: 23
+2026-01-02 19:10:41,483 - __main__ - INFO - Saídas: submission.csv, métricas.json
+2026-01-02 19:10:41,484 - __main__ - INFO - ================================================================================
+2026-01-02 19:10:41,484 - __main__ - INFO - ✅ SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!
+2026-01-02 23:26:47,828 - __main__ - INFO - ================================================================================
+2026-01-02 23:26:47,828 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-02 23:26:47,828 - __main__ - INFO - ================================================================================
+2026-01-02 23:26:47,828 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-02 23:26:47,828 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-02 23:26:47,829 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-02 23:26:47,842 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-02 23:26:47,842 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 23:26:47,845 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-02 23:26:47,845 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 23:26:47,846 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 23:26:47,848 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-02 23:26:47,849 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 23:26:47,850 - __main__ - INFO -    ✅ Schema válido
+2026-01-02 23:26:47,851 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:26:47,851 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 23:26:47,852 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 23:26:56,074 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 23:26:56,080 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 23:26:56,086 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 23:26:56,092 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 23:26:56,097 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 23:26:56,110 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 23:26:56,119 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 23:26:56,125 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 23:26:56,130 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 23:26:56,136 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-02 23:26:56,141 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 23:26:56,146 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-02 23:26:56,157 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 23:26:56,163 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 23:26:56,966 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-02 23:26:56,969 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:26:56,970 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 23:26:57,002 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 23:26:57,009 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:26:57,009 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 23:26:57,032 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 23:26:57,036 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:26:57,037 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 23:26:57,063 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 23:26:57,068 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:26:57,068 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 23:26:57,094 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 23:26:57,099 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:26:57,100 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-02 23:26:57,130 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-02 23:26:57,135 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:26:57,135 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 23:26:57,162 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 23:26:57,180 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 23:26:57,180 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 23:26:57,181 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 23:26:57,181 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-02 23:26:57,183 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:26:57,185 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-02 23:26:57,186 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 23:26:57,186 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 23:26:57,251 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-02 23:26:57,285 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-02 23:26:57,308 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-02 23:26:57,309 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-02 23:26:57,309 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-02 23:26:57,311 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-02 23:26:57,319 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-02 23:26:57,334 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-02 23:26:57,348 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-02 23:26:57,351 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-02 23:26:57,356 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-02 23:26:57,358 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-02 23:26:57,358 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-02 23:26:57,362 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-02 23:26:57,363 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-02 23:26:57,363 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-02 23:26:57,364 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:26:57,364 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-02 23:26:57,364 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-02 23:27:05,613 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 23:27:05,623 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 23:27:05,657 - titanic_pipeline.preprocessing - WARNING - Parallel failed for _extract_deck on train: Cannot setitem on a Categorical with a new category (U), set the categories first. Fallback to sequential.
+2026-01-02 23:27:06,502 - titanic_pipeline.preprocessing - WARNING - Parallel processing failed: Cannot setitem on a Categorical with a new category (U), set the categories first. Using sequential.
+2026-01-02 23:27:06,507 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 23:27:06,511 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-02 23:27:06,511 - titanic_pipeline.preprocessing - INFO - Applied _create_family_features sequentially.
+2026-01-02 23:27:06,516 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 23:27:06,520 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-02 23:27:06,521 - titanic_pipeline.preprocessing - INFO - Applied _extract_title sequentially.
+2026-01-02 23:27:06,522 - titanic_pipeline.preprocessing - WARNING - Failed to apply _extract_deck: Cannot setitem on a Categorical with a new category (U), set the categories first. Skipping.
+2026-01-02 23:27:06,524 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 23:27:06,526 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-02 23:27:06,526 - titanic_pipeline.preprocessing - INFO - Applied _extract_ticket_prefix sequentially.
+2026-01-02 23:27:06,532 - titanic_pipeline.preprocessing - WARNING - Failed to apply _create_interactions: Object with dtype category cannot perform the numpy op add. Skipping.
+2026-01-02 23:27:06,542 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 23:27:06,557 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-02 23:27:06,557 - titanic_pipeline.preprocessing - INFO - Applied _create_bins sequentially.
+2026-01-02 23:27:06,563 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 23:27:06,567 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-02 23:27:06,568 - titanic_pipeline.preprocessing - INFO - Applied _create_missing_indicators sequentially.
+2026-01-02 23:27:06,570 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:27:06,570 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-02 23:27:06,597 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-02 23:27:06,602 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:27:06,603 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-02 23:27:06,631 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-02 23:27:06,636 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Sex: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 23:27:06,637 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:27:06,638 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-02 23:27:06,672 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-02 23:27:06,677 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Embarked: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-02 23:27:06,678 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:27:06,679 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-02 23:27:06,703 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-02 23:27:06,709 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:27:06,710 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-02 23:27:06,735 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-02 23:27:06,741 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-02 23:27:06,743 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-02 23:27:06,743 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-02 23:27:06,743 - __main__ - INFO -    💾 Features de treino processadas e cached (v1.0.0)
+2026-01-02 23:27:06,744 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-02 23:27:06,744 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-02 23:27:06,746 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_TicketPrefix_te']
+2026-01-02 23:27:06,746 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'TicketPrefix', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-02 23:27:06,746 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-02 23:27:06,773 - __main__ - INFO -    🚀 Iniciando treinamento paralelo com ModelingManager...
+2026-01-02 23:27:06,775 - titanic_pipeline.core.modeling - INFO -    🔄 Training models sequentially to avoid pickling issues...
+2026-01-02 23:27:06,971 - titanic_pipeline.core.modeling - INFO -    📊 Available models: ['RandomForest', 'LogisticRegression', 'SVC', 'KNeighbors', 'GaussianNB', 'MLPClassifier', 'GradientBoosting', 'ExtraTrees', 'AdaBoost', 'Bagging', 'SGDClassifier', 'RidgeClassifier', 'LinearSVC', 'DecisionTree', 'BernoulliNB', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'XGBoost', 'LightGBM', 'CatBoost']
+2026-01-02 23:27:08,266 - titanic_pipeline.core.modeling - INFO -    ✅ RandomForest trained: 0.8047
+2026-01-02 23:27:08,361 - titanic_pipeline.core.modeling - INFO -    ✅ LogisticRegression trained: 0.8159
+2026-01-02 23:27:08,524 - titanic_pipeline.core.modeling - INFO -    ✅ SVC trained: 0.8283
+2026-01-02 23:27:08,525 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training KNeighbors: KNeighborsClassifier.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 23:27:08,525 - titanic_pipeline.core.modeling - ERROR -    ❌ KNeighbors training failed: KNeighborsClassifier.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 23:27:08,526 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training GaussianNB: GaussianNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 23:27:08,526 - titanic_pipeline.core.modeling - ERROR -    ❌ GaussianNB training failed: GaussianNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 23:27:11,922 - titanic_pipeline.core.modeling - INFO -    ✅ MLPClassifier trained: 0.8092
+2026-01-02 23:27:13,268 - titanic_pipeline.core.modeling - INFO -    ✅ GradientBoosting trained: 0.8025
+2026-01-02 23:27:14,187 - titanic_pipeline.core.modeling - INFO -    ✅ ExtraTrees trained: 0.7823
+2026-01-02 23:27:14,889 - titanic_pipeline.core.modeling - INFO -    ✅ AdaBoost trained: 0.8182
+2026-01-02 23:27:15,163 - titanic_pipeline.core.modeling - INFO -    ✅ Bagging trained: 0.7957
+2026-01-02 23:27:15,211 - titanic_pipeline.core.modeling - INFO -    ✅ SGDClassifier trained: 0.7508
+2026-01-02 23:27:15,239 - titanic_pipeline.core.modeling - INFO -    ✅ RidgeClassifier trained: 0.8227
+2026-01-02 23:27:15,297 - titanic_pipeline.core.modeling - INFO -    ✅ LinearSVC trained: 0.8171
+2026-01-02 23:27:15,344 - titanic_pipeline.core.modeling - INFO -    ✅ DecisionTree trained: 0.7609
+2026-01-02 23:27:15,344 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training BernoulliNB: BernoulliNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 23:27:15,344 - titanic_pipeline.core.modeling - ERROR -    ❌ BernoulliNB training failed: BernoulliNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 23:27:15,345 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training LinearDiscriminantAnalysis: LinearDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 23:27:15,346 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearDiscriminantAnalysis training failed: LinearDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 23:27:15,348 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training QuadraticDiscriminantAnalysis: QuadraticDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 23:27:15,349 - titanic_pipeline.core.modeling - ERROR -    ❌ QuadraticDiscriminantAnalysis training failed: QuadraticDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-02 23:27:15,652 - titanic_pipeline.core.modeling - INFO -    ✅ XGBoost trained: 0.7980
+2026-01-02 23:27:16,466 - titanic_pipeline.core.modeling - INFO -    ✅ LightGBM trained: 0.8047
+2026-01-02 23:27:31,178 - titanic_pipeline.core.modeling - INFO -    ✅ CatBoost trained: 0.8103
+2026-01-02 23:27:31,178 - __main__ - INFO -    💾 Resultados dos modelos cached
+2026-01-02 23:27:31,178 - __main__ - INFO - Modelos treinados: 15 modelos em 24.43 s
+2026-01-02 23:27:31,178 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-02 23:27:31,179 - __main__ - WARNING - ⚠️  Apenas 2 modelos válidos. Mínimo: 3
+2026-01-02 23:27:31,179 - __main__ - ERROR - ❌ Não foi possível criar ensemble com >=3 modelos. Usando melhor modelo único.
+2026-01-02 23:27:31,179 - __main__ - INFO - GERANDO GRÁFICOS E RELATÓRIOS...
+2026-01-02 23:27:31,830 - titanic_pipeline.core.reporting - INFO - Model performance logged to output/reports/model_performance.csv
+2026-01-02 23:27:32,515 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-02 23:27:32,663 - titanic_pipeline.core.reporting - INFO -    📊 Using 16 numeric features for correlation heatmap
+2026-01-02 23:27:34,557 - titanic_pipeline.core.reporting - INFO -    📊 Feature correlation heatmap generated
+2026-01-02 23:27:35,350 - titanic_pipeline.core.reporting - INFO -    📊 Model performance timeline generated
+2026-01-02 23:27:35,350 - __main__ - INFO - SALVANDO MODELO FINAL...
+2026-01-02 23:27:35,354 - titanic_pipeline.core.modeling - INFO - Pipeline saved to output/models/best_model_pipeline.pkl
+2026-01-02 23:27:35,354 - __main__ - INFO - Modelo final 'SVC' salvo como pipeline completo.
+2026-01-02 23:27:35,355 - __main__ - INFO - 📤 GERANDO ARQUIVO DE SUBMISSÃO A PARTIR DO MODELO SALVO...
+2026-01-02 23:27:35,373 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from output/models/best_model_pipeline.pkl
+2026-01-02 23:27:35,420 - titanic_pipeline.core.modeling - INFO - Predictions generated for 418 samples
+2026-01-02 23:27:35,429 - __main__ - INFO -    ✅ Submission gerada e salva em: output/submission.csv
+2026-01-02 23:27:35,431 - titanic_pipeline.core.reporting - INFO -    📝 Markdown report saved: output\relatorios\relatorio_final.md
+2026-01-02 23:27:35,662 - titanic_pipeline.core.reporting - INFO -    📄 DOCX report saved: output\relatorios\relatorio_final.docx
+2026-01-02 23:27:35,899 - titanic_pipeline.core.reporting - INFO -    📕 PDF report saved: output\relatorios\relatorio_final.pdf
+2026-01-02 23:27:40,485 - titanic_pipeline.core.reporting - WARNING - Feature mismatch for LightGBM, using all available features
+2026-01-02 23:27:41,511 - titanic_pipeline.core.reporting - INFO -    📊 Calibration plots generated
+2026-01-02 23:27:47,436 - titanic_pipeline.core.reporting - INFO -    📊 Feature importance plots generated
+2026-01-02 23:27:47,438 - titanic_pipeline.core.reporting - INFO -    📝 Changelog and manifest generated
+2026-01-02 23:27:47,440 - titanic_pipeline.core.reporting - INFO -    ⏱️  Timing report saved
+2026-01-02 23:27:47,442 - __main__ - INFO - ✅ Métricas exportadas: output/relatorios/metrics.json
+2026-01-02 23:27:47,442 - __main__ - INFO - ================================================================================
+2026-01-02 23:27:47,442 - __main__ - INFO - 📊 RESUMO FINAL DO PIPELINE TITANIC ML
+2026-01-02 23:27:47,442 - __main__ - INFO - ================================================================================
+2026-01-02 23:27:47,443 - __main__ - INFO - ⏱️  Tempo total: 47.60s
+2026-01-02 23:27:47,444 - __main__ - INFO - Modelos: 15/15
+2026-01-02 23:27:47,445 - __main__ - INFO - 🏆 Melhor modelo: SVC (Acc: 0.8283)
+2026-01-02 23:27:47,446 - __main__ - INFO - 🎯 Ensemble: Nenhum (Acc: N/A)
+2026-01-02 23:27:47,446 - __main__ - INFO - ✨ Features: 23
+2026-01-02 23:27:47,447 - __main__ - INFO - Saídas: submission.csv, métricas.json
+2026-01-02 23:27:47,448 - __main__ - INFO - ================================================================================
+2026-01-02 23:27:47,448 - __main__ - INFO - ✅ SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!
+2026-01-03 00:11:52,377 - __main__ - INFO - ================================================================================
+2026-01-03 00:11:52,378 - __main__ - INFO - INICIANDO PIPELINE DE TREINAMENTO - TITANIC
+2026-01-03 00:11:52,378 - __main__ - INFO - ================================================================================
+2026-01-03 00:11:52,378 - __main__ - INFO - 🚀 Rodando smoke tests antes do pipeline principal...
+2026-01-03 00:11:52,378 - __main__ - INFO - 🧪 Iniciando SMOKE TESTS...
+2026-01-03 00:11:52,380 - __main__ - INFO -    ✅ Diretórios e arquivos OK
+2026-01-03 00:11:52,394 - __main__ - INFO -    ✅ Dados carregados: train=(50, 12), test=(30, 11)
+2026-01-03 00:11:52,395 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-03 00:11:52,398 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 50 linhas, 12 colunas
+2026-01-03 00:11:52,401 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-03 00:11:52,402 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-03 00:11:52,405 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 30 linhas, 11 colunas
+2026-01-03 00:11:52,406 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-03 00:11:52,406 - __main__ - INFO -    ✅ Schema válido
+2026-01-03 00:11:52,407 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:11:52,407 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-03 00:11:52,408 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-03 00:12:00,836 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-03 00:12:00,840 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-03 00:12:00,846 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-03 00:12:00,850 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-03 00:12:00,859 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-03 00:12:00,872 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-03 00:12:00,880 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-03 00:12:00,887 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-03 00:12:00,892 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-03 00:12:00,898 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-03 00:12:00,902 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-03 00:12:00,908 - titanic_pipeline.preprocessing - INFO - Interações criadas: AgeClass, FarePerPerson, Title_Interactions.
+2026-01-03 00:12:00,920 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-03 00:12:00,928 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-03 00:12:01,768 - titanic_pipeline.preprocessing - INFO - Feature engineering applied in parallel.
+2026-01-03 00:12:01,770 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:01,772 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-03 00:12:01,799 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-03 00:12:01,806 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:01,806 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-03 00:12:01,827 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-03 00:12:01,834 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:01,834 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-03 00:12:01,867 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-03 00:12:01,873 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:01,874 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-03 00:12:01,898 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-03 00:12:01,902 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:01,903 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-03 00:12:01,925 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-03 00:12:01,931 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:01,932 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-03 00:12:01,952 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-03 00:12:01,959 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-03 00:12:01,959 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-03 00:12:01,960 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-03 00:12:01,960 - __main__ - INFO -    ✅ Features geradas: train=(50, 34), test=(30, 33)
+2026-01-03 00:12:01,960 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:01,962 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_Deck_te', 'feat_TicketPrefix_te']
+2026-01-03 00:12:01,962 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'Title', 'Deck', 'TicketPrefix', 'Title_Interactions', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-03 00:12:01,963 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-03 00:12:02,028 - __main__ - INFO -    ✅ Modelo treinado: Acc=0.6000
+2026-01-03 00:12:02,063 - __main__ - INFO -    ✅ Predições geradas: 30 amostras
+2026-01-03 00:12:02,087 - __main__ - INFO -    ✅ Modelo salvo e carregado OK
+2026-01-03 00:12:02,090 - __main__ - INFO - ✅ SMOKE TESTS PASSARAM!
+2026-01-03 00:12:02,091 - __main__ - INFO - 📁 CRIANDO DIRETÓRIOS...
+2026-01-03 00:12:02,093 - __main__ - INFO - 📊 CARREGANDO E VALIDANDO DADOS...
+2026-01-03 00:12:02,101 - __main__ - INFO - 🧠 OTIMIZANDO USO DE MEMÓRIA...
+2026-01-03 00:12:02,122 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.28 MB to 0.14 MB (50.1% reduction)
+2026-01-03 00:12:02,134 - titanic_pipeline.utils.memory - INFO -    💾 Memory usage decreased from 0.13 MB to 0.07 MB (48.8% reduction)
+2026-01-03 00:12:02,139 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-03 00:12:02,142 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-03 00:12:02,146 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-03 00:12:02,147 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-03 00:12:02,149 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-03 00:12:02,150 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-03 00:12:02,150 - __main__ - INFO - 🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...
+2026-01-03 00:12:02,150 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:02,150 - titanic_pipeline.preprocessing - INFO - AdvancedFeatureEngineer initialized: parallel=True, heavy_ops=True, training=True
+2026-01-03 00:12:02,151 - titanic_pipeline.preprocessing - INFO - Starting advanced feature engineering...
+2026-01-03 00:12:10,485 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-03 00:12:10,495 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-03 00:12:10,524 - titanic_pipeline.preprocessing - WARNING - Parallel failed for _extract_deck on train: Cannot setitem on a Categorical with a new category (U), set the categories first. Fallback to sequential.
+2026-01-03 00:12:11,350 - titanic_pipeline.preprocessing - WARNING - Parallel processing failed: Cannot setitem on a Categorical with a new category (U), set the categories first. Using sequential.
+2026-01-03 00:12:11,352 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-03 00:12:11,354 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-03 00:12:11,354 - titanic_pipeline.preprocessing - INFO - Applied _create_family_features sequentially.
+2026-01-03 00:12:11,359 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-03 00:12:11,365 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-03 00:12:11,365 - titanic_pipeline.preprocessing - INFO - Applied _extract_title sequentially.
+2026-01-03 00:12:11,367 - titanic_pipeline.preprocessing - WARNING - Failed to apply _extract_deck: Cannot setitem on a Categorical with a new category (U), set the categories first. Skipping.
+2026-01-03 00:12:11,370 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-03 00:12:11,372 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-03 00:12:11,373 - titanic_pipeline.preprocessing - INFO - Applied _extract_ticket_prefix sequentially.
+2026-01-03 00:12:11,378 - titanic_pipeline.preprocessing - WARNING - Failed to apply _create_interactions: Object with dtype category cannot perform the numpy op add. Skipping.
+2026-01-03 00:12:11,389 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-03 00:12:11,397 - titanic_pipeline.preprocessing - INFO - Bins criados: feat_AgeBin, feat_FareBin, feat_AgeCategory_v2, feat_FareCategory_v2.
+2026-01-03 00:12:11,398 - titanic_pipeline.preprocessing - INFO - Applied _create_bins sequentially.
+2026-01-03 00:12:11,403 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-03 00:12:11,407 - titanic_pipeline.preprocessing - INFO - Indicadores de missing criados: feat_*_missing.
+2026-01-03 00:12:11,407 - titanic_pipeline.preprocessing - INFO - Applied _create_missing_indicators sequentially.
+2026-01-03 00:12:11,409 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:11,410 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Pclass
+2026-01-03 00:12:11,442 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Pclass.json
+2026-01-03 00:12:11,449 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:11,450 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Sex
+2026-01-03 00:12:11,473 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Sex.json
+2026-01-03 00:12:11,480 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Sex: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-03 00:12:11,481 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:11,481 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-03 00:12:11,519 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-03 00:12:11,525 - titanic_pipeline.preprocessing - WARNING - Erro ao carregar mapa de target encoding para Embarked: Cannot setitem on a Categorical with a new category (0.3838383838383838), set the categories first. Usando global mean.
+2026-01-03 00:12:11,526 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:11,526 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-03 00:12:11,550 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-03 00:12:11,571 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:11,571 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-03 00:12:11,600 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-03 00:12:11,605 - titanic_pipeline.preprocessing - INFO - Target encoding aplicado.
+2026-01-03 00:12:11,605 - titanic_pipeline.preprocessing - INFO - Column consistency ensured between train and test.
+2026-01-03 00:12:11,605 - titanic_pipeline.preprocessing - INFO - Advanced feature engineering completed.
+2026-01-03 00:12:11,606 - __main__ - INFO -    💾 Features de treino processadas e cached (v1.0.0)
+2026-01-03 00:12:11,606 - __main__ - INFO - 🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...
+2026-01-03 00:12:11,607 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-03 00:12:11,608 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'feat_Pclass_te', 'feat_Sex_te', 'feat_Embarked_te', 'feat_Title_te', 'feat_TicketPrefix_te']
+2026-01-03 00:12:11,609 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['Sex', 'Embarked', 'TicketPrefix', 'feat_AgeBin', 'feat_FareBin', 'feat_AgeCategory_v2', 'feat_FareCategory_v2', 'feat_Age_missing', 'feat_Cabin_missing', 'feat_Embarked_missing', 'feat_Fare_missing']
+2026-01-03 00:12:11,609 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-03 00:12:11,643 - __main__ - INFO -    🚀 Iniciando treinamento paralelo com ModelingManager...
+2026-01-03 00:12:11,645 - titanic_pipeline.core.modeling - INFO -    🔄 Training models sequentially to avoid pickling issues...
+2026-01-03 00:12:11,839 - titanic_pipeline.core.modeling - INFO -    📊 Available models: ['RandomForest', 'LogisticRegression', 'SVC', 'KNeighbors', 'GaussianNB', 'MLPClassifier', 'GradientBoosting', 'ExtraTrees', 'AdaBoost', 'Bagging', 'SGDClassifier', 'RidgeClassifier', 'LinearSVC', 'DecisionTree', 'BernoulliNB', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'XGBoost', 'LightGBM', 'CatBoost']
+2026-01-03 00:12:13,137 - titanic_pipeline.core.modeling - INFO -    ✅ RandomForest trained: 0.8047
+2026-01-03 00:12:13,234 - titanic_pipeline.core.modeling - INFO -    ✅ LogisticRegression trained: 0.8159
+2026-01-03 00:12:13,388 - titanic_pipeline.core.modeling - INFO -    ✅ SVC trained: 0.8283
+2026-01-03 00:12:13,389 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training KNeighbors: KNeighborsClassifier.__init__() got an unexpected keyword argument 'random_state'
+2026-01-03 00:12:13,389 - titanic_pipeline.core.modeling - ERROR -    ❌ KNeighbors training failed: KNeighborsClassifier.__init__() got an unexpected keyword argument 'random_state'
+2026-01-03 00:12:13,389 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training GaussianNB: GaussianNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-03 00:12:13,390 - titanic_pipeline.core.modeling - ERROR -    ❌ GaussianNB training failed: GaussianNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-03 00:12:16,819 - titanic_pipeline.core.modeling - INFO -    ✅ MLPClassifier trained: 0.8092
+2026-01-03 00:12:18,126 - titanic_pipeline.core.modeling - INFO -    ✅ GradientBoosting trained: 0.8025
+2026-01-03 00:12:19,069 - titanic_pipeline.core.modeling - INFO -    ✅ ExtraTrees trained: 0.7823
+2026-01-03 00:12:19,755 - titanic_pipeline.core.modeling - INFO -    ✅ AdaBoost trained: 0.8182
+2026-01-03 00:12:20,020 - titanic_pipeline.core.modeling - INFO -    ✅ Bagging trained: 0.7957
+2026-01-03 00:12:20,064 - titanic_pipeline.core.modeling - INFO -    ✅ SGDClassifier trained: 0.7508
+2026-01-03 00:12:20,103 - titanic_pipeline.core.modeling - INFO -    ✅ RidgeClassifier trained: 0.8227
+2026-01-03 00:12:20,156 - titanic_pipeline.core.modeling - INFO -    ✅ LinearSVC trained: 0.8171
+2026-01-03 00:12:20,206 - titanic_pipeline.core.modeling - INFO -    ✅ DecisionTree trained: 0.7609
+2026-01-03 00:12:20,206 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training BernoulliNB: BernoulliNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-03 00:12:20,206 - titanic_pipeline.core.modeling - ERROR -    ❌ BernoulliNB training failed: BernoulliNB.__init__() got an unexpected keyword argument 'random_state'
+2026-01-03 00:12:20,207 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training LinearDiscriminantAnalysis: LinearDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-03 00:12:20,207 - titanic_pipeline.core.modeling - ERROR -    ❌ LinearDiscriminantAnalysis training failed: LinearDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-03 00:12:20,207 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training QuadraticDiscriminantAnalysis: QuadraticDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-03 00:12:20,208 - titanic_pipeline.core.modeling - ERROR -    ❌ QuadraticDiscriminantAnalysis training failed: QuadraticDiscriminantAnalysis.__init__() got an unexpected keyword argument 'random_state'
+2026-01-03 00:12:20,517 - titanic_pipeline.core.modeling - INFO -    ✅ XGBoost trained: 0.7980
+2026-01-03 00:12:20,995 - titanic_pipeline.core.modeling - INFO -    ✅ LightGBM trained: 0.8047
+2026-01-03 00:12:36,701 - titanic_pipeline.core.modeling - INFO -    ✅ CatBoost trained: 0.8103
+2026-01-03 00:12:36,701 - __main__ - INFO -    💾 Resultados dos modelos cached
+2026-01-03 00:12:36,702 - __main__ - INFO - Modelos treinados: 15 modelos em 25.10 s
+2026-01-03 00:12:36,702 - __main__ - INFO - CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...
+2026-01-03 00:12:36,703 - __main__ - WARNING - ⚠️  Apenas 2 modelos válidos. Mínimo: 3
+2026-01-03 00:12:36,703 - __main__ - ERROR - ❌ Não foi possível criar ensemble com >=3 modelos. Usando melhor modelo único.
+2026-01-03 00:12:36,705 - __main__ - INFO - GERANDO GRÁFICOS E RELATÓRIOS...
+2026-01-03 00:12:37,441 - titanic_pipeline.core.reporting - INFO - Model performance logged to output/reports/model_performance.csv
+2026-01-03 00:12:38,416 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-03 00:12:38,548 - titanic_pipeline.core.reporting - INFO -    📊 Using 16 numeric features for correlation heatmap
+2026-01-03 00:12:39,881 - titanic_pipeline.core.reporting - INFO -    📊 Feature correlation heatmap generated
+2026-01-03 00:12:40,646 - titanic_pipeline.core.reporting - INFO -    📊 Model performance timeline generated
+2026-01-03 00:12:40,647 - __main__ - INFO - SALVANDO MODELO FINAL...
+2026-01-03 00:12:40,650 - titanic_pipeline.core.modeling - INFO - Pipeline saved to output/models/best_model_pipeline.pkl
+2026-01-03 00:12:40,650 - __main__ - INFO - Modelo final 'SVC' salvo como pipeline completo.
+2026-01-03 00:12:40,651 - __main__ - INFO - 📤 GERANDO ARQUIVO DE SUBMISSÃO A PARTIR DO MODELO SALVO...
+2026-01-03 00:12:40,670 - titanic_pipeline.core.modeling - INFO - Pipeline loaded from output/models/best_model_pipeline.pkl
+2026-01-03 00:12:40,722 - titanic_pipeline.core.modeling - INFO - Predictions generated for 418 samples
+2026-01-03 00:12:40,729 - __main__ - INFO -    ✅ Submission gerada e salva em: output/submission.csv
+2026-01-03 00:12:40,731 - titanic_pipeline.core.reporting - INFO -    📝 Markdown report saved: output\relatorios\relatorio_final.md
+2026-01-03 00:12:40,971 - titanic_pipeline.core.reporting - INFO -    📄 DOCX report saved: output\relatorios\relatorio_final.docx
+2026-01-03 00:12:41,206 - titanic_pipeline.core.reporting - INFO -    📕 PDF report saved: output\relatorios\relatorio_final.pdf
+2026-01-03 00:12:45,741 - titanic_pipeline.core.reporting - WARNING - Feature mismatch for LightGBM, using all available features
+2026-01-03 00:12:46,798 - titanic_pipeline.core.reporting - INFO -    📊 Calibration plots generated
+2026-01-03 00:12:52,582 - titanic_pipeline.core.reporting - INFO -    📊 Feature importance plots generated
+2026-01-03 00:12:52,584 - titanic_pipeline.core.reporting - INFO -    📝 Changelog and manifest generated
+2026-01-03 00:12:52,585 - titanic_pipeline.core.reporting - INFO -    ⏱️  Timing report saved
+2026-01-03 00:12:52,588 - __main__ - INFO - ✅ Métricas exportadas: output/relatorios/metrics.json
+2026-01-03 00:12:52,589 - __main__ - INFO - ================================================================================
+2026-01-03 00:12:52,590 - __main__ - INFO - 📊 RESUMO FINAL DO PIPELINE TITANIC ML
+2026-01-03 00:12:52,590 - __main__ - INFO - ================================================================================
+2026-01-03 00:12:52,591 - __main__ - INFO - ⏱️  Tempo total: 48.35s
+2026-01-03 00:12:52,593 - __main__ - INFO - Modelos: 15/15
+2026-01-03 00:12:52,593 - __main__ - INFO - 🏆 Melhor modelo: SVC (Acc: 0.8283)
+2026-01-03 00:12:52,594 - __main__ - INFO - 🎯 Ensemble: Nenhum (Acc: N/A)
+2026-01-03 00:12:52,594 - __main__ - INFO - ✨ Features: 23
+2026-01-03 00:12:52,595 - __main__ - INFO - Saídas: submission.csv, métricas.json
+2026-01-03 00:12:52,595 - __main__ - INFO - ================================================================================
+2026-01-03 00:12:52,595 - __main__ - INFO - ✅ SUCESSO TOTAL! PIPELINE DE TREINAMENTO CONCLUÍDO!

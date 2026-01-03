@@ -43,7 +43,7 @@ class ModelingManager:
 
     def train_all_models(self, X_train: np.ndarray, y_train: np.ndarray) -> Dict[str, Any]:
         """
-        Train all configured models in parallel.
+        Train all configured models sequentially to avoid pickling issues on Windows.
 
         Args:
             X_train: Training features
@@ -52,40 +52,26 @@ class ModelingManager:
         Returns:
             Dictionary with model results
         """
-        logger.info("   🔄 Training models in parallel...")
+        logger.info("   🔄 Training models sequentially to avoid pickling issues...")
 
         # Get available models
         available_models = self._get_available_models()
 
-        # Train models in parallel
+        # Train models sequentially
         results = {}
-        futures = {}
-
-        with self.parallel_processor.executor as executor:
-            for model_name, model_class in available_models.items():
-                future = executor.submit(
-                    self._train_single_model,
-                    model_name,
-                    model_class,
-                    X_train,
-                    y_train
-                )
-                futures[future] = model_name
-
-            for future in self.parallel_processor.as_completed(futures):
-                model_name = futures[future]
-                try:
-                    result = future.result()
-                    results[model_name] = result
-                    logger.info(f"   ✅ {model_name} trained: {result['mean_score']:.4f}")
-                except Exception as e:
-                    logger.error(f"   ❌ {model_name} training failed: {e}")
+        for model_name, model_class in available_models.items():
+            try:
+                result = self._train_single_model(model_name, model_class, X_train, y_train)
+                results[model_name] = result
+                logger.info(f"   ✅ {model_name} trained: {result['mean_score']:.4f}")
+            except Exception as e:
+                logger.error(f"   ❌ {model_name} training failed: {e}")
 
         return results
 
     def _train_single_model(self, model_name: str, model_class, X_train: np.ndarray,
                           y_train: np.ndarray) -> Dict[str, Any]:
-        """Train a single model with cross-validation and timeout protection."""
+        """Train a single model with cross-validation."""
         try:
             # Use pre-configured model if available
             if model_name in self.pre_configured_models:
@@ -99,41 +85,22 @@ class ModelingManager:
                     if model_name in ["SVC", "KNeighbors"]:
                         model_params.update({
                             "max_iter": 10000 if model_name == "SVC" else None,
-                            "n_jobs": -1 if model_name == "KNeighbors" else None
+                            "n_jobs": 1 if model_name == "KNeighbors" else None  # Set to 1 for safety
                         })
                     model = model_class(**model_params)
                 else:
                     model = model_class(random_state=self.config["random_state"])
 
-            # Timeout protection for slow models
-            timeout_seconds = 300  # 5 minutes timeout
-            if model_name in ["SVC", "KNeighbors", "MLPClassifier"]:
-                timeout_seconds = 600  # 10 minutes for very slow models
+            # Perform cross-validation
+            cv_scores = cross_val_score(
+                model, X_train, y_train,
+                cv=self.config["cv_folds"],
+                scoring="accuracy",
+                n_jobs=1  # Avoid nested parallelism
+            )
 
-            # Perform cross-validation with timeout
-            import concurrent.futures
-            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-                future_cv = executor.submit(
-                    cross_val_score,
-                    model, X_train, y_train,
-                    cv=self.config["cv_folds"],
-                    scoring="accuracy",
-                    n_jobs=1  # Avoid nested parallelism
-                )
-                try:
-                    cv_scores = future_cv.result(timeout=timeout_seconds)
-                except concurrent.futures.TimeoutError:
-                    logger.warning(f"   ⚠️  CV for {model_name} timed out after {timeout_seconds}s, skipping")
-                    raise TimeoutError(f"CV timeout for {model_name}")
-
-            # Train final model with timeout
-            with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-                future_fit = executor.submit(model.fit, X_train, y_train)
-                try:
-                    future_fit.result(timeout=timeout_seconds)
-                except concurrent.futures.TimeoutError:
-                    logger.warning(f"   ⚠️  Training for {model_name} timed out after {timeout_seconds}s, skipping")
-                    raise TimeoutError(f"Training timeout for {model_name}")
+            # Train final model
+            model.fit(X_train, y_train)
 
             result = {
                 "trained_model": model,
@@ -172,8 +139,8 @@ class ModelingManager:
             if "trained_model" in result:
                 base_models.append((model_name, result["trained_model"]))
 
-        if len(base_models) < 2:
-            logger.warning("   ⚠️  Not enough models for ensemble")
+        if len(base_models) < 3:
+            logger.warning(f"   ⚠️  Apenas {len(base_models)} modelos válidos. Mínimo: 3")
             return ensemble_results
 
         try:

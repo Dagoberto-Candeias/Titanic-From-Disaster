@@ -639,7 +639,7 @@ def smoke_test():
             for c in train_fe.columns
             if c not in ["PassengerId", "Survived", "Name", "Ticket", "Cabin"]
         ]
-        preprocessor = create_feature_pipeline(train_fe, feature_cols_smoke)
+        preprocessor = create_feature_pipeline(df=train_fe, feature_cols=feature_cols_smoke, random_state=CONFIG["random_state"])
         X = preprocessor.fit_transform(train_fe[feature_cols_smoke])
         y = train_fe["Survived"]
 

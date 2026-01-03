@@ -17,6 +17,7 @@ class ReportingManager:
         self.config = config
         self.output_dir = Path("output")
         self.reports_dir = self.output_dir / "relatorios"
+        self.feature_cols = None
 
     def generate_reports(
         self,
@@ -312,7 +313,22 @@ class ReportingManager:
 
                     # Get predicted probabilities
                     if hasattr(model, "predict_proba"):
-                        prob_pos = model.predict_proba(X_train)[:, 1]
+                        # Handle feature mismatch by using model's expected features
+                        X_for_pred = X_train
+                        if hasattr(model, 'feature_names_in_'):
+                            expected = model.feature_names_in_
+                            if (hasattr(X_train, 'select_dtypes') and
+                                set(expected).issubset(set(X_train.columns))):
+                                X_for_pred = X_train[list(expected)]
+                            else:
+                                logger.warning(
+                                    "Feature mismatch for %s, using all available features",
+                                    model_name
+                                )
+
+                        prob_pos = model.predict_proba(
+                            X_for_pred
+                        )[:, 1]
                     else:
                         continue
 
@@ -457,29 +473,29 @@ def generate_roc_curves(model_results, X_train, y_train, feature_cols=None):
             ):
                 model = result["trained_model"]
 
-            # Determine which columns to pass to predict_proba.
-            # Prefer model.feature_names_in_ when available.
-            # Otherwise use feature_cols if present in X_train.
-            # Fallback: use X_train as provided.
-            X_for_pred = X_train
-            if hasattr(X_train, "select_dtypes") and feature_cols:
-                expected = getattr(model, "feature_names_in_", None)
-                if expected is not None:
-                    # If we can select the original training columns
-                    # from X_train, do so.
-                    if set(expected).issubset(set(X_train.columns)):
-                        X_for_pred = X_train[list(expected)]
+                # Determine which columns to pass to predict_proba.
+                # Prefer model.feature_names_in_ when available.
+                # Otherwise use feature_cols if present in X_train.
+                # Fallback: use X_train as provided.
+                X_for_pred = X_train
+                if hasattr(X_train, "select_dtypes") and feature_cols:
+                    expected = getattr(model, "feature_names_in_", None)
+                    if expected is not None:
+                        # If we can select the original training columns
+                        # from X_train, do so.
+                        if set(expected).issubset(set(X_train.columns)):
+                            X_for_pred = X_train[list(expected)]
+                        else:
+                            # Can't reconstruct the original feature set from
+                            # X_train; use X_train as provided.
+                            X_for_pred = X_train
                     else:
-                        # Can't reconstruct the original feature set from
-                        # X_train; use X_train as provided.
-                        X_for_pred = X_train
-                else:
-                    # No feature-name metadata on the model; use
-                    # feature_cols only if present in X_train.
-                    if set(feature_cols).issubset(set(X_train.columns)):
-                        X_for_pred = X_train[feature_cols]
-                    else:
-                        X_for_pred = X_train
+                        # No feature-name metadata on the model; use
+                        # feature_cols only if present in X_train.
+                        if set(feature_cols).issubset(set(X_train.columns)):
+                            X_for_pred = X_train[feature_cols]
+                        else:
+                            X_for_pred = X_train
                 y_pred_proba = model.predict_proba(X_for_pred)[:, 1]
                 fpr, tpr, _ = roc_curve(y_train, y_pred_proba)
                 roc_auc = auc(fpr, tpr)
