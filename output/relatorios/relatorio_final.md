@@ -133,29 +133,29 @@ A análise dos modelos revelou os seguintes fatores mais importantes para a sobr
 
 Foram criadas 23 features a partir dos dados originais:
 
-1. `Pclass`
-2. `Sex`
-3. `Age`
-4. `SibSp`
-5. `Parch`
-6. `Fare`
-7. `Embarked`
-8. `FamilySize`
-9. `IsAlone`
-10. `TicketPrefix`
-11. `feat_AgeBin`
-12. `feat_FareBin`
-13. `feat_AgeCategory_v2`
-14. `feat_FareCategory_v2`
-15. `feat_Age_missing`
-16. `feat_Cabin_missing`
-17. `feat_Embarked_missing`
-18. `feat_Fare_missing`
-19. `feat_Pclass_te`
-20. `feat_Sex_te`
-21. `feat_Embarked_te`
-22. `feat_Title_te`
-23. `feat_TicketPrefix_te`
+• **Pclass**
+• **Sex**
+• **Age**
+• **SibSp**
+• **Parch**
+• **Fare**
+• **Embarked**
+• **FamilySize**
+• **IsAlone**
+• **TicketPrefix**
+• **feat_AgeBin**
+• **feat_FareBin**
+• **feat_AgeCategory_v2**
+• **feat_FareCategory_v2**
+• **feat_Age_missing**
+• **feat_Cabin_missing**
+• **feat_Embarked_missing**
+• **feat_Fare_missing**
+• **feat_Pclass_te**
+• **feat_Sex_te**
+• **feat_Embarked_te**
+• **feat_Title_te**
+• **feat_TicketPrefix_te**
 
 ## Discussão
 
@@ -344,7 +344,11 @@ O pipeline atual representa uma evolução significativa em relação à impleme
 - **Modelos Atuais**: 15
 - **Tempo de Execução**: Otimizado com paralelização
 
+## Repositório do Projeto
+
+O código fonte completo deste projeto está disponível no GitHub: [https://github.com/dagoberto-moraes/titanic-ml-pipeline](https://github.com/dagoberto-moraes/titanic-ml-pipeline)
+
 ---
 
-*Relatório gerado em: 04/01/2026 14:43:56*
+*Relatório gerado em: 04/01/2026 19:14:53*
 *Pipeline Titanic ML - Versão 5.0*

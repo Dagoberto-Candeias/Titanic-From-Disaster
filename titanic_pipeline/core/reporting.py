@@ -306,8 +306,8 @@ class ReportingManager:
                 f.write(
                     f"Foram criadas {len(feature_cols)} features a partir dos dados originais:\n\n"
                 )
-                for i, feature in enumerate(feature_cols, 1):
-                    f.write(f"{i}. `{feature}`\n")
+                for feature in feature_cols:
+                    f.write(f"• **{feature}**\n")
                 f.write("\n")
 
                 # Discussão
@@ -582,6 +582,15 @@ class ReportingManager:
                 f.write(f"{len(model_results)}\n")
                 f.write(
                     "- **Tempo de Execução**: Otimizado com paralelização\n\n"
+                )
+
+                # Repositório do Projeto
+                f.write("## Repositório do Projeto\n\n")
+                f.write(
+                    "O código fonte completo deste projeto está disponível no GitHub: "
+                )
+                f.write(
+                    "[https://github.com/dagoberto-moraes/titanic-ml-pipeline](https://github.com/dagoberto-moraes/titanic-ml-pipeline)\n\n"
                 )
 
                 # Data e versão

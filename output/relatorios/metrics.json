@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-01-04T14:44:11.882129",
-  "total_time_seconds": 55.179698,
+  "timestamp": "2026-01-04T19:15:05.409616",
+  "total_time_seconds": 46.41962,
   "features_count": 23,
   "models": {
     "RandomForest": {
