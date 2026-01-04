@@ -14,3 +14,4 @@ python-docx
 reportlab
 kaleido
 plotly
+yfinance
