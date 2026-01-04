@@ -346,5 +346,5 @@ O pipeline atual representa uma evolução significativa em relação à impleme
 
 ---
 
-*Relatório gerado em: 04/01/2026 14:22:19*
+*Relatório gerado em: 04/01/2026 14:43:56*
 *Pipeline Titanic ML - Versão 5.0*
