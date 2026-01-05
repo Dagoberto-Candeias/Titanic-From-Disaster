@@ -3,12 +3,12 @@ CONFIG = {
     "debug_mode": True,
     "parallel_jobs": 1,
     "cv_folds": 3,
-    "random_state": 42,
+    "random_state": 25,
     "cache_enabled": False,
     "fast_mode": True,
     "feature_selection": False,
     "use_optuna": False,
-    "optuna_trials": 1,
+    "optuna_trials": 10,
     "enhanced_balance": False,
     "log_level": 20,  # INFO
 }

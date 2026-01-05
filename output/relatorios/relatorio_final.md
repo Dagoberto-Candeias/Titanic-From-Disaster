@@ -102,16 +102,16 @@ A Tabela 1 apresenta os resultados da validação cruzada para todos os modelos 
 | AdaBoost | 0.8182 | 0.0126 | 0.8316 |
 | LinearSVC | 0.8171 | 0.0151 | 0.8350 |
 | LogisticRegression | 0.8159 | 0.0151 | 0.8350 |
-| CatBoost | 0.8103 | 0.0278 | 0.8316 |
-| MLPClassifier | 0.8092 | 0.0199 | 0.8249 |
-| RandomForest | 0.8047 | 0.0291 | 0.8316 |
+| CatBoost | 0.8126 | 0.0271 | 0.8350 |
+| SGDClassifier | 0.8114 | 0.0317 | 0.8418 |
+| MLPClassifier | 0.8092 | 0.0222 | 0.8249 |
 | LightGBM | 0.8047 | 0.0153 | 0.8215 |
-| GradientBoosting | 0.8025 | 0.0177 | 0.8182 |
+| GradientBoosting | 0.8036 | 0.0183 | 0.8182 |
 | XGBoost | 0.7980 | 0.0167 | 0.8114 |
-| Bagging | 0.7957 | 0.0297 | 0.8215 |
-| ExtraTrees | 0.7823 | 0.0231 | 0.8148 |
-| DecisionTree | 0.7609 | 0.0055 | 0.7677 |
-| SGDClassifier | 0.7508 | 0.0795 | 0.8215 |
+| RandomForest | 0.7969 | 0.0240 | 0.8215 |
+| Bagging | 0.7969 | 0.0195 | 0.8182 |
+| ExtraTrees | 0.7755 | 0.0231 | 0.8081 |
+| DecisionTree | 0.7609 | 0.0198 | 0.7879 |
 
 **Tabela 1**: Resultados da validação cruzada (média ± desvio padrão)
 
@@ -177,7 +177,7 @@ Os insights gerados podem ser aplicados em:
 
 ## Conclusão
 
-Este trabalho demonstrou a aplicação bem-sucedida de técnicas de machine learning para análise do desastre do Titanic. O pipeline desenvolvido alcançou uma acurácia de 0.8215, identificando fatores-chave para a sobrevivência.
+Este trabalho demonstrou a aplicação bem-sucedida de técnicas de machine learning para análise do desastre do Titanic. O pipeline desenvolvido alcançou uma acurácia de 0.7879, identificando fatores-chave para a sobrevivência.
 
 Os resultados confirmam a importância de variáveis socioeconômicas e demográficas na determinação do prognóstico em situações de emergência. A metodologia empregada, baseada em validação cruzada e engenharia de features, garante a robustez das conclusões obtidas.
 
@@ -350,5 +350,5 @@ O código fonte completo deste projeto está disponível no GitHub: [https://git
 
 ---
 
-*Relatório gerado em: 04/01/2026 19:14:53*
+*Relatório gerado em: 04/01/2026 20:01:01*
 *Pipeline Titanic ML - Versão 5.0*
