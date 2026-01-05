@@ -52,6 +52,13 @@ def create_sample_data():
     X_train['Sex'] = np.random.choice(['male', 'female'], n_samples)
     X_train['Embarked'] = np.random.choice(['S', 'C', 'Q'], n_samples)
 
+    # Encode categorical features for model training
+    from sklearn.preprocessing import LabelEncoder
+    le_sex = LabelEncoder()
+    X_train['Sex'] = le_sex.fit_transform(X_train['Sex'])
+    le_embarked = LabelEncoder()
+    X_train['Embarked'] = le_embarked.fit_transform(X_train['Embarked'])
+
     y_train = np.random.choice([0, 1], n_samples)
 
     # Create sample test data

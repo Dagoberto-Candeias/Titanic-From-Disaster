@@ -350,5 +350,5 @@ O código fonte completo deste projeto está disponível no GitHub: [https://git
 
 ---
 
-*Relatório gerado em: 04/01/2026 20:01:01*
+*Relatório gerado em: 05/01/2026 00:25:57*
 *Pipeline Titanic ML - Versão 5.0*
