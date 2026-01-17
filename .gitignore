@@ -1,11 +1,31 @@
-# Ignore generated outputs and caches
-/output/
-output/*
-/output/cache/
-/output/models/
-*.pyc
+# Python - Arquivos compilados e cache
 __pycache__/
+*.py[cod]
+*$py.class
 .pytest_cache/
-venv/
-dist/
-build/
+
+# Jupyter Notebooks - Checkpoints automáticos
+.ipynb_checkpoints/
+
+# CatBoost - Logs e arquivos temporários de treinamento
+catboost_info/
+
+# Relatórios e arquivos binários gerados
+# (Mantém o código que gera, mas ignora o produto final binário)
+output/relatorios/*.pdf
+output/relatorios/*.docx
+output/relatorios/*.md
+
+# Modelos treinados (arquivos binários grandes)
+output/models/
+
+# Configurações de IDE e Editor (Opcional, mas recomendado)
+.vscode/
+.idea/
+
+# Arquivos de sistema operacional
+Thumbs.db
+Desktop.ini
+
+# Cache do pre-commit (se estiver local no projeto)
+.cache/
