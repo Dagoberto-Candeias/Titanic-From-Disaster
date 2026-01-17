@@ -20,6 +20,29 @@ O pipeline foi corrigido para remover erros críticos (typos, imports circulares
 
 Status atual: Funcional, testado e pronto para submissão Kaggle (acurácia ~82-85%).
 
+## 🚀 Início Rápido
+
+### Pré-requisitos
+- Python 3.8+
+- Dados: `train.csv` e `test.csv` no diretório `data/raw/`
+
+### Instalação Rápida
+```bash
+pip install -r requirements.txt
+```
+
+### Execução
+```bash
+python train.py
+```
+
+### Resultados
+- `output/submission.csv`: Pronto para Kaggle
+- `output/relatorios/metrics.json`: Métricas detalhadas
+- `output/graficos/`: Visualizações (ROC, SHAP, etc.)
+
+**Tempo estimado:** 5-15 min (com cache: <1 min)
+
 ## 🏗️ Arquitetura do Projeto
 
 ### Estrutura de Diretórios
@@ -192,6 +215,14 @@ Histórico recente: PR "Extended Validation with Repeated CV, SHAP and Calibrati
 - **Dados ausentes**: Certifique-se de `data/raw/train.csv` e `test.csv`
 
 Performance: Use cache para execuções <1 min; desabilite Optuna para testes rápidos.
+
+## 📚 Documentação Adicional
+
+Para documentação detalhada em português, consulte os arquivos na pasta `arquivo/`:
+- `LEIA_ME_PRIMEIRO.txt`: Guia de início rápido completo
+- `GUIA_RAPIDO.md`: Guia rápido de uso
+- `README_TITANIC_DOCUMENTADO.md`: Documentação técnica detalhada
+- `ELT579_118550_Relatorio_Anotado_Detalhado.docx`: Relatório anotado
 
 ## 📚 Referências
 - [Kaggle Titanic](https://www.kaggle.com/c/titanic)
