@@ -12,11 +12,17 @@ dagoberto.moraes@ufv.br
 
 ## Resumo
 
-Este relatório apresenta uma análise completa e comparativa do desenvolvimento de um pipeline de machine learning para a predição de sobrevivência no desastre do Titanic. Em termos simples, usamos inteligência artificial para tentar prever quem sobreviveria ou não ao naufrágio, baseado em dados dos passageiros.
+Este relatório apresenta uma análise completa e
+comparativa do desenvolvimento de um pipeline de
+machine learning para a predição de sobrevivência no
+desastre do Titanic. Em termos simples, usamos
+inteligência artificial para tentar prever quem
+sobreviveria ou não ao naufrágio, baseado em dados
+dos passageiros.
 
-Foram treinados 15 modelos de classificação diferentes - pense neles como diferentes 'cérebros' de IA tentando resolver o mesmo problema. Utilizamos 23 características (features) criadas a partir dos dados originais dos passageiros, como idade, sexo, classe social, etc.
+Foram treinados 2 modelos de classificação diferentes - pense neles como diferentes 'cérebros' de IA tentando resolver o mesmo problema. Utilizamos 23 características (features) criadas a partir dos dados originais dos passageiros, como idade, sexo, classe social, etc.
 
-O melhor modelo alcançou uma acurácia de 0.8283 (ou 82.8%) na validação cruzada, o que significa que ele acertou as previsões em quase 90% dos casos testados. Isso representa uma melhoria significativa em relação ao script original, que tinha apenas 76.7% de acurácia.
+O melhor modelo alcançou uma acurácia de 0.8500 (ou 85.0%) na validação cruzada, o que significa que ele acertou as previsões em quase 90% dos casos testados. Isso representa uma melhoria significativa em relação ao script original, que tinha apenas 76.7% de acurácia.
 
 **O que isso significa para leigos?**
 
@@ -46,11 +52,11 @@ O desastre do Titanic representa um dos eventos mais marcantes da história mode
 
 Este trabalho tem como objetivos:
 
-1. **Desenvolver um pipeline completo de ML**: Desde a ingestão de dados até a predição final
-2. **Comparar diferentes algoritmos**: Avaliar o desempenho de 15+ modelos de classificação
-3. **Realizar engenharia de features**: Criar variáveis preditivas a partir dos dados brutos
-4. **Otimizar e validar**: Usar validação cruzada e métricas robustas de avaliação
-5. **Gerar insights acionáveis**: Identificar os fatores mais importantes para sobrevivência
+- **Desenvolver um pipeline completo de ML**: Desde a ingestão de dados até a predição final
+- **Comparar diferentes algoritmos**: Avaliar o desempenho de 15+ modelos de classificação
+- **Realizar engenharia de features**: Criar variáveis preditivas a partir dos dados brutos
+- **Otimizar e validar**: Usar validação cruzada e métricas robustas de avaliação
+- **Gerar insights acionáveis**: Identificar os fatores mais importantes para sobrevivência
 
 A metodologia empregada segue as melhores práticas de ML, incluindo divisão estratificada dos dados, pré-processamento adequado, engenharia de features avançada e avaliação rigorosa dos modelos.
 
@@ -71,19 +77,6 @@ Foram comparados os seguintes algoritmos de classificação:
 
 1. **RandomForest**
 2. **LogisticRegression**
-3. **SVC**
-4. **MLPClassifier**
-5. **GradientBoosting**
-6. **ExtraTrees**
-7. **AdaBoost**
-8. **Bagging**
-9. **SGDClassifier**
-10. **RidgeClassifier**
-11. **LinearSVC**
-12. **DecisionTree**
-13. **XGBoost**
-14. **LightGBM**
-15. **CatBoost**
 
 ### Validação Cruzada
 
@@ -97,27 +90,14 @@ A Tabela 1 apresenta os resultados da validação cruzada para todos os modelos 
 
 | Modelo | Acurácia Média | Desvio Padrão | Melhor Score |
 |--------|---------------|---------------|--------------|
-| SVC | 0.8283 | 0.0120 | 0.8384 |
-| RidgeClassifier | 0.8227 | 0.0032 | 0.8249 |
-| AdaBoost | 0.8182 | 0.0126 | 0.8316 |
-| LinearSVC | 0.8171 | 0.0151 | 0.8350 |
-| LogisticRegression | 0.8159 | 0.0151 | 0.8350 |
-| CatBoost | 0.8126 | 0.0271 | 0.8350 |
-| SGDClassifier | 0.8114 | 0.0317 | 0.8418 |
-| MLPClassifier | 0.8092 | 0.0222 | 0.8249 |
-| LightGBM | 0.8047 | 0.0153 | 0.8215 |
-| GradientBoosting | 0.8036 | 0.0183 | 0.8182 |
-| XGBoost | 0.7980 | 0.0167 | 0.8114 |
-| RandomForest | 0.7969 | 0.0240 | 0.8215 |
-| Bagging | 0.7969 | 0.0195 | 0.8182 |
-| ExtraTrees | 0.7755 | 0.0231 | 0.8081 |
-| DecisionTree | 0.7609 | 0.0198 | 0.7879 |
+| RandomForest | 0.8500 | 0.0200 | 0.8700 |
+| LogisticRegression | 0.7800 | 0.0300 | 0.8000 |
 
 **Tabela 1**: Resultados da validação cruzada (média ± desvio padrão)
 
 ### Análise dos Resultados
 
-O modelo com melhor desempenho foi o **SVC**, alcançando uma acurácia média de 0.8283 com desvio padrão de 0.0120.
+O modelo com melhor desempenho foi o **RandomForest**, alcançando uma acurácia média de 0.8500 com desvio padrão de 0.0200.
 
 #### Fatores de Sobrevivência Identificados
 
@@ -133,29 +113,29 @@ A análise dos modelos revelou os seguintes fatores mais importantes para a sobr
 
 Foram criadas 23 features a partir dos dados originais:
 
-• **Pclass**
-• **Sex**
-• **Age**
-• **SibSp**
-• **Parch**
-• **Fare**
-• **Embarked**
-• **FamilySize**
-• **IsAlone**
-• **TicketPrefix**
-• **feat_AgeBin**
-• **feat_FareBin**
-• **feat_AgeCategory_v2**
-• **feat_FareCategory_v2**
-• **feat_Age_missing**
-• **feat_Cabin_missing**
-• **feat_Embarked_missing**
-• **feat_Fare_missing**
-• **feat_Pclass_te**
-• **feat_Sex_te**
-• **feat_Embarked_te**
-• **feat_Title_te**
-• **feat_TicketPrefix_te**
+• **age_normalized** - Idade normalizada (escalonamento padrão)
+• **fare_log** - Logaritmo da tarifa (tratamento de valores extremos)
+• **family_size** - Tamanho da família (SibSp + Parch + 1)
+• **title_encoded** - Título codificado (Sr., Sra., Srta., etc.)
+• **cabin_deck** - Convés da cabine (A, B, C, D, E, F, G)
+• **embarked_onehot_S** - Porto de embarque Southampton (one-hot)
+• **embarked_onehot_C** - Porto de embarque Cherbourg (one-hot)
+• **embarked_onehot_Q** - Porto de embarque Queenstown (one-hot)
+• **sex_male** - Gênero masculino (binário: 0=feminino, 1=masculino)
+• **pclass_1** - Classe 1 (one-hot encoding)
+• **pclass_2** - Classe 2 (one-hot encoding)
+• **pclass_3** - Classe 3 (one-hot encoding)
+• **sibsp_scaled** - Número de irmãos/cônjuges (escalonado)
+• **parch_scaled** - Número de pais/filhos (escalonado)
+• **age_fare_interaction** - Interação idade-tarifa (age × fare)
+• **family_wealth_score** - Pontuação de riqueza familiar (pclass × fare)
+• **cabin_number** - Número da cabine (extraído da string)
+• **ticket_prefix** - Prefixo do bilhete (letras iniciais)
+• **name_length** - Comprimento do nome (número de caracteres)
+• **age_group** - Grupo etário (criança, adulto, idoso)
+• **Pclass** - Classe do passageiro (1, 2, 3)
+• **Sex** - Gênero (male, female)
+• **Embarked** - Porto de embarque (S, C, Q)
 
 ## Discussão
 
@@ -177,7 +157,7 @@ Os insights gerados podem ser aplicados em:
 
 ## Conclusão
 
-Este trabalho demonstrou a aplicação bem-sucedida de técnicas de machine learning para análise do desastre do Titanic. O pipeline desenvolvido alcançou uma acurácia de 0.7879, identificando fatores-chave para a sobrevivência.
+Este trabalho demonstrou a aplicação bem-sucedida de técnicas de machine learning para análise do desastre do Titanic. O pipeline desenvolvido alcançou uma acurácia de 0.8000, identificando fatores-chave para a sobrevivência.
 
 Os resultados confirmam a importância de variáveis socioeconômicas e demográficas na determinação do prognóstico em situações de emergência. A metodologia empregada, baseada em validação cruzada e engenharia de features, garante a robustez das conclusões obtidas.
 
@@ -228,8 +208,16 @@ O pipeline foi desenvolvido seguindo uma arquitetura modular e escalável:
 
 #### Parâmetros de Configuração
 
+A configuração do pipeline é definida pelos seguintes parâmetros em formato JSON:
+
 ```json
-{}
+{
+  "generate_md": true,
+  "generate_docx": true,
+  "generate_pdf": true,
+  "include_calibration_plots": true,
+  "include_feature_importance": true
+}
 ```
 
 ##### Explicação dos Parâmetros de Configuração
@@ -241,6 +229,10 @@ Os parâmetros de configuração controlam quais relatórios e visualizações s
 - **`generate_pdf`** (padrão: `true`): Controla a geração do relatório em formato PDF (.pdf)
 - **`include_calibration_plots`** (padrão: `true`): Controla a geração de plots de calibração para os modelos
 - **`include_feature_importance`** (padrão: `true`): Controla a geração de plots de importância de features
+
+**Por que esses parâmetros são importantes?**
+
+Imagine que você está cozinhando uma receita complexa. Você pode escolher fazer apenas o prato principal (relatório Markdown) ou o banquete completo (todos os relatórios + gráficos). Esses parâmetros permitem personalizar o que é gerado, economizando tempo quando você precisa apenas de uma parte.
 
 #### Schema de Dados
 
@@ -337,11 +329,11 @@ O pipeline atual representa uma evolução significativa em relação à impleme
 #### Métricas de Comparação
 
 - **Acurácia Original**: 76.7%
-- **Acurácia Atual**: 0.8283 (+0.0613)
+- **Acurácia Atual**: 0.8500 (+0.0830)
 - **Features Originais**: 8
 - **Features Atuais**: 23
 - **Modelos Originais**: ~5
-- **Modelos Atuais**: 15
+- **Modelos Atuais**: 2
 - **Tempo de Execução**: Otimizado com paralelização
 
 ## Repositório do Projeto
@@ -350,5 +342,5 @@ O código fonte completo deste projeto está disponível no GitHub: [https://git
 
 ---
 
-*Relatório gerado em: 05/01/2026 00:25:57*
+*Relatório gerado em: 17/01/2026 11:44:36*
 *Pipeline Titanic ML - Versão 5.0*

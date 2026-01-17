@@ -8,17 +8,21 @@ import pickle
 import hashlib
 import json
 import logging
-from typing import Any, Optional, List
+from typing import Any, Optional, List, Dict
 import pandas as pd
 
 logger = logging.getLogger(__name__)
 
-def get_cache_key(data_hash: str, operation: str, schema_version: str = "1.0.0") -> str:
+
+def get_cache_key(data_hash: str, operation: str, schema_version: str = "1.2.0") -> str:
     """Gera chave de cache com versionamento de schema."""
     key_str = f"{data_hash}_{operation}_{schema_version}"
     return hashlib.md5(key_str.encode()).hexdigest()
 
-def validate_data_schema(df: pd.DataFrame, expected_columns: List[str], dataset_name: str) -> bool:
+
+def validate_data_schema(
+    df: pd.DataFrame, expected_columns: List[str], dataset_name: str
+) -> bool:
     """Valida schema dos dados de entrada e salva relatório JSON"""
     logger.info(f"🔍 VALIDANDO SCHEMA: {dataset_name}")
 
@@ -59,11 +63,13 @@ def validate_data_schema(df: pd.DataFrame, expected_columns: List[str], dataset_
     )
     return True
 
+
 def cache_result(key: str, result: Any, cache_dir: str = "output/cache") -> None:
     # Assume CONFIG is global or imported
     try:
         from __main__ import CONFIG
-        if not CONFIG.get('cache_enabled', True):
+
+        if not CONFIG.get("cache_enabled", True):
             return
     except ImportError:
         pass  # Assume enabled
@@ -78,10 +84,12 @@ def cache_result(key: str, result: Any, cache_dir: str = "output/cache") -> None
     except Exception as e:
         logger.warning(f"⚠️  Cache falhou para {key}: {e}")
 
+
 def load_cached_result(key: str, cache_dir: str = "output/cache") -> Optional[Any]:
     try:
         from __main__ import CONFIG
-        if not CONFIG.get('cache_enabled', True):
+
+        if not CONFIG.get("cache_enabled", True):
             return None
     except ImportError:
         pass
@@ -99,5 +107,54 @@ def load_cached_result(key: str, cache_dir: str = "output/cache") -> Optional[An
 
     return None
 
+
 def data_hash_calc(df: pd.DataFrame) -> str:
     return hashlib.md5(pd.util.hash_pandas_object(df).values.tobytes()).hexdigest()
+
+
+class CacheManager:
+    def __init__(self, cache_dir: str = "output/cache", enabled: bool = True):
+        self.cache_dir = cache_dir
+        self.enabled = enabled
+        if self.enabled:
+            os.makedirs(self.cache_dir, exist_ok=True)
+
+    def get_cache_key(
+        self, data_hash: str, operation: str, schema_version: str = "1.2.0"
+    ) -> str:
+        return get_cache_key(data_hash, operation, schema_version)
+
+    def load(self, key: str) -> Optional[Any]:
+        if not self.enabled:
+            return None
+        return load_cached_result(key, self.cache_dir)
+
+    def save(self, key: str, data: Any) -> None:
+        if not self.enabled:
+            return
+        cache_result(key, data, self.cache_dir)
+
+
+class DataValidator:
+    def __init__(self, expected_schemas: Dict[str, Any]):
+        self.expected_schemas = expected_schemas
+
+    def validate_data_schema(
+        self,
+        df: pd.DataFrame,
+        expected_columns: List[str],
+        dataset_name: str,
+        report_dir: str = "output/relatorios",
+    ) -> bool:
+        return validate_data_schema(df, expected_columns, dataset_name)
+
+    def validate_data_integrity(self, df: pd.DataFrame, dataset_name: str) -> bool:
+        if df.empty:
+            logger.warning(f"⚠️  Dataset {dataset_name} is empty.")
+            return False
+        return True
+
+
+class ParallelProcessor:
+    def __init__(self, max_workers: int = 1):
+        self.max_workers = max_workers

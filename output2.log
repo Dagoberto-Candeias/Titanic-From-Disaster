@@ -1,0 +1,54 @@
+2026-01-09 11:48:26,046 - INFO - Starting comprehensive testing of reporting.py...
+2026-01-09 11:48:26,047 - INFO - Testing ReportingManager...
+2026-01-09 11:48:26,145 - INFO -    \U0001f4dd Comprehensive Markdown report saved: output\relatorios\relatorio_final.md
+2026-01-09 11:48:26,518 - INFO -    \U0001f4c4 Comprehensive DOCX report saved: output\relatorios\relatorio_final.docx
+2026-01-09 11:48:26,742 - INFO -    \U0001f4d5 Comprehensive PDF report saved: output\relatorios\relatorio_final.pdf
+2026-01-09 11:48:28,262 - INFO -    \U0001f4ca Calibration plots generated
+2026-01-09 11:48:28,964 - INFO -    \U0001f4ca Feature importance plots generated
+2026-01-09 11:48:28,964 - INFO - \u2713 ReportingManager.generate_reports completed successfully
+2026-01-09 11:48:28,970 - INFO - Testing standalone functions...
+2026-01-09 11:48:29,035 - INFO -    \U0001f4dd Comprehensive Markdown report saved: output\relatorios\relatorio_final.md
+2026-01-09 11:48:29,254 - INFO -    \U0001f4c4 Comprehensive DOCX report saved: output\relatorios\relatorio_final.docx
+2026-01-09 11:48:29,287 - INFO -    \U0001f4d5 Comprehensive PDF report saved: output\relatorios\relatorio_final.pdf
+2026-01-09 11:48:30,055 - INFO -    \U0001f4ca Calibration plots generated
+2026-01-09 11:48:30,665 - INFO -    \U0001f4ca Feature importance plots generated
+2026-01-09 11:48:30,665 - INFO - \u2713 generate_reports completed successfully
+2026-01-09 11:48:31,194 - INFO -    \U0001f4ca ROC curves generated
+2026-01-09 11:48:31,194 - INFO - \u2713 generate_roc_curves completed successfully
+2026-01-09 11:48:31,335 - INFO -    \U0001f4ca Using 23 numeric features for correlation heatmap
+2026-01-09 11:48:32,478 - INFO -    \U0001f4ca Feature correlation heatmap generated
+2026-01-09 11:48:32,478 - INFO - \u2713 generate_feature_correlation_heatmap completed successfully
+2026-01-09 11:48:32,989 - INFO -    \U0001f4ca Model performance timeline generated
+2026-01-09 11:48:32,990 - INFO - \u2713 generate_model_performance_timeline completed successfully
+2026-01-09 11:48:32,992 - INFO -    \U0001f4dd Changelog and manifest generated
+2026-01-09 11:48:32,992 - INFO - \u2713 generate_changelog_and_manifest completed successfully
+2026-01-09 11:48:32,994 - INFO -    \u23f1\ufe0f  Timing report saved
+2026-01-09 11:48:32,994 - INFO - \u2713 save_timing_report completed successfully
+C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\titanic_pipeline\core\reporting.py:1965: FutureWarning: The NumPy global RNG was seeded by calling `np.random.seed`. In a future version this function will no longer use the global RNG. Pass `rng` explicitly to opt-in to the new behaviour and silence this warning.
+  shap.summary_plot(
+C:\Users\dcm\anaconda3\Lib\site-packages\shap\plots\_beeswarm.py:723: FutureWarning: The NumPy global RNG was seeded by calling `np.random.seed`. In a future version this function will no longer use the global RNG. Pass `rng` explicitly to opt-in to the new behaviour and silence this warning.
+  summary_legacy(
+C:\Users\dcm\anaconda3\Lib\site-packages\shap\plots\_beeswarm.py:743: FutureWarning: The NumPy global RNG was seeded by calling `np.random.seed`. In a future version this function will no longer use the global RNG. Pass `rng` explicitly to opt-in to the new behaviour and silence this warning.
+  summary_legacy(
+2026-01-09 11:48:34,251 - INFO -    \U0001f4ca SHAP comparison plot generated
+2026-01-09 11:48:34,251 - INFO - \u2713 generate_shap_comparison_plot completed successfully
+2026-01-09 11:48:35,000 - INFO -    \U0001f4e4 Improved submission generated
+2026-01-09 11:48:35,001 - INFO - \u2713 improved_generate_submission completed successfully
+2026-01-09 11:48:35,002 - INFO - Model performance logged to output/reports/model_performance.csv
+2026-01-09 11:48:35,002 - INFO - \u2713 log_model_performance_to_csv completed successfully
+2026-01-09 11:48:36,906 - INFO -    \U0001f4ca Permutation importance for RandomForest generated
+2026-01-09 11:48:36,907 - INFO - \u2713 generate_permutation_importance completed successfully
+2026-01-09 11:48:36,907 - INFO - \u2713 _get_best_score completed successfully
+2026-01-09 11:48:36,907 - INFO - Checking generated files...
+2026-01-09 11:48:36,907 - INFO - \u2713 output/relatorios/relatorio_final.md exists
+2026-01-09 11:48:36,907 - INFO - \u2713 output/graficos/roc_curves/04_roc_curve.png exists
+2026-01-09 11:48:36,907 - INFO - \u2713 output/graficos/correlation/09_feature_correlation_heatmap.png exists
+2026-01-09 11:48:36,907 - INFO - \u2713 output/graficos/timeline/10_model_performance_timeline.png exists
+2026-01-09 11:48:36,907 - INFO - \u2713 output/changelog/manifest.json exists
+2026-01-09 11:48:36,907 - INFO - \u2713 output/changelog/CHANGELOG.md exists
+2026-01-09 11:48:36,908 - INFO - \u2713 output/relatorios/timing_report.json exists
+2026-01-09 11:48:36,908 - INFO - \u2713 output/submission_titanic_final.csv exists
+2026-01-09 11:48:36,908 - INFO - \u2713 output/reports/model_performance.csv exists
+2026-01-09 11:48:36,908 - INFO - \u2713 output/graficos/permutation_importance_RandomForest.png exists
+2026-01-09 11:48:36,908 - INFO - \u2713 output/graficos/permutation_importance_RandomForest.csv exists
+2026-01-09 11:48:36,908 - INFO - Comprehensive testing completed!

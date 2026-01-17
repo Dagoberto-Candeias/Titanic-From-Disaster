@@ -1,8 +1,8 @@
 # 🚢 Titanic: Machine Learning from Disaster - Versão Documentada
 
-**Autor:** Dagoberto Candeias de Moraes  
-**Matrícula:** 118550  
-**Disciplina:** UFV - ELT 579  
+**Autor:** Dagoberto Candeias de Moraes
+**Matrícula:** 118550
+**Disciplina:** UFV - ELT 579
 **Versão:** Completa e Documentada
 
 ---
@@ -100,46 +100,43 @@ Prever a sobrevivência dos passageiros do Titanic com base em características 
 
 ## 📁 Estrutura do Código
 
-O código está organizado em **7 blocos principais**:
+O código está organizado em uma **arquitetura modular** com o pacote `titanic_pipeline`:
 
-### Bloco 1: Importações e Configurações
-- Importa todas as bibliotecas necessárias
-- Configura ambiente de execução
-- Suprime warnings desnecessários
+### Módulos Principais
 
-### Bloco 2: Análise Exploratória (EDA)
-- Função `analise_exploratoria_completa()`
-- 9 visualizações diferentes
-- Estatísticas detalhadas
-- Insights demográficos
+#### 1. Core Pipeline (`titanic_pipeline/core/`)
+- **`pipeline.py`**: Classe `TitanicPipeline` - orquestrador principal
+- **`modeling.py`**: Classe `ModelingManager` - gerenciamento de modelos e ensembles
+- **`preprocessing.py`**: Funções de pré-processamento avançado
+- **`reporting.py`**: Classe `ReportingManager` - geração de relatórios e visualizações
+- **`utils.py`**: Utilitários para cache, validação e processamento paralelo
 
-### Bloco 3: Feature Engineering
-- Classe `EngenhariaFeatures`
-- Método `criar_features()` - cria 30+ features
-- Método `tratar_valores_ausentes()` - imputação inteligente
+#### 2. Feature Engineering (`titanic_pipeline/features/`)
+- **`engineer.py`**: Classe `FeatureEngineer` - criação de features avançadas
+- **`preprocessing.py`**: Wrappers de compatibilidade para pré-processamento
+- **`selectors.py`**: Classe `FeatureSelector` - seleção de features
 
-### Bloco 4: Modelagem
-- Classe `ModelagemAvancada`
-- Método `criar_todos_modelos()` - 15+ algoritmos
-- Método `treinar_e_avaliar()` - validação cruzada
-- Método `criar_ensemble()` - Voting e Stacking
+#### 3. Utilitários (`titanic_pipeline/utils/`)
+- **`cache.py`**: Sistema de cache versionado inteligente
+- **`helpers.py`**: Funções auxiliares para pickle e paralelização
+- **`memory.py`**: Otimização de uso de memória
+- **`parallel.py`**: Processamento paralelo
+- **`validation.py`**: Validação de dados e schema
 
-### Bloco 5: Pipeline Completo
-- Classe `PipelineTitanic`
-- Integra todas as etapas
-- Método `executar_analise_completa()` - execução principal
+#### 4. Configuração (`titanic_pipeline/config/`)
+- **`default.py`**: Configurações padrão do sistema
+- **`validation.py`**: Validação de configurações
 
-### Bloco 6: Geração de Relatórios
-- Função `gerar_relatorio_comparativo()`
-- Gera relatório em Markdown
-- Gera relatório em DOCX (se disponível)
-- Tabelas comparativas
+#### 5. Scripts Auxiliares (`scripts/`)
+- **`retrain_and_explain.py`**: Retreinamento com validação estendida e SHAP
+- **`generate_shap.py`**: Geração dedicada de plots SHAP
 
-### Bloco 7: Execução Principal
-- Função `main()`
-- Carrega dados
-- Executa pipeline
-- Gera relatórios
+#### 6. Testes (`tests/`)
+- **`test_pipeline.py`**: Testes do pipeline completo
+- **`test_modeling.py`**: Testes de modelagem
+- **`test_preprocessing.py`**: Testes de pré-processamento
+- **`test_reporting.py`**: Testes de relatórios
+- **`test_utils.py`**: Testes de utilitários
 
 ---
 
@@ -419,8 +416,8 @@ Titanic From Disaster/
 
 Este é um projeto acadêmico para a disciplina ELT 579 da UFV.
 
-**Autor:** Dagoberto Candeias de Moraes  
-**Matrícula:** 118550  
+**Autor:** Dagoberto Candeias de Moraes
+**Matrícula:** 118550
 **Contato:** dagoberto.moraes@ufv.br
 
 ---

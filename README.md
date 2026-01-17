@@ -3,6 +3,7 @@
 ## 📋 Descrição
 Este projeto implementa um pipeline completo e avançado de machine learning para o problema clássico do Titanic, utilizando dados do Kaggle. O pipeline inclui:
 
+- **Arquitetura Modular**: Pipeline orquestrado com classes especializadas (TitanicPipeline, ModelingManager, ReportingManager)
 - **Pré-processamento avançado**: Imputação KNN/Iterative, encoding categórico, normalização
 - **Engenharia de features**: Target encoding, features polinomiais, interações, bins e missing indicators
 - **Balanceamento de classes**: SMOTE + undersampling (opcional)
@@ -12,6 +13,8 @@ Este projeto implementa um pipeline completo e avançado de machine learning par
 - **Explicabilidade**: SHAP plots (bar, beeswarm), curvas de calibração
 - **Geração de relatórios**: Métricas JSON, logs estruturados, visualizações (ROC, confusion matrix, correlation heatmap)
 - **Testes abrangentes**: Smoke tests, unit tests (pytest), validação de schema
+- **Sistema de cache versionado**: Reutilização inteligente de computações custosas
+- **Configuração centralizada**: Gerenciamento de configurações via ConfigManager
 
 O pipeline foi corrigido para remover erros críticos (typos, imports circulares, chamadas incorretas), implementadas melhorias (cache versionado, ensemble robusto, tratamento granular de erros, validação de features) e estendido com validação robusta via Repeated CV, SHAP e calibração. Todos os commits foram mesclados via PR no GitHub.
 
@@ -197,7 +200,7 @@ Performance: Use cache para execuções <1 min; desabilite Optuna para testes r�
 - [SHAP](https://shap.readthedocs.io/)
 
 ## 👤 Autor
-**Dagoberto Candeias de Moraes (118550)**  
+**Dagoberto Candeias de Moraes (118550)**
 *ELT579 - Aprendizado de Máquina, UFV*
 
 ## 📄 Licença

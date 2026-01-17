@@ -19,7 +19,9 @@ class FeatureEngineer:
         self.config = config
         self.cache_manager = cache_manager
 
-    def engineer_features(self, df: pd.DataFrame, is_training: bool = True) -> Tuple[np.ndarray, Optional[np.ndarray], List[str]]:
+    def engineer_features(
+        self, df: pd.DataFrame, is_training: bool = True
+    ) -> Tuple[np.ndarray, Optional[np.ndarray], List[str]]:
         """
         Engineer features from raw Titanic data.
 
@@ -52,7 +54,11 @@ class FeatureEngineer:
                 data = self._polynomial_features(data)
 
             # Target encoding if enabled and training
-            if self.config.get("target_encoding", True) and is_training and y is not None:
+            if (
+                self.config.get("target_encoding", True)
+                and is_training
+                and y is not None
+            ):
                 data = self._target_encoding(data, y)
 
             # Handle missing values
@@ -62,7 +68,9 @@ class FeatureEngineer:
             feature_cols = [col for col in data.columns if col != "PassengerId"]
             X = data[feature_cols].values
 
-            logger.info(f"   ✅ Features engineered: {len(feature_cols)} features, {X.shape[0]} samples")
+            logger.info(
+                f"   ✅ Features engineered: {len(feature_cols)} features, {X.shape[0]} samples"
+            )
 
             return X, y, feature_cols
 
@@ -77,13 +85,38 @@ class FeatureEngineer:
         # Title extraction from Name
         data["Title"] = data["Name"].str.extract(r" ([A-Za-z]+)\.", expand=False)
         title_mapping = {
-            "Mr": "Mr", "Mrs": "Mrs", "Miss": "Miss", "Master": "Master",
-            "Dr": "Officer", "Rev": "Officer", "Col": "Officer", "Major": "Officer",
-            "Mlle": "Miss", "Countess": "Royalty", "Ms": "Mrs", "Lady": "Royalty",
-            "Jonkheer": "Royalty", "Don": "Royalty", "Dona": "Royalty", "Mme": "Mrs",
-            "Capt": "Officer", "Sir": "Royalty"
+            "Mr": "Mr",
+            "Mrs": "Mrs",
+            "Miss": "Miss",
+            "Master": "Master",
+            "Dr": "Officer",
+            "Rev": "Officer",
+            "Col": "Officer",
+            "Major": "Officer",
+            "Mlle": "Miss",
+            "Countess": "Royalty",
+            "Ms": "Mrs",
+            "Lady": "Royalty",
+            "Jonkheer": "Royalty",
+            "Don": "Royalty",
+            "Dona": "Royalty",
+            "Mme": "Mrs",
+            "Capt": "Officer",
+            "Sir": "Royalty",
         }
         data["Title"] = data["Title"].map(title_mapping).fillna("Other")
+
+        # Title Grouping (New Feature)
+        title_group_mapping = {
+            "Mr": "Mr",
+            "Mrs": "Mrs",
+            "Miss": "Miss",
+            "Master": "Master",
+            "Officer": "Rare",
+            "Royalty": "Rare",
+            "Other": "Rare",
+        }
+        data["Title_Group"] = data["Title"].map(title_group_mapping)
 
         # Family size
         data["FamilySize"] = data["SibSp"] + data["Parch"] + 1
@@ -92,12 +125,18 @@ class FeatureEngineer:
         data["IsAlone"] = (data["FamilySize"] == 1).astype(int)
 
         # Age groups
-        data["AgeGroup"] = pd.cut(data["Age"], bins=[0, 12, 18, 35, 60, 100],
-                                labels=["Child", "Teen", "Young", "Adult", "Senior"])
+        data["AgeGroup"] = pd.cut(
+            data["Age"],
+            bins=[0, 12, 18, 35, 60, 100],
+            labels=["Child", "Teen", "Young", "Adult", "Senior"],
+        )
 
         # Fare groups
-        data["FareGroup"] = pd.qcut(data["Fare"].fillna(data["Fare"].median()),
-                                  q=4, labels=["Low", "Medium", "High", "VeryHigh"])
+        data["FareGroup"] = pd.qcut(
+            data["Fare"].fillna(data["Fare"].median()),
+            q=4,
+            labels=["Low", "Medium", "High", "VeryHigh"],
+        )
 
         # Cabin deck
         data["CabinDeck"] = data["Cabin"].str[0].fillna("Unknown")
@@ -124,8 +163,9 @@ class FeatureEngineer:
         data["Age*Sex"] = data["Age"] * (data["Sex"] == "male").astype(int)
 
         # Family size categories
-        data["FamilySizeCat"] = pd.cut(data["FamilySize"], bins=[0, 1, 4, 20],
-                                     labels=["Alone", "Small", "Large"])
+        data["FamilySizeCat"] = pd.cut(
+            data["FamilySize"], bins=[0, 1, 4, 20], labels=["Alone", "Small", "Large"]
+        )
 
         return data
 
@@ -149,11 +189,19 @@ class FeatureEngineer:
         data = df.copy()
 
         # Create target encoding for Title
-        title_means = pd.DataFrame({"Title": data["Title"], "Target": y}).groupby("Title")["Target"].mean()
+        title_means = (
+            pd.DataFrame({"Title": data["Title"], "Target": y})
+            .groupby("Title")["Target"]
+            .mean()
+        )
         data["Title_encoded"] = data["Title"].map(title_means)
 
         # Create target encoding for CabinDeck
-        deck_means = pd.DataFrame({"CabinDeck": data["CabinDeck"], "Target": y}).groupby("CabinDeck")["Target"].mean()
+        deck_means = (
+            pd.DataFrame({"CabinDeck": data["CabinDeck"], "Target": y})
+            .groupby("CabinDeck")["Target"]
+            .mean()
+        )
         data["CabinDeck_encoded"] = data["CabinDeck"].map(deck_means)
 
         return data

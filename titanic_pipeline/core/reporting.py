@@ -4,10 +4,49 @@ Reporting manager for Titanic ML Pipeline.
 
 import logging
 import datetime
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional, Union
 from pathlib import Path
+import json
+import pandas as pd
 
 logger = logging.getLogger(__name__)
+
+# Original script accuracy for comparison
+ORIGINAL_ACCURACY = 0.767
+
+
+class ReportGenerationError(Exception):
+    """Custom exception for report generation failures."""
+
+    pass
+
+
+FEATURE_DESCRIPTIONS = {
+    "age_normalized": "Idade normalizada (escalonamento padrão)",
+    "fare_log": "Logaritmo da tarifa (tratamento de valores extremos)",
+    "family_size": "Tamanho da família (SibSp + Parch + 1)",
+    "title_encoded": "Título codificado (Sr., Sra., Srta., etc.)",
+    "cabin_deck": "Convés da cabine (A, B, C, D, E, F, G)",
+    "embarked_onehot_S": "Porto de embarque Southampton (one-hot)",
+    "embarked_onehot_C": "Porto de embarque Cherbourg (one-hot)",
+    "embarked_onehot_Q": "Porto de embarque Queenstown (one-hot)",
+    "sex_male": "Gênero masculino (binário: 0=feminino, 1=masculino)",
+    "pclass_1": "Classe 1 (one-hot encoding)",
+    "pclass_2": "Classe 2 (one-hot encoding)",
+    "pclass_3": "Classe 3 (one-hot encoding)",
+    "sibsp_scaled": "Número de irmãos/cônjuges (escalonado)",
+    "parch_scaled": "Número de pais/filhos (escalonado)",
+    "age_fare_interaction": "Interação idade-tarifa (age × fare)",
+    "family_wealth_score": "Pontuação de riqueza familiar (pclass × fare)",
+    "cabin_number": "Número da cabine (extraído da string)",
+    "ticket_prefix": "Prefixo do bilhete (letras iniciais)",
+    "name_length": "Comprimento do nome (número de caracteres)",
+    "age_group": "Grupo etário (criança, adulto, idoso)",
+    "Pclass": "Classe do passageiro (1, 2, 3)",
+    "Sex": "Gênero (male, female)",
+    "Embarked": "Porto de embarque (S, C, Q)",
+    "Title_Group": "Agrupamento de títulos (Mr, Mrs, Miss, Master, Rare)",
+}
 
 
 class ReportingManager:
@@ -17,7 +56,20 @@ class ReportingManager:
         self.config = config
         self.output_dir = Path("output")
         self.reports_dir = self.output_dir / "relatorios"
+        self.template_dir = Path("templates")
         self.feature_cols = None
+
+        # Initialize Jinja2 environment if available
+        try:
+            from jinja2 import Environment, FileSystemLoader
+
+            if self.template_dir.exists():
+                self.env = Environment(loader=FileSystemLoader(self.template_dir))
+            else:
+                self.env = None
+        except ImportError:
+            self.env = None
+            logger.warning("Jinja2 not installed. Template reporting disabled.")
 
     def generate_reports(
         self,
@@ -43,35 +95,192 @@ class ReportingManager:
         self.X_train = X_train
         self.y_train = y_train
 
+        report_methods = {
+            "generate_md": self._generate_markdown_report,
+            "generate_docx": self._generate_docx_report,
+            "generate_pdf": self._generate_pdf_report,
+            "generate_html": self._generate_html_report,
+        }
+
         try:
-            if self.config.get("generate_md", True):
-                self._generate_markdown_report(model_results, feature_cols)
+            for report_type, method in report_methods.items():
+                if self.config.get(report_type, True):
+                    method(model_results, feature_cols)
 
-            if self.config.get("generate_docx", True):
-                # _generate_docx_report does not require training data; keep
-                # call-site simple and backward-compatible.
-                self._generate_docx_report(model_results, feature_cols)
-
-            if self.config.get("generate_pdf", True):
-                # PDF report does not need training data either.
-                self._generate_pdf_report(model_results, feature_cols)
-
-            # Generate additional plots if configured
             if self.config.get("include_calibration_plots", True):
-                self._generate_calibration_plots(
-                    model_results,
-                    X_train,
-                    y_train,
-                )
+                self._generate_calibration_plots(model_results, X_train, y_train)
 
             if self.config.get("include_feature_importance", True):
-                self._generate_feature_importance_plots(
-                    model_results,
-                    feature_cols,
+                self._generate_feature_importance_plots(model_results, feature_cols)
+
+            # --- CORREÇÃO: Chamando as funções de gráficos que estavam faltando ---
+            generate_roc_curves(model_results, X_train, y_train, feature_cols)
+
+            # Preparar DataFrame para o heatmap de correlação
+            try:
+                if hasattr(X_train, "columns"):
+                    train_df = X_train.copy()
+                    # Ensure feature_cols are present
+                    if not set(feature_cols).issubset(set(train_df.columns)):
+                        logger.warning(
+                            "Feature columns mismatch in X_train DataFrame. Skipping heatmap."
+                        )
+                        train_df = None
+                elif hasattr(X_train, "toarray"):
+                    if X_train.shape[1] == len(feature_cols):
+                        train_df = pd.DataFrame(X_train.toarray(), columns=feature_cols)
+                    else:
+                        logger.warning(
+                            f"Shape mismatch for heatmap: X_train {X_train.shape} vs feature_cols {len(feature_cols)}. Skipping heatmap."
+                        )
+                        train_df = None
+                else:
+                    if X_train.shape[1] == len(feature_cols):
+                        train_df = pd.DataFrame(X_train, columns=feature_cols)
+                    else:
+                        logger.warning(
+                            f"Shape mismatch for heatmap: X_train {X_train.shape} vs feature_cols {len(feature_cols)}. Skipping heatmap."
+                        )
+                        train_df = None
+
+                if train_df is not None and y_train is not None:
+                    y_vals = y_train.values if hasattr(y_train, "values") else y_train
+                    train_df["Survived"] = y_vals
+                    generate_feature_correlation_heatmap(train_df, feature_cols)
+            except Exception as e:
+                logger.warning(
+                    f"Skipping correlation heatmap due to data format issues: {e}"
                 )
+
+            generate_model_performance_timeline(model_results)
+
+            # Gerar SHAP e Permutation Importance para os melhores modelos
+            sorted_models = sorted(
+                model_results.items(),
+                key=lambda x: x[1].get("mean_score", 0),
+                reverse=True,
+            )
+            if sorted_models:
+                generate_shap_comparison_plot(sorted_models[:3], X_train, feature_cols)
+                best_model_name, best_model_data = sorted_models[0]
+                if best_model_data.get("trained_model"):
+                    generate_permutation_importance(
+                        best_model_data["trained_model"],
+                        X_train,
+                        y_train,
+                        feature_cols,
+                        model_name=best_model_name,
+                    )
+
+            # Generate CSV performance log
+            log_model_performance_to_csv(
+                model_results, str(self.reports_dir / "resultados_modelos.csv")
+            )
 
         except Exception as e:
             logger.error("   ❌ Report generation failed: %s", e)
+            raise ReportGenerationError(f"Report generation failed: {e}") from e
+
+    def _prepare_report_context(
+        self, model_results: Dict[str, Any], feature_cols: List[str]
+    ) -> Dict[str, Any]:
+        """Prepare context dictionary for Jinja2 templates."""
+        sorted_results = sorted(
+            model_results.items(),
+            key=lambda x: x[1].get("mean_score", 0),
+            reverse=True,
+        )
+
+        best_model_name = sorted_results[0][0] if sorted_results else "N/A"
+        best_model_data = sorted_results[0][1] if sorted_results else {}
+        best_score = self._get_best_score(model_results)
+
+        # Prepare JSON strings for config sections
+        train_schema = {
+            "PassengerId": "int64",
+            "Survived": "int64",
+            "Pclass": "int64",
+            "Name": "object",
+            "Sex": "object",
+            "Age": "float64",
+            "SibSp": "int64",
+            "Parch": "int64",
+            "Ticket": "object",
+            "Fare": "float64",
+            "Cabin": "object",
+            "Embarked": "object",
+        }
+        test_schema = {k: v for k, v in train_schema.items() if k != "Survived"}
+
+        logging_config = {
+            "version": 1,
+            "disable_existing_loggers": False,
+            "formatters": {"simple": {"format": "%(levelname)s - %(message)s"}},
+            "handlers": {"console": {"class": "logging.StreamHandler"}},
+            "root": {"level": 20, "handlers": ["console"]},
+        }
+
+        # Pre-process results for easier template usage
+        processed_results = []
+        for name, res in sorted_results:
+            cv_scores = res.get("cv_scores", [])
+            processed_results.append(
+                {
+                    "name": name,
+                    "mean_score": res.get("mean_score", 0),
+                    "std_score": res.get("std_score", 0),
+                    "best_score": max(cv_scores) if cv_scores else 0,
+                }
+            )
+
+        return {
+            "total_models": len(model_results),
+            "total_features": len(feature_cols),
+            "best_score": best_score,
+            "models_list": list(model_results.keys()),
+            "sorted_results": sorted_results,  # Raw sorted items
+            "processed_results": processed_results,  # Simplified list of dicts
+            "best_model_name": best_model_name,
+            "best_model_mean": best_model_data.get("mean_score", 0),
+            "best_model_std": best_model_data.get("std_score", 0),
+            "feature_cols": feature_cols,
+            "feature_descriptions": FEATURE_DESCRIPTIONS,
+            "config_json": json.dumps(self.config, indent=2, default=str),
+            "train_schema_json": json.dumps(train_schema, indent=2),
+            "test_schema_json": json.dumps(test_schema, indent=2),
+            "logging_config_json": json.dumps(logging_config, indent=2),
+            "generation_time": datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+        }
+
+    def _generate_html_report(
+        self,
+        model_results: Dict[str, Any],
+        feature_cols: List[str],
+    ) -> None:
+        """Generate HTML report using Jinja2 template."""
+        if not self.env:
+            logger.warning("   ⚠️  Jinja2 not available, skipping HTML report.")
+            return
+
+        try:
+            report_path = self.reports_dir / "relatorio_final.html"
+            # Ensure template exists, otherwise fallback or skip
+            try:
+                template = self.env.get_template("report_template.html")
+            except Exception:
+                logger.warning("   ⚠️  HTML template not found. Skipping HTML report.")
+                return
+
+            context = self._prepare_report_context(model_results, feature_cols)
+            content = template.render(**context)
+
+            with open(report_path, "w", encoding="utf-8") as f:
+                f.write(content)
+            logger.info("   🌐 HTML report generated: %s", report_path)
+
+        except Exception as e:
+            logger.error("   ❌ HTML report generation failed: %s", e)
+            # Don't raise here to allow other reports to finish if this one fails
 
     def _generate_markdown_report(
         self,
@@ -82,11 +291,29 @@ class ReportingManager:
         try:
             report_path = self.reports_dir / "relatorio_final.md"
 
+            # Try to use Jinja2 template first
+            if self.env:
+                try:
+                    template = self.env.get_template("report_template.md")
+                    context = self._prepare_report_context(model_results, feature_cols)
+                    content = template.render(**context)
+                    with open(report_path, "w", encoding="utf-8") as f:
+                        f.write(content)
+                    logger.info(
+                        "   📝 Markdown report generated from template: %s", report_path
+                    )
+                    return
+                except Exception as e:
+                    logger.warning(
+                        "   ⚠️  Failed to render template, falling back to hardcoded report: %s",
+                        e,
+                    )
+
             with open(report_path, "w", encoding="utf-8") as f:
                 # Header/Title Page
-                f.write("# ATIVIDADE PRÁTICA: MACHINE LEARNING - TITANIC\n\n")
-                f.write("**Dagoberto Candeias de Moraes**\n\n")
-                f.write("UFV – ELT 579 – Aprendizado de Máquina\n\n")
+                f.write("# ATIVIDADE PRÁTICA: MACHINE LEARNING - " "TITANIC\n\n")
+                f.write("**Dagoberto Candeias de Moraes**\n" "\n")
+                f.write("UFV – ELT 579 – Aprendizado de " "Máquina\n\n")
                 f.write("Matrícula: 118550 – Semana Final\n\n")
                 f.write("dagoberto.moraes@ufv.br\n\n")
                 f.write("---\n\n")
@@ -94,55 +321,77 @@ class ReportingManager:
                 # Resumo
                 f.write("## Resumo\n\n")
                 total_models = len(model_results)
-                best_score = self._get_best_score(model_results)
+                try:
+                    best_score = self._get_best_score(model_results)
+                except Exception as e:
+                    logger.error("Error getting best score: %s", e)
+                    best_score = 0.0
                 f.write(
-                    "Este relatório apresenta uma análise completa e comparativa do desenvolvimento de um pipeline de machine learning "
+                    "Este relatório apresenta uma análise completa e\n"
+                    "comparativa do desenvolvimento de um pipeline de\n"
+                    "machine learning para a predição de sobrevivência no\n"
+                    "desastre do Titanic. Em termos simples, usamos\n"
+                    "inteligência artificial para tentar prever quem\n"
+                    "sobreviveria ou não ao naufrágio, baseado em dados\n"
+                    "dos passageiros.\n\n"
                 )
                 f.write(
-                    "para a predição de sobrevivência no desastre do Titanic. Em termos simples, usamos inteligência artificial para tentar prever quem sobreviveria ou não ao naufrágio, baseado em dados dos passageiros.\n\n"
+                    f"Foram treinados {total_models} modelos de classificação diferentes - pense neles como diferentes 'cérebros' de IA tentando resolver o mesmo problema. Utilizamos {len(feature_cols)} características (features) criadas a partir dos dados originais dos passageiros, como idade, sexo, classe social, etc.\n\n"
                 )
+                f.write("O melhor modelo alcançou uma acurácia de ")
+                f.write(f"{best_score:.4f}")
+                f.write(" (ou ")
+                f.write(f"{best_score*100:.1f}")
+                f.write("%) na validação cruzada, ")
                 f.write(
-                    f"Foram treinados {total_models} modelos de classificação diferentes - pense neles como diferentes 'cérebros' de IA tentando resolver o mesmo problema. "
-                )
-                f.write(
-                    f"Utilizamos {len(feature_cols)} características (features) criadas a partir dos dados originais dos passageiros, como idade, sexo, classe social, etc.\n\n"
-                )
-                f.write(
-                    f"O melhor modelo alcançou uma acurácia de {best_score:.4f} (ou {best_score*100:.1f}%) na validação cruzada, "
-                )
-                f.write(
-                    "o que significa que ele acertou as previsões em quase 90% dos casos testados. Isso representa uma melhoria significativa em relação ao script original, que tinha apenas 76.7% de acurácia.\n\n"
+                    "o que significa que ele acertou as previsões em quase 90% dos casos testados. "
+                    "Isso representa uma melhoria significativa em relação ao script original, que tinha apenas 76.7% de acurácia.\n\n"
                 )
 
                 f.write("**O que isso significa para leigos?**\n\n")
-                f.write("Imagine que você tem que adivinhar se alguém sobreviveria ao Titanic baseado em informações sobre a pessoa. Antes, você acertaria apenas 77% das vezes. Agora, com nossa IA melhorada, você acertaria cerca de 90% das vezes. Isso é uma grande melhoria!\n\n")
+                f.write(
+                    "Imagine que você tem que adivinhar se alguém sobreviveria ao Titanic baseado em informações sobre a pessoa. "
+                    "Antes, você acertaria apenas 77% das vezes. Agora, com nossa IA melhorada, você acertaria cerca de 90% das vezes. "
+                    "Isso é uma grande melhoria!\n\n"
+                )
 
                 f.write("**Principais conquistas (explicadas simplesmente):**\n\n")
                 f.write(
-                    "• **Pipeline Modular**: Dividimos o trabalho em partes separadas (como cozinhar em etapas: cortar, cozinhar, servir), facilitando manutenção e entendimento\n"
+                    "• **Pipeline Modular**: Dividimos o trabalho em partes separadas "
+                    "(como cozinhar em etapas: cortar, cozinhar, servir), facilitando manutenção e entendimento\n"
                 )
                 f.write(
-                    "• **Engenharia de Features Avançada**: Criamos mais de 20 informações úteis sobre cada passageiro (como 'tamanho da família', 'título social') em vez de usar apenas 8 básicas\n"
+                    "• **Engenharia de Features Avançada**: Criamos mais de 20 informações úteis "
+                    "sobre cada passageiro (como 'tamanho da família', 'título social') em vez de usar apenas 8 básicas\n"
                 )
                 f.write(
-                    "• **Validação Robusta**: Testamos os modelos de forma justa e repetida, como fazer vários exames para garantir que o aluno realmente sabe a matéria\n"
+                    "• **Validação Robusta**: Testamos os modelos de forma justa e repetida, "
+                    "como fazer vários exames para garantir que o aluno realmente sabe a matéria\n"
                 )
                 f.write(
-                    "• **Ensembles Otimizados**: Combinamos vários modelos de IA, como uma equipe de especialistas votando juntos para uma decisão melhor\n"
+                    "• **Ensembles Otimizados**: Combinamos vários modelos de IA, "
+                    "como uma equipe de especialistas votando juntos para uma decisão melhor\n"
                 )
                 f.write(
-                    "• **Otimização Automática**: Usamos um programa que automaticamente encontra as melhores configurações para os modelos, em vez de tentar manualmente\n"
+                    "• **Otimização Automática**: Usamos um programa que automaticamente encontra as melhores configurações "
+                    "para os modelos, em vez de tentar manualmente\n"
                 )
                 f.write(
                     "• **Cache Inteligente**: Guardamos resultados de cálculos demorados para não precisar refazer tudo do zero\n"
                 )
                 f.write(
-                    "• **Relatórios Acadêmicos**: Geramos automaticamente relatórios bonitos em diferentes formatos (texto, Word, PDF) com gráficos e explicações\n\n"
+                    "• **Relatórios Acadêmicos**: Geramos automaticamente relatórios bonitos "
+                    "em diferentes formatos (texto, Word, PDF) com gráficos e explicações\n\n"
                 )
 
                 f.write("**Visão geral dos gráficos principais:**\n\n")
-                f.write("![Curva ROC dos Modelos](output/graficos/roc_curves/04_roc_curve.png)\n\n")
-                f.write("*Esta imagem mostra como cada modelo de IA performa em prever sobrevivência. Quanto mais a linha azul sobe para cima e esquerda, melhor o modelo.*\n\n")
+                f.write(
+                    "![Curva ROC dos Modelos](output/graficos/roc_curves/04_roc_curve.png)\n\n"
+                )
+                f.write(
+                    "*Esta imagem mostra como cada modelo de IA performa em prever sobrevivência. "
+                    "Quanto mais a linha azul sobe para cima e esquerda, melhor o modelo.*\n\n"
+                )
 
                 f.write(
                     "A análise inclui pré-processamento avançado (limpeza e preparação dos dados), seleção de features (escolher as informações mais importantes), "
@@ -171,27 +420,25 @@ class ReportingManager:
 
                 f.write("Este trabalho tem como objetivos:\n\n")
                 f.write(
-                    "1. **Desenvolver um pipeline completo de ML**: Desde a ingestão de dados até a predição final\n"
+                    "- **Desenvolver um pipeline completo de ML**: Desde a ingestão de dados até a predição final\n"
                 )
                 f.write(
-                    "2. **Comparar diferentes algoritmos**: Avaliar o desempenho de 15+ modelos de classificação\n"
+                    "- **Comparar diferentes algoritmos**: Avaliar o desempenho de 15+ modelos de classificação\n"
                 )
                 f.write(
-                    "3. **Realizar engenharia de features**: Criar variáveis preditivas a partir dos dados brutos\n"
+                    "- **Realizar engenharia de features**: Criar variáveis preditivas a partir dos dados brutos\n"
                 )
                 f.write(
-                    "4. **Otimizar e validar**: Usar validação cruzada e métricas robustas de avaliação\n"
+                    "- **Otimizar e validar**: Usar validação cruzada e métricas robustas de avaliação\n"
                 )
                 f.write(
-                    "5. **Gerar insights acionáveis**: Identificar os fatores mais importantes para sobrevivência\n\n"
+                    "- **Gerar insights acionáveis**: Identificar os fatores mais importantes para sobrevivência\n\n"
                 )
 
                 f.write(
                     "A metodologia empregada segue as melhores práticas de ML, incluindo "
                 )
-                f.write(
-                    "divisão estratificada dos dados, pré-processamento adequado, "
-                )
+                f.write("divisão estratificada dos dados, pré-processamento adequado, ")
                 f.write(
                     "engenharia de features avançada e avaliação rigorosa dos modelos.\n\n"
                 )
@@ -203,10 +450,12 @@ class ReportingManager:
                     "Os dados foram submetidos a um pipeline de pré-processamento completo:\n\n"
                 )
                 f.write(
-                    "1. **Tratamento de Valores Faltantes**: Imputação baseada em estatísticas descritivas e algoritmos avançados\n"
+                    "1. **Tratamento de Valores Faltantes**: Imputação baseada em estatísticas descritivas "
+                    "e algoritmos avançados\n"
                 )
                 f.write(
-                    "2. **Codificação de Variáveis Categóricas**: One-hot encoding e ordinal encoding conforme apropriado\n"
+                    "2. **Codificação de Variáveis Categóricas**: One-hot encoding e ordinal encoding "
+                    "conforme apropriado\n"
                 )
                 f.write(
                     "3. **Escalonamento**: StandardScaler para variáveis numéricas\n"
@@ -255,7 +504,8 @@ class ReportingManager:
                 ):
                     mean_score = result.get("mean_score", 0)
                     std_score = result.get("std_score", 0)
-                    best_score = max(result.get("cv_scores", [0]))
+                    cv_scores = result.get("cv_scores", [])
+                    best_score = max(cv_scores) if cv_scores else 0
 
                     row = (
                         f"| {model_name} | {mean_score:.4f} | "
@@ -268,31 +518,33 @@ class ReportingManager:
                 )
 
                 # Análise dos Resultados
-                best_model = max(
-                    model_results.items(),
-                    key=lambda x: x[1].get("mean_score", 0),
-                )
                 f.write("### Análise dos Resultados\n\n")
-                f.write(
-                    f"O modelo com melhor desempenho foi o **{best_model[0]}**, "
-                )
-                f.write(
-                    f"alcançando uma acurácia média de {best_model[1].get('mean_score', 0):.4f} "
-                )
-                f.write(
-                    f"com desvio padrão de {best_model[1].get('std_score', 0):.4f}.\n\n"
-                )
+                if model_results:
+                    best_model = max(
+                        model_results.items(),
+                        key=lambda x: x[1].get("mean_score", 0),
+                    )
+                    f.write(
+                        f"O modelo com melhor desempenho foi o **{best_model[0]}**, "
+                    )
+                    f.write(
+                        f"alcançando uma acurácia média de {best_model[1].get('mean_score', 0):.4f} "
+                    )
+                    f.write(
+                        f"com desvio padrão de {best_model[1].get('std_score', 0):.4f}.\n\n"
+                    )
+                else:
+                    f.write("Nenhum modelo foi treinado com sucesso.\n\n")
 
                 f.write("#### Fatores de Sobrevivência Identificados\n\n")
                 f.write(
                     "A análise dos modelos revelou os seguintes fatores mais importantes para a sobrevivência:\n\n"
                 )
                 f.write(
-                    "1. **Classe Social (Pclass)**: Passageiros de primeira classe tiveram maior chance de sobrevivência\n"
+                    "1. **Classe Social (Pclass)**: Passageiros de primeira classe tiveram maior chance "
+                    "de sobrevivência\n"
                 )
-                f.write(
-                    "2. **Gênero (Sex)**: Mulheres tiveram prioridade no resgate\n"
-                )
+                f.write("2. **Gênero (Sex)**: Mulheres tiveram prioridade no resgate\n")
                 f.write("3. **Idade**: Crianças tiveram maior prioridade\n")
                 f.write(
                     "4. **Tamanho da Família**: Famílias pequenas tiveram melhor prognóstico\n"
@@ -306,8 +558,10 @@ class ReportingManager:
                 f.write(
                     f"Foram criadas {len(feature_cols)} features a partir dos dados originais:\n\n"
                 )
+
                 for feature in feature_cols:
-                    f.write(f"• **{feature}**\n")
+                    description = FEATURE_DESCRIPTIONS.get(feature, "Feature derivada")
+                    f.write(f"• **{feature}** - {description}\n")
                 f.write("\n")
 
                 # Discussão
@@ -320,7 +574,8 @@ class ReportingManager:
                     "1. **Tamanho da Amostra**: Apenas 891 passageiros, o que pode limitar a generalização\n"
                 )
                 f.write(
-                    "2. **Dados Faltantes**: Informações como idade e cabine não estavam completas para todos os passageiros\n"
+                    "2. **Dados Faltantes**: Informações como idade e cabine não estavam completas "
+                    "para todos os passageiros\n"
                 )
                 f.write(
                     "3. **Viés Histórico**: O conjunto de dados reflete apenas os passageiros registrados\n\n"
@@ -353,9 +608,7 @@ class ReportingManager:
                 f.write(
                     "Os resultados confirmam a importância de variáveis socioeconômicas e demográficas "
                 )
-                f.write(
-                    "na determinação do prognóstico em situações de emergência. "
-                )
+                f.write("na determinação do prognóstico em situações de emergência. ")
                 f.write(
                     "A metodologia empregada, baseada em validação cruzada e engenharia de features, "
                 )
@@ -381,9 +634,7 @@ class ReportingManager:
                 f.write(
                     "- **Bibliotecas Principais**: scikit-learn, pandas, numpy, matplotlib\n"
                 )
-                f.write(
-                    "- **Validação**: 5-fold cross-validation estratificada\n"
-                )
+                f.write("- **Validação**: 5-fold cross-validation estratificada\n")
                 f.write(
                     "- **Métricas**: Acurácia, AUC-ROC, precisão, recall, F1-score\n\n"
                 )
@@ -394,27 +645,22 @@ class ReportingManager:
                 )
                 f.write("#### Módulos Principais\n\n")
                 f.write(
-                    "1. **titanic_pipeline.preprocessing**: Responsável pelo pré-processamento e engenharia de features\n"
+                    "1. **titanic_pipeline.preprocessing**: Responsável pelo pré-processamento "
+                    "e engenharia de features\n"
                 )
-                f.write(
-                    "   - AdvancedFeatureEngineer: Criação de features derivadas\n"
-                )
+                f.write("   - AdvancedFeatureEngineer: Criação de features derivadas\n")
                 f.write(
                     "   - create_feature_pipeline: Pipeline de transformação de features\n\n"
                 )
                 f.write(
                     "2. **titanic_pipeline.core.modeling**: Gerenciamento de modelos e treinamento\n"
                 )
-                f.write(
-                    "   - ModelingManager: Coordenação do treinamento paralelo\n"
-                )
+                f.write("   - ModelingManager: Coordenação do treinamento paralelo\n")
                 f.write("   - Funções de ensemble (Voting, Stacking)\n\n")
                 f.write(
                     "3. **titanic_pipeline.core.reporting**: Geração de relatórios e visualizações\n"
                 )
-                f.write(
-                    "   - ReportingManager: Coordenação da geração de relatórios\n"
-                )
+                f.write("   - ReportingManager: Coordenação da geração de relatórios\n")
                 f.write("   - Funções de plotagem e análise\n\n")
                 f.write(
                     "4. **titanic_pipeline.core.utils**: Utilitários e funções auxiliares\n"
@@ -438,29 +684,52 @@ class ReportingManager:
                 f.write(
                     "5. **Otimização de Hiperparâmetros**: Optuna para tuning automático\n"
                 )
-                f.write(
-                    "6. **Ensemble Creation**: Voting e Stacking classifiers\n"
-                )
+                f.write("6. **Ensemble Creation**: Voting e Stacking classifiers\n")
                 f.write(
                     "7. **Avaliação e Relatórios**: Métricas, gráficos e documentação\n\n"
                 )
 
                 f.write("### Configuração do Pipeline\n\n")
                 f.write("#### Parâmetros de Configuração\n\n")
+                f.write(
+                    "A configuração do pipeline é definida pelos seguintes parâmetros em formato JSON:\n\n"
+                )
                 f.write("```json\n")
-                import json
-
                 config_json = json.dumps(self.config, indent=2, default=str)
                 f.write(config_json)
                 f.write("\n```\n\n")
 
                 f.write("##### Explicação dos Parâmetros de Configuração\n\n")
-                f.write("Os parâmetros de configuração controlam quais relatórios e visualizações são gerados:\n\n")
-                f.write("- **`generate_md`** (padrão: `true`): Controla a geração do relatório em formato Markdown (.md)\n")
-                f.write("- **`generate_docx`** (padrão: `true`): Controla a geração do relatório em formato DOCX (.docx)\n")
-                f.write("- **`generate_pdf`** (padrão: `true`): Controla a geração do relatório em formato PDF (.pdf)\n")
-                f.write("- **`include_calibration_plots`** (padrão: `true`): Controla a geração de plots de calibração para os modelos\n")
-                f.write("- **`include_feature_importance`** (padrão: `true`): Controla a geração de plots de importância de features\n\n")
+                f.write(
+                    "Os parâmetros de configuração controlam quais relatórios e visualizações são gerados:\n\n"
+                )
+                f.write(
+                    "- **`generate_md`** (padrão: `true`): Controla a geração do relatório em formato Markdown (.md)\n"
+                )
+                f.write(
+                    "- **`generate_docx`** (padrão: `true`): Controla a geração do relatório "
+                    "em formato DOCX (.docx)\n"
+                )
+                f.write(
+                    "- **`generate_pdf`** (padrão: `true`): Controla a geração do relatório "
+                    "em formato PDF (.pdf)\n"
+                )
+                f.write(
+                    "- **`include_calibration_plots`** (padrão: `true`): Controla a geração de plots de calibração "
+                    "para os modelos\n"
+                )
+                f.write(
+                    "- **`include_feature_importance`** (padrão: `true`): "
+                    "Controla a geração de plots de importância de "
+                    "features\n\n"
+                )
+
+                f.write("**Por que esses parâmetros são importantes?**\n\n")
+                f.write(
+                    "Imagine que você está cozinhando uma receita complexa. Você pode escolher fazer apenas o prato principal "
+                    "(relatório Markdown) ou o banquete completo (todos os relatórios + gráficos). "
+                    "Esses parâmetros permitem personalizar o que é gerado, economizando tempo quando você precisa apenas de uma parte.\n\n"
+                )
 
                 f.write("#### Schema de Dados\n\n")
                 f.write("**Dados de Treino**:\n\n")
@@ -535,38 +804,50 @@ class ReportingManager:
 
                 f.write("### Melhorias em Relação ao Script Original\n\n")
                 f.write(
-                    "O pipeline atual representa uma evolução significativa em relação à implementação original:\n\n"
+                    "O pipeline atual representa uma evolução "
+                    "significativa em relação à implementação original:"
+                    "\n\n"
                 )
                 f.write("#### Melhorias Implementadas\n\n")
                 f.write(
-                    "1. **Arquitetura Modular**: Separação clara em módulos especializados\n"
+                    "1. **Arquitetura Modular**: Separação clara em "
+                    "módulos especializados\n"
                 )
                 f.write(
-                    "2. **Cache Inteligente**: Reutilização de computações custosas com versionamento\n"
+                    "2. **Cache Inteligente**: Reutilização de "
+                    "computações custosas com versionamento\n"
                 )
                 f.write(
-                    "3. **Treinamento Paralelo**: Execução distribuída para melhor performance\n"
+                    "3. **Treinamento Paralelo**: Execução distribuída "
+                    "para melhor performance\n"
                 )
                 f.write(
-                    "4. **Otimização Automática**: Optuna substituindo otimização manual\n"
+                    "4. **Otimização Automática**: Optuna substituindo "
+                    "otimização manual\n"
                 )
                 f.write(
-                    "5. **Validação Robusta**: Schema validation e testes de sanidade\n"
+                    "5. **Validação Robusta**: Schema validation e "
+                    "testes de sanidade\n"
                 )
                 f.write(
-                    "6. **Relatórios Acadêmicos**: Geração automática de Markdown, DOCX e PDF\n"
+                    "6. **Relatórios Acadêmicos**: Geração automática de "
+                    "Markdown, DOCX e PDF\n"
                 )
                 f.write(
-                    "7. **Feature Engineering Avançado**: 20+ features vs. 8 originais\n"
+                    "7. **Feature Engineering Avançado**: 20+ features "
+                    "vs. 8 originais\n"
                 )
                 f.write(
-                    "8. **Ensembles Otimizados**: Voting e Stacking com pesos dinâmicos\n"
+                    "8. **Ensembles Otimizados**: Voting e Stacking com "
+                    "pesos dinâmicos\n"
                 )
                 f.write(
-                    "9. **Tratamento de Erros**: Retry automático para modelos falhados\n"
+                    "9. **Tratamento de Erros**: Retry automático para "
+                    "modelos falhados\n"
                 )
                 f.write(
-                    "10. **Monitoramento**: Logging detalhado e métricas estruturadas\n\n"
+                    "10. **Monitoramento**: Logging detalhado e "
+                    "métricas estruturadas\n\n"
                 )
 
                 f.write("#### Métricas de Comparação\n\n")
@@ -580,29 +861,29 @@ class ReportingManager:
                 f.write("- **Modelos Originais**: ~5\n")
                 f.write("- **Modelos Atuais**: ")
                 f.write(f"{len(model_results)}\n")
-                f.write(
-                    "- **Tempo de Execução**: Otimizado com paralelização\n\n"
-                )
+                f.write("- **Tempo de Execução**: Otimizado com " "paralelização\n\n")
 
                 # Repositório do Projeto
                 f.write("## Repositório do Projeto\n\n")
                 f.write(
-                    "O código fonte completo deste projeto está disponível no GitHub: "
+                    "O código fonte completo deste projeto está "
+                    "disponível no GitHub: "
                 )
                 f.write(
-                    "[https://github.com/dagoberto-moraes/titanic-ml-pipeline](https://github.com/dagoberto-moraes/titanic-ml-pipeline)\n\n"
+                    "[https://github.com/dagoberto-moraes/titanic-ml-pipeline]"
+                    "(https://github.com/dagoberto-moraes/titanic-ml-pipeline)"
+                    "\n\n"
                 )
 
                 # Data e versão
                 f.write("---\n\n")
                 f.write(
-                    f"*Relatório gerado em: {datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')}*\n"
+                    f"*Relatório gerado em: "
+                    f"{datetime.datetime.now().strftime('%d/%m/%Y %H:%M:%S')}*\n"
                 )
                 f.write("*Pipeline Titanic ML - Versão 5.0*\n")
 
-            logger.info(
-                "   📝 Comprehensive Markdown report saved: %s", report_path
-            )
+            logger.info("   📝 Comprehensive Markdown report saved: %s", report_path)
 
         except Exception as e:
             logger.error("   ❌ Markdown report generation failed: %s", e)
@@ -631,18 +912,16 @@ class ReportingManager:
             total_models = len(model_results)
             best_score = self._get_best_score(model_results)
             doc.add_paragraph(
-                f"Este relatório apresenta uma análise completa do desenvolvimento de um pipeline de machine learning "
-                f"para a predição de sobrevivência no desastre do Titanic. Foram treinados {total_models} modelos de classificação diferentes, "
-                f"utilizando {len(feature_cols)} features engenheiradas a partir dos dados originais. "
-                f"O melhor modelo alcançou uma acurácia de {best_score:.4f} na validação cruzada. "
-                f"A análise inclui pré-processamento avançado, seleção de features, comparação de algoritmos e geração de insights sobre os fatores que influenciaram a sobrevivência dos passageiros."
+                f"""Este relatório apresenta uma análise completa do desenvolvimento de um pipeline de machine learning para a predição de sobrevivência no desastre do Titanic. Foram treinados {total_models} modelos de classificação diferentes, utilizando {len(feature_cols)} features engenheiradas a partir dos dados originais. O melhor modelo alcançou uma acurácia de {best_score:.4f} na validação cruzada. A análise inclui pré-processamento avançado, seleção de features, comparação de algoritmos e geração de insights sobre os fatores que influenciaram a sobrevivência dos passageiros."""
             )
 
             # Introdução
             doc.add_heading("Introdução", level=1)
             doc.add_paragraph(
-                "O desastre do Titanic representa um dos eventos mais marcantes da história moderna, tornando-se um caso de estudo clássico em análise de dados e machine learning. "
-                "O conjunto de dados do Titanic, disponível no Kaggle, contém informações sobre 891 passageiros, incluindo características demográficas, socioeconômicas e de viagem."
+                "O desastre do Titanic representa um dos eventos mais marcantes da história moderna, "
+                "tornando-se um caso de estudo clássico em análise de dados e machine learning. "
+                "O conjunto de dados do Titanic, disponível no Kaggle, contém informações sobre 891 passageiros, "
+                "incluindo características demográficas, socioeconômicas e de viagem."
             )
             doc.add_paragraph("Este trabalho tem como objetivos:")
             doc.add_paragraph(
@@ -736,7 +1015,8 @@ class ReportingManager:
                 row_cells[0].text = model_name
                 row_cells[1].text = f"{result.get('mean_score', 0):.4f}"
                 row_cells[2].text = f"{result.get('std_score', 0):.4f}"
-                best_score = max(result.get("cv_scores", [0]))
+                cv_scores = result.get("cv_scores", [])
+                best_score = max(cv_scores) if cv_scores else 0
                 row_cells[3].text = f"{best_score:.4f}"
 
             doc.add_paragraph(
@@ -745,13 +1025,16 @@ class ReportingManager:
 
             # Análise dos Resultados
             doc.add_heading("Análise dos Resultados", level=2)
-            best_model = max(
-                model_results.items(), key=lambda x: x[1].get("mean_score", 0)
-            )
-            doc.add_paragraph(
-                f"O modelo com melhor desempenho foi o {best_model[0]}, alcançando uma acurácia média de {best_model[1].get('mean_score', 0):.4f} "
-                f"com desvio padrão de {best_model[1].get('std_score', 0):.4f}."
-            )
+            if model_results:
+                best_model = max(
+                    model_results.items(), key=lambda x: x[1].get("mean_score", 0)
+                )
+                doc.add_paragraph(
+                    f"O modelo com melhor desempenho foi o {best_model[0]}, alcançando uma acurácia média de {best_model[1].get('mean_score', 0):.4f} "
+                    f"com desvio padrão de {best_model[1].get('std_score', 0):.4f}."
+                )
+            else:
+                doc.add_paragraph("Nenhum modelo foi treinado com sucesso.")
 
             doc.add_heading("Fatores de Sobrevivência Identificados", level=3)
             doc.add_paragraph(
@@ -871,26 +1154,20 @@ class ReportingManager:
             doc.add_paragraph(
                 "Original: Código procedural em arquivo único (~200 linhas)"
             )
-            doc.add_paragraph(
-                "Atual: Pipeline modular com 15+ módulos especializados"
-            )
+            doc.add_paragraph("Atual: Pipeline modular com 15+ módulos especializados")
             doc.add_paragraph(
                 "Melhoria: Separação de responsabilidades, reutilização, manutenção facilitada"
             )
 
             doc.add_heading("Engenharia de Features", level=3)
             doc.add_paragraph("Original: 8 features básicas")
-            doc.add_paragraph(
-                f"Atual: {len(feature_cols)}+ features avançadas"
-            )
+            doc.add_paragraph(f"Atual: {len(feature_cols)}+ features avançadas")
             doc.add_paragraph(
                 "Melhoria: Features derivadas, interações, bins, target encoding"
             )
 
             doc.add_heading("Pré-processamento", level=3)
-            doc.add_paragraph(
-                "Original: Imputação simples, StandardScaler básico"
-            )
+            doc.add_paragraph("Original: Imputação simples, StandardScaler básico")
             doc.add_paragraph(
                 "Atual: Imputação KNN/Iterative, encodings apropriados, pipeline completo"
             )
@@ -903,18 +1180,12 @@ class ReportingManager:
             doc.add_paragraph(
                 f"Atual: {len(model_results)}+ modelos state-of-the-art, validação estratificada"
             )
-            doc.add_paragraph(
-                "Melhoria: Algoritmos modernos, métricas completas"
-            )
+            doc.add_paragraph("Melhoria: Algoritmos modernos, métricas completas")
 
             doc.add_heading("Otimização", level=3)
             doc.add_paragraph("Original: skopt manual (30 chamadas)")
-            doc.add_paragraph(
-                "Atual: Optuna automática com trials configuráveis"
-            )
-            doc.add_paragraph(
-                "Melhoria: Framework moderno, melhor convergência"
-            )
+            doc.add_paragraph("Atual: Optuna automática com trials configuráveis")
+            doc.add_paragraph("Melhoria: Framework moderno, melhor convergência")
 
             doc.add_heading("Ensembles", level=3)
             doc.add_paragraph("Original: Voting simples com 4 modelos")
@@ -923,9 +1194,7 @@ class ReportingManager:
 
             doc.add_heading("Relatórios", level=3)
             doc.add_paragraph("Original: Sem relatórios estruturados")
-            doc.add_paragraph(
-                "Atual: Markdown, DOCX, PDF; gráficos; métricas JSON"
-            )
+            doc.add_paragraph("Atual: Markdown, DOCX, PDF; gráficos; métricas JSON")
             doc.add_paragraph("Melhoria: Documentação acadêmica completa")
 
             doc.add_heading("Robustez", level=3)
@@ -981,13 +1250,9 @@ class ReportingManager:
             row_cells[2].text = "15+ arquivos"
             row_cells[3].text = "+1400%"
 
-            doc.add_paragraph(
-                "Tabela 2: Comparação quantitativa entre implementações"
-            )
+            doc.add_paragraph("Tabela 2: Comparação quantitativa entre implementações")
 
-            doc.add_heading(
-                "Por que as Melhorias Foram Implementadas", level=2
-            )
+            doc.add_heading("Por que as Melhorias Foram Implementadas", level=2)
             doc.add_paragraph(
                 "Problemas do script original identificados e soluções implementadas:"
             )
@@ -1143,14 +1408,10 @@ class ReportingManager:
             author = Paragraph("Dagoberto Candeias de Moraes", normal_style)
             story.append(author)
 
-            course = Paragraph(
-                "UFV – ELT 579 – Aprendizado de Máquina", normal_style
-            )
+            course = Paragraph("UFV – ELT 579 – Aprendizado de Máquina", normal_style)
             story.append(course)
 
-            matricula = Paragraph(
-                "Matrícula: 118550 – Semana Final", normal_style
-            )
+            matricula = Paragraph("Matrícula: 118550 – Semana Final", normal_style)
             story.append(matricula)
 
             email = Paragraph("dagoberto.moraes@ufv.br", normal_style)
@@ -1164,13 +1425,7 @@ class ReportingManager:
 
             total_models = len(model_results)
             best_score = self._get_best_score(model_results)
-            resumo_text = (
-                f"Este relatório apresenta uma análise completa do desenvolvimento de um pipeline de machine learning "
-                f"para a predição de sobrevivência no desastre do Titanic. Foram treinados {total_models} modelos de classificação diferentes, "
-                f"utilizando {len(feature_cols)} features engenheiradas a partir dos dados originais. "
-                f"O melhor modelo alcançou uma acurácia de {best_score:.4f} na validação cruzada. "
-                f"A análise inclui pré-processamento avançado, seleção de features, comparação de algoritmos e geração de insights sobre os fatores que influenciaram a sobrevivência dos passageiros."
-            )
+            resumo_text = f"Este relatório apresenta uma análise completa do desenvolvimento de um pipeline de machine learning para a predição de sobrevivência no desastre do Titanic. Foram treinados {total_models} modelos de classificação diferentes, utilizando {len(feature_cols)} features engenheiradas a partir dos dados originais. O melhor modelo alcançou uma acurácia de {best_score:.4f} na validação cruzada. A análise inclui pré-processamento avançado, seleção de features, comparação de algoritmos e geração de insights sobre os fatores que influenciaram a sobrevivência dos passageiros."
             resumo = Paragraph(resumo_text, normal_style)
             story.append(resumo)
             story.append(Spacer(1, 12))
@@ -1211,12 +1466,12 @@ class ReportingManager:
             meth_title = Paragraph("Metodologia", heading1_style)
             story.append(meth_title)
 
-            preproc_title = Paragraph(
-                "Pré-processamento de Dados", heading2_style
-            )
+            preproc_title = Paragraph("Pré-processamento de Dados", heading2_style)
             story.append(preproc_title)
 
-            preproc_text = "Os dados foram submetidos a um pipeline de pré-processamento completo:"
+            preproc_text = (
+                "Os dados foram submetidos a um pipeline de pré-processamento completo:"
+            )
             preproc = Paragraph(preproc_text, normal_style)
             story.append(preproc)
 
@@ -1233,9 +1488,7 @@ class ReportingManager:
             alg_title = Paragraph("Algoritmos Avaliados", heading2_style)
             story.append(alg_title)
 
-            alg_text = (
-                "Foram comparados os seguintes algoritmos de classificação:"
-            )
+            alg_text = "Foram comparados os seguintes algoritmos de classificação:"
             alg = Paragraph(alg_text, normal_style)
             story.append(alg)
 
@@ -1268,9 +1521,7 @@ class ReportingManager:
             story.append(Spacer(1, 6))
 
             # Model results table
-            model_data = [
-                ["Modelo", "Acurácia Média", "Desvio Padrão", "Melhor Score"]
-            ]
+            model_data = [["Modelo", "Acurácia Média", "Desvio Padrão", "Melhor Score"]]
             for model_name, result in sorted(
                 model_results.items(),
                 key=lambda x: x[1].get("mean_score", 0),
@@ -1281,7 +1532,7 @@ class ReportingManager:
                         model_name,
                         f"{result.get('mean_score', 0):.4f}",
                         f"{result.get('std_score', 0):.4f}",
-                        f"{max(result.get('cv_scores', [0])):.4f}",
+                        f"{max(result.get('cv_scores', [])) if result.get('cv_scores') else 0:.4f}",
                     ]
                 )
 
@@ -1313,13 +1564,16 @@ class ReportingManager:
             anal_title = Paragraph("Análise dos Resultados", heading2_style)
             story.append(anal_title)
 
-            best_model = max(
-                model_results.items(), key=lambda x: x[1].get("mean_score", 0)
-            )
-            anal_text = (
-                f"O modelo com melhor desempenho foi o {best_model[0]}, alcançando uma acurácia média de {best_model[1].get('mean_score', 0):.4f} "
-                f"com desvio padrão de {best_model[1].get('std_score', 0):.4f}."
-            )
+            if model_results:
+                best_model = max(
+                    model_results.items(), key=lambda x: x[1].get("mean_score", 0)
+                )
+                anal_text = (
+                    f"O modelo com melhor desempenho foi o {best_model[0]}, alcançando uma acurácia média de {best_model[1].get('mean_score', 0):.4f} "
+                    f"com desvio padrão de {best_model[1].get('std_score', 0):.4f}."
+                )
+            else:
+                anal_text = "Nenhum modelo foi treinado com sucesso."
             anal = Paragraph(anal_text, normal_style)
             story.append(anal)
             story.append(Spacer(1, 6))
@@ -1344,9 +1598,7 @@ class ReportingManager:
                 factor_p = Paragraph(factor, normal_style)
                 story.append(factor_p)
 
-            features_title = Paragraph(
-                "Features Engenhariaadas", heading2_style
-            )
+            features_title = Paragraph("Features Engenhariaadas", heading2_style)
             story.append(features_title)
 
             features_text = f"Foram criadas {len(feature_cols)} features a partir dos dados originais:"
@@ -1428,9 +1680,7 @@ class ReportingManager:
             tech_title = Paragraph("Configuração Técnica", heading1_style)
             story.append(tech_title)
 
-            env_title = Paragraph(
-                "Ambiente de Desenvolvimento", heading2_style
-            )
+            env_title = Paragraph("Ambiente de Desenvolvimento", heading2_style)
             story.append(env_title)
 
             env_list = [
@@ -1443,9 +1693,7 @@ class ReportingManager:
                 env_p = Paragraph(env_item, normal_style)
                 story.append(env_p)
 
-            config_title = Paragraph(
-                "Configuração do Pipeline", heading2_style
-            )
+            config_title = Paragraph("Configuração do Pipeline", heading2_style)
             story.append(config_title)
 
             import json
@@ -1526,6 +1774,18 @@ class ReportingManager:
                                     model_name,
                                 )
 
+                        # Handle dense requirement for specific models
+                        dense_required_models = [
+                            "GaussianNB",
+                            "LinearDiscriminantAnalysis",
+                            "QuadraticDiscriminantAnalysis",
+                            "VotingEnsemble",
+                            "StackingEnsemble",
+                        ]
+                        if model_name in dense_required_models:
+                            if hasattr(X_for_pred, "toarray"):
+                                X_for_pred = X_for_pred.toarray()
+
                         prob_pos = model.predict_proba(X_for_pred)[:, 1]
                     else:
                         continue
@@ -1549,12 +1809,12 @@ class ReportingManager:
                         [0, 1],
                         linestyle="--",
                         color="gray",
-                        label="Perfectly calibrated",
+                        label="Perfeitamente calibrado",
                     )
 
-                    plt.xlabel("Predicted probability")
-                    plt.ylabel("True probability")
-                    plt.title(f"Calibration Plot - {model_name}")
+                    plt.xlabel("Probabilidade Predita")
+                    plt.ylabel("Probabilidade Real")
+                    plt.title(f"Curva de Calibração - {model_name}")
                     plt.legend()
                     plt.grid(True, alpha=0.3)
 
@@ -1584,8 +1844,6 @@ class ReportingManager:
             for model_name, result in model_results.items():
                 if "trained_model" in result:
                     model = result["trained_model"]
-
-                    # Check if model has feature_importances_
                     if hasattr(model, "feature_importances_"):
                         importances = model.feature_importances_
 
@@ -1602,18 +1860,16 @@ class ReportingManager:
                         top_n = min(20, len(importances))
 
                         plt.figure(figsize=(10, 8))
-                        plt.title(f"Feature Importances - {model_name}")
+                        plt.title(f"Importância das Features - {model_name}")
                         plt.barh(
                             range(top_n),
                             importances[indices][:top_n],
                             align="center",
                         )
 
-                        ytick_labels = [
-                            feature_names[i] for i in indices[:top_n]
-                        ]
+                        ytick_labels = [feature_names[i] for i in indices[:top_n]]
                         plt.yticks(range(top_n), ytick_labels)
-                        plt.xlabel("Relative Importance")
+                        plt.xlabel("Importância Relativa")
                         plt.gca().invert_yaxis()
                         plt.grid(True, alpha=0.3)
 
@@ -1622,6 +1878,72 @@ class ReportingManager:
                         plot_path = graficos_dir / fname
                         plt.savefig(plot_path, dpi=300, bbox_inches="tight")
                         plt.close()
+
+            # Compare feature importances (Random Forest vs XGBoost or AdaBoost)
+            rf_key = "RandomForest"
+            # Prefer XGBoost for comparison if available, else AdaBoost
+            compare_key = "XGBoost" if "XGBoost" in model_results else "AdaBoost"
+
+            if rf_key in model_results and compare_key in model_results:
+                rf_model = model_results[rf_key]["trained_model"]
+                compare_model = model_results[compare_key]["trained_model"]
+
+                if hasattr(rf_model, "feature_importances_") and hasattr(
+                    compare_model, "feature_importances_"
+                ):
+                    rf_importances = rf_model.feature_importances_
+                    compare_importances = compare_model.feature_importances_
+
+                    # Normalize the importance scores to make them comparable
+                    rf_importances = rf_importances / np.sum(rf_importances)
+                    compare_importances = compare_importances / np.sum(
+                        compare_importances
+                    )
+
+                    # Ensure feature_names is defined
+                    if len(feature_cols) == len(rf_importances):
+                        feature_names = feature_cols
+                    else:
+                        feature_names = [
+                            f"feature_{i}" for i in range(len(rf_importances))
+                        ]
+
+                    # Create the bar chart
+                    n_features = len(feature_names)
+                    x = np.arange(n_features)  # the label locations
+                    width = 0.35  # the width of the bars
+
+                    fig, ax = plt.subplots(figsize=(12, 10))
+                    rects1 = ax.bar(
+                        x - width / 2, rf_importances, width, label="RandomForest"
+                    )
+                    rects2 = ax.bar(
+                        x + width / 2, compare_importances, width, label=compare_key
+                    )
+
+                    # Add some text for labels, title and custom x-axis tick labels, etc.
+                    ax.set_ylabel("Importância")
+                    ax.set_title("Comparação de Importância das Features")
+                    ax.set_xticks(x)
+                    ax.set_xticklabels(feature_names, rotation=90)
+                    ax.legend()
+
+                    fig.tight_layout()
+
+                    # Save the plot
+                    fname = "feature_importance_comparison.png"
+                    plot_path = graficos_dir / fname
+                    plt.savefig(plot_path, dpi=300, bbox_inches="tight")
+                    plt.close()
+                    logger.info("   📊 Combined feature importance plot generated")
+                else:
+                    logger.warning(
+                        "   ⚠️  One or both models do not have feature importances. Skipping combined plot."
+                    )
+            else:
+                logger.warning(
+                    f"   ⚠️  Models for comparison ({rf_key}, {compare_key}) not found. Skipping combined plot."
+                )
 
             logger.info("   📊 Feature importance plots generated")
 
@@ -1633,9 +1955,7 @@ class ReportingManager:
         if not model_results:
             return 0.0
 
-        return max(
-            result.get("mean_score", 0) for result in model_results.values()
-        )
+        return max(result.get("mean_score", 0) for result in model_results.values())
 
 
 # Standalone functions for backward compatibility
@@ -1655,7 +1975,12 @@ def generate_reports(
     manager.generate_reports(model_results, feature_cols, X_train, y_train)
 
 
-def generate_roc_curves(model_results, X_train, y_train, feature_cols=None):
+def generate_roc_curves(
+    model_results: Dict[str, Any],
+    X_train: Any,
+    y_train: Any,
+    feature_cols: Optional[List[str]] = None,
+) -> None:
     """Generate ROC curves for models."""
     try:
         from sklearn.metrics import roc_curve, auc
@@ -1696,6 +2021,20 @@ def generate_roc_curves(model_results, X_train, y_train, feature_cols=None):
                             X_for_pred = X_train[feature_cols]
                         else:
                             X_for_pred = X_train
+
+                # Handle dense requirement for specific models
+                dense_required_models = [
+                    "GaussianNB",
+                    "LinearDiscriminantAnalysis",
+                    "QuadraticDiscriminantAnalysis",
+                    "VotingEnsemble",
+                    "StackingEnsemble",
+                ]
+                if model_name in dense_required_models and hasattr(
+                    X_for_pred, "toarray"
+                ):
+                    X_for_pred = X_for_pred.toarray()
+
                 y_pred_proba = model.predict_proba(X_for_pred)[:, 1]
                 fpr, tpr, _ = roc_curve(y_train, y_pred_proba)
                 roc_auc = auc(fpr, tpr)
@@ -1704,9 +2043,9 @@ def generate_roc_curves(model_results, X_train, y_train, feature_cols=None):
         plt.plot([0, 1], [0, 1], "k--")
         plt.xlim([0.0, 1.0])
         plt.ylim([0.0, 1.05])
-        plt.xlabel("False Positive Rate")
-        plt.ylabel("True Positive Rate")
-        plt.title("ROC Curves")
+        plt.xlabel("Taxa de Falsos Positivos")
+        plt.ylabel("Taxa de Verdadeiros Positivos")
+        plt.title("Curvas ROC")
         plt.legend(loc="lower right")
         plt.grid(True, alpha=0.3)
         plt.savefig(roc_dir / "04_roc_curve.png", dpi=300, bbox_inches="tight")
@@ -1716,7 +2055,10 @@ def generate_roc_curves(model_results, X_train, y_train, feature_cols=None):
         logger.error(f"   ❌ ROC curve generation failed: {e}")
 
 
-def generate_feature_correlation_heatmap(train, feature_cols):
+def generate_feature_correlation_heatmap(
+    train: Any,
+    feature_cols: List[str],
+) -> None:
     """Generate feature correlation heatmap."""
     try:
         import numpy as np
@@ -1728,9 +2070,7 @@ def generate_feature_correlation_heatmap(train, feature_cols):
 
         # Filtrar apenas colunas numéricas para correlação
         numeric_cols = (
-            train[feature_cols]
-            .select_dtypes(include=[np.number])
-            .columns.tolist()
+            train[feature_cols].select_dtypes(include=[np.number]).columns.tolist()
         )
 
         if not numeric_cols:
@@ -1758,7 +2098,7 @@ def generate_feature_correlation_heatmap(train, feature_cols):
         corr_matrix = train[numeric_cols].corr()
         plt.figure(figsize=(14, 10))
         sns.heatmap(corr_matrix, annot=False, cmap="coolwarm", center=0)
-        plt.title("Feature Correlation Heatmap")
+        plt.title("Mapa de Calor de Correlação de Features")
         plt.tight_layout()
         out_path = corr_dir / "09_feature_correlation_heatmap.png"
         plt.savefig(out_path, dpi=300, bbox_inches="tight")
@@ -1771,7 +2111,7 @@ def generate_feature_correlation_heatmap(train, feature_cols):
         )
 
 
-def generate_model_performance_timeline(model_results):
+def generate_model_performance_timeline(model_results: Dict[str, Any]) -> None:
     """Generate model performance timeline."""
     try:
         import matplotlib.pyplot as plt
@@ -1782,14 +2122,12 @@ def generate_model_performance_timeline(model_results):
 
         # Simple timeline plot
         models = list(model_results.keys())
-        scores = [
-            result.get("mean_score", 0) for result in model_results.values()
-        ]
+        scores = [result.get("mean_score", 0) for result in model_results.values()]
         plt.figure(figsize=(12, 6))
         plt.bar(models, scores)
         plt.xticks(rotation=45, ha="right")
-        plt.ylabel("Mean CV Score")
-        plt.title("Model Performance Timeline")
+        plt.ylabel("Acurácia Média (CV)")
+        plt.title("Linha do Tempo de Performance dos Modelos")
         plt.tight_layout()
         plt.savefig(
             timeline_dir / "10_model_performance_timeline.png",
@@ -1799,16 +2137,14 @@ def generate_model_performance_timeline(model_results):
         plt.close()
         logger.info("   📊 Model performance timeline generated")
     except Exception as e:
-        logger.error(
-            f"   ❌ Model performance timeline generation failed: {e}"
-        )
+        logger.error(f"   ❌ Model performance timeline generation failed: {e}")
 
 
 def generate_changelog_and_manifest(
-    feature_cols,
-    model_results,
-    script_total_time,
-):
+    feature_cols: List[str],
+    model_results: Dict[str, Any],
+    script_total_time: Union[float, datetime.timedelta],
+) -> None:
     """Generate changelog and manifest."""
     try:
         changelog_dir = Path("output") / "changelog"
@@ -1845,7 +2181,10 @@ def generate_changelog_and_manifest(
         logger.error(f"   ❌ Changelog and manifest generation failed: {e}")
 
 
-def save_timing_report(script_total_time, model_results):
+def save_timing_report(
+    script_total_time: Union[float, datetime.timedelta],
+    model_results: Dict[str, Any],
+) -> None:
     """Save timing report."""
     try:
         from pathlib import Path
@@ -1877,8 +2216,12 @@ def save_timing_report(script_total_time, model_results):
         logger.error(f"   ❌ Timing report save failed: {e}")
 
 
-def generate_shap_comparison_plot(top_models, X_train_data, feature_names_out):
-    """Generate SHAP comparison plot."""
+def generate_shap_comparison_plot(
+    top_models: List[Any],
+    X_train_data: Any,
+    feature_names_out: List[str],
+) -> None:
+    """Generate SHAP plots for top models."""
     try:
         import shap
         import matplotlib.pyplot as plt
@@ -1887,35 +2230,229 @@ def generate_shap_comparison_plot(top_models, X_train_data, feature_names_out):
         shap_dir = Path("output/graficos/shap")
         shap_dir.mkdir(parents=True, exist_ok=True)
 
-        # Simplified SHAP comparison
-        plt.figure(figsize=(12, 8))
-        for name, perf in top_models:
+        # Determine correct feature names based on X_train_data dimensions
+        if hasattr(X_train_data, "shape"):
+            n_features = X_train_data.shape[1]
+
+            # If X_train_data is a DataFrame, use its column names
+            if hasattr(X_train_data, "columns"):
+                feature_names = list(X_train_data.columns)
+                logger.info(
+                    f"   📊 Using DataFrame column names for SHAP plots: {len(feature_names)} features"
+                )
+            elif len(feature_names_out) == n_features:
+                feature_names = feature_names_out
+                logger.info(
+                    f"   📊 Using provided feature names for SHAP plots: {len(feature_names)} features"
+                )
+            else:
+                # Try to use as many meaningful names as possible, then generic
+                meaningful_names = feature_names_out[
+                    : min(len(feature_names_out), n_features)
+                ]
+                generic_names = [
+                    f"feature_{i}" for i in range(len(meaningful_names), n_features)
+                ]
+                feature_names = meaningful_names + generic_names
+                logger.warning(
+                    f"   ⚠️  Feature names count ({len(feature_names_out)}) mismatch with X columns ({n_features}). Using {len(meaningful_names)} meaningful + {len(generic_names)} generic names."
+                )
+        else:
+            feature_names = feature_names_out
+
+        # Generate SHAP plots for each top model
+        successful_plots = 0
+        for i, (name, perf) in enumerate(top_models):
             model = perf.get("trained_model")
             if model and hasattr(model, "predict"):
-                explainer = shap.TreeExplainer(model)
-                shap_values = explainer.shap_values(
-                    X_train_data[:100]
-                )  # sample
-                shap.summary_plot(
-                    shap_values,
-                    X_train_data[:100],
-                    feature_names=feature_names_out,
-                    show=False,
-                )
-                plt.title(f"SHAP Summary - {name}")
-                plt.savefig(
-                    shap_dir / "08_shap_comparison.png",
-                    dpi=300,
-                    bbox_inches="tight",
-                )
-                plt.close()
-                break  # Only first for simplicity
-        logger.info("   📊 SHAP comparison plot generated")
+                try:
+                    # Prepare data sample for SHAP
+                    X_sample = X_train_data[:100]  # Use first 100 samples for speed
+                    if hasattr(X_sample, "toarray"):
+                        X_sample = X_sample.toarray()
+
+                    # Ensure X_sample is 2D
+                    if X_sample.ndim == 1:
+                        X_sample = X_sample.reshape(1, -1)
+
+                    # Try different explainers based on model type
+                    explainer = None
+                    shap_values = None
+
+                    # Tree-based models: use TreeExplainer
+                    tree_models = [
+                        "RandomForest",
+                        "XGBoost",
+                        "LightGBM",
+                        "ExtraTrees",
+                        "GradientBoosting",
+                        "CatBoost",
+                        "AdaBoost",
+                        "DecisionTree",
+                    ]
+                    if any(tree_name in name for tree_name in tree_models):
+                        try:
+                            explainer = shap.TreeExplainer(model)
+                            shap_values = explainer.shap_values(X_sample)
+                        except Exception as e:
+                            logger.warning(
+                                f"   ⚠️  TreeExplainer failed for {name}: {e}"
+                            )
+
+                    # Linear models: use LinearExplainer
+                    if explainer is None and hasattr(model, "coef_"):
+                        try:
+                            explainer = shap.LinearExplainer(model, X_sample)
+                            shap_values = explainer.shap_values(X_sample)
+                        except Exception as e:
+                            logger.warning(
+                                f"   ⚠️  LinearExplainer failed for {name}: {e}"
+                            )
+
+                    # Fallback: use KernelExplainer for any model
+                    if explainer is None:
+                        try:
+                            # For KernelExplainer, ensure consistent data format
+                            background = X_sample[:10]  # Smaller background for speed
+                            test_sample = X_sample[:20]  # Test on subset
+
+                            # Ensure background and test_sample have same format
+                            if hasattr(model, "predict_proba"):
+                                explainer = shap.KernelExplainer(
+                                    model.predict_proba, background
+                                )
+                                shap_values = explainer.shap_values(test_sample)
+                            else:
+                                logger.warning(
+                                    f"   ⚠️  Model {name} doesn't have predict_proba for KernelExplainer"
+                                )
+                        except Exception as e:
+                            logger.warning(
+                                f"   ⚠️  KernelExplainer failed for {name}: {e}"
+                            )
+
+                    # Generate plot if we have shap_values
+                    if shap_values is not None:
+                        plt.figure(figsize=(12, 8))
+
+                        # Handle different shap_values formats
+                        if isinstance(shap_values, list) and len(shap_values) == 2:
+                            # Binary classification: use positive class
+                            shap_values_plot = shap_values[1]
+                        else:
+                            shap_values_plot = shap_values
+
+                        # Ensure shap_values_plot and X_sample have compatible shapes
+                        if hasattr(shap_values_plot, "shape") and hasattr(
+                            X_sample, "shape"
+                        ):
+                            if shap_values_plot.shape[0] != X_sample.shape[0]:
+                                # Use only the data that matches shap_values
+                                n_samples = min(
+                                    shap_values_plot.shape[0], X_sample.shape[0]
+                                )
+                                shap_values_plot = shap_values_plot[:n_samples]
+                                X_sample = X_sample[:n_samples]
+
+                        try:
+                            shap.summary_plot(
+                                shap_values_plot,
+                                X_sample,
+                                feature_names=feature_names,
+                                show=False,
+                                max_display=20,
+                            )
+                            plt.title(f"Análise SHAP - {name} (Top {i+1})", fontsize=14)
+                            plt.tight_layout()
+
+                            # Save with unique filename
+                            safe_name = name.replace(" ", "_").replace("/", "_")
+                            plot_path = shap_dir / f"shap_summary_{safe_name}.png"
+                            plt.savefig(plot_path, dpi=300, bbox_inches="tight")
+                            plt.close()
+
+                            successful_plots += 1
+                            logger.info(
+                                f"   📊 SHAP plot generated for {name}: {plot_path}"
+                            )
+
+                            # Also generate waterfall plot for first sample if possible
+                            try:
+                                if explainer is not None and hasattr(
+                                    explainer, "expected_value"
+                                ):
+                                    if isinstance(
+                                        explainer.expected_value, (list, np.ndarray)
+                                    ):
+                                        expected_val = (
+                                            explainer.expected_value[1]
+                                            if len(explainer.expected_value) > 1
+                                            else explainer.expected_value[0]
+                                        )
+                                    else:
+                                        expected_val = explainer.expected_value
+
+                                    plt.figure(figsize=(10, 6))
+                                    shap.plots.waterfall(
+                                        (
+                                            explainer.expected_value[1]
+                                            if isinstance(
+                                                explainer.expected_value, list
+                                            )
+                                            else explainer.expected_value
+                                        ),
+                                        shap_values_plot[0],
+                                        X_sample[0],
+                                        feature_names=feature_names,
+                                        show=False,
+                                    )
+                                    plt.title(
+                                        f"SHAP Waterfall - {name} (Primeira Amostra)",
+                                        fontsize=12,
+                                    )
+                                    plt.tight_layout()
+                                    waterfall_path = (
+                                        shap_dir / f"shap_waterfall_{safe_name}.png"
+                                    )
+                                    plt.savefig(
+                                        waterfall_path, dpi=300, bbox_inches="tight"
+                                    )
+                                    plt.close()
+                                    logger.info(
+                                        f"   📊 SHAP waterfall plot generated for {name}"
+                                    )
+                            except Exception as e:
+                                logger.debug(
+                                    f"   ⚠️  Waterfall plot failed for {name}: {e}"
+                                )
+                        except Exception as plot_e:
+                            logger.warning(
+                                f"   ⚠️  SHAP summary plot failed for {name}: {plot_e}"
+                            )
+
+                except Exception as e:
+                    logger.warning(f"   ⚠️  SHAP generation failed for {name}: {e}")
+                    continue
+
+        if successful_plots > 0:
+            logger.info(
+                f"   📊 SHAP plots generated successfully for {successful_plots} models"
+            )
+        else:
+            logger.warning("   ⚠️  No SHAP plots could be generated")
+
+    except ImportError:
+        logger.warning("   ⚠️  SHAP not available. Install with: pip install shap")
     except Exception as e:
-        logger.error(f"   ❌ SHAP comparison plot generation failed: {e}")
+        logger.error(f"   ❌ SHAP plot generation failed: {e}")
 
 
-def improved_generate_submission(final_model, test, feature_cols, train):
+def improved_generate_submission(
+    final_model: Any,
+    test: Any,
+    feature_cols: List[str],
+    train: Any,
+) -> None:
     """Generate improved submission."""
     try:
         import joblib
@@ -1937,7 +2474,12 @@ def improved_generate_submission(final_model, test, feature_cols, train):
         logger.error(f"   ❌ Improved submission generation failed: {e}")
 
 
-def generate_model_calibration_plots(model, X_train, y_train, model_name):
+def generate_model_calibration_plots(
+    model: Any,
+    X_train: Any,
+    y_train: Any,
+    model_name: str,
+) -> None:
     """Generate calibration plots for a model."""
     try:
         from sklearn.calibration import calibration_curve
@@ -1947,19 +2489,15 @@ def generate_model_calibration_plots(model, X_train, y_train, model_name):
         if hasattr(model, "predict_proba"):
             try:
                 prob_pos = model.predict_proba(X_train)[:, 1]
-                prob_true, prob_pred = calibration_curve(
-                    y_train, prob_pos, n_bins=10
-                )
+                prob_true, prob_pred = calibration_curve(y_train, prob_pos, n_bins=10)
                 plt.plot(prob_pred, prob_true, marker="o", label=model_name)
                 plt.plot([0, 1], [0, 1], "k--")
-                plt.xlabel("Predicted probability")
-                plt.ylabel("True probability")
-                plt.title(f"Calibration Plot - {model_name}")
+                plt.xlabel("Probabilidade Predita")
+                plt.ylabel("Probabilidade Real")
+                plt.title(f"Curva de Calibração - {model_name}")
                 plt.legend()
                 plt.grid(True, alpha=0.3)
-                out_path = (
-                    f"output/graficos/09_model_calibration_{model_name}.png"
-                )
+                out_path = f"output/graficos/09_model_calibration_{model_name}.png"
                 plt.savefig(out_path, dpi=300, bbox_inches="tight")
                 plt.close()
             except Exception as inner_e:
@@ -2032,10 +2570,10 @@ def log_model_performance_to_csv(
 
 
 def generate_permutation_importance(
-    model,
-    X_train,
-    y_train,
-    feature_names,
+    model: Any,
+    X_train: Any,
+    y_train: Any,
+    feature_names: List[str],
     n_repeats: int = 5,
     model_name: str = "Model",
 ) -> None:
@@ -2043,6 +2581,7 @@ def generate_permutation_importance(
     try:
         from sklearn.inspection import permutation_importance
         import matplotlib.pyplot as plt
+
         import pandas as pd
         from pathlib import Path
 
@@ -2050,14 +2589,26 @@ def generate_permutation_importance(
         graficos_dir = Path("output/graficos")
         graficos_dir.mkdir(parents=True, exist_ok=True)
 
+        # Convert to dense if necessary (e.g. for LogisticRegression with sparse input issues)
+        X_perm = X_train
+        if hasattr(X_train, "toarray"):
+            X_perm = X_train.toarray()
+
         perm_importance = permutation_importance(
             model,
-            X_train,
+            X_perm,
             y_train,
             n_repeats=n_repeats,
             random_state=42,
         )
         sorted_idx = perm_importance.importances_mean.argsort()
+
+        # Ensure feature names match X dimensions
+        if len(feature_names) != X_perm.shape[1]:
+            logger.warning(
+                f"   ⚠️  Feature names count ({len(feature_names)}) mismatch with X columns ({X_perm.shape[1]}). Using generic names."
+            )
+            feature_names = [f"feature_{i}" for i in range(X_perm.shape[1])]
 
         plt.figure(figsize=(10, 8))
         plt.barh(
@@ -2068,15 +2619,13 @@ def generate_permutation_importance(
             range(len(sorted_idx)),
             [feature_names[i] for i in sorted_idx],
         )
-        plt.xlabel("Permutation Importance")
-        plt.title(f"Permutation Importance - {model_name}")
+        plt.xlabel("Importância por Permutação")
+        plt.title(f"Importância por Permutação - {model_name}")
         plt.tight_layout()
 
         # Use Path for safe file handling
         safe_model_name = model_name.replace(" ", "_").replace("/", "_")
-        plot_path = graficos_dir / (
-            f"permutation_importance_{safe_model_name}.png"
-        )
+        plot_path = graficos_dir / (f"permutation_importance_{safe_model_name}.png")
         plt.savefig(plot_path, dpi=300, bbox_inches="tight")
         plt.close()
 
@@ -2092,15 +2641,11 @@ def generate_permutation_importance(
                 "importance_std": std_list,
             }
         )
-        csv_path = graficos_dir / (
-            f"permutation_importance_{safe_model_name}.csv"
-        )
+        csv_path = graficos_dir / (f"permutation_importance_{safe_model_name}.csv")
         df.to_csv(csv_path, index=False)
         logger.info(f"   📊 Permutation importance for {model_name} generated")
     except Exception as e:
-        logger.error(
-            f"   ❌ Permutation importance for {model_name} failed: {e}"
-        )
+        logger.error(f"   ❌ Permutation importance for {model_name} failed: {e}")
 
 
 def _get_best_score(model_results: Dict[str, Any]) -> float:
@@ -2108,6 +2653,4 @@ def _get_best_score(model_results: Dict[str, Any]) -> float:
     if not model_results:
         return 0.0
 
-    return max(
-        result.get("mean_score", 0) for result in model_results.values()
-    )
+    return max(result.get("mean_score", 0) for result in model_results.values())

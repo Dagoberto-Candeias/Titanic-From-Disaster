@@ -1,7 +1,16 @@
-import os
-import sys
+"""
+Arquivo de configuração para testes pytest.
+"""
 
-# Ensure project root is on sys.path so tests can import the local package
-ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
+import pytest
+
+# Aqui você pode adicionar fixtures, configurações, etc. que serão
+# automaticamente aplicadas a todos os testes.
+
+
+@pytest.fixture(scope="session", autouse=True)
+def configure_logging():
+    """Configura o logging para os testes."""
+    import logging
+
+    logging.basicConfig(level=logging.INFO)

@@ -8,13 +8,18 @@ from typing import Dict, Any
 import numpy as np
 import pandas as pd
 
-from sklearn.ensemble import VotingClassifier, StackingClassifier, RandomForestClassifier
+from sklearn.ensemble import (
+    VotingClassifier,
+    StackingClassifier,
+    RandomForestClassifier,
+)
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 
 # Optional imports for optimization
 try:
     from xgboost import XGBClassifier
+
     XGB_AVAILABLE = True
 except ImportError:
     XGBClassifier = None
@@ -22,26 +27,79 @@ except ImportError:
 
 try:
     from lightgbm import LGBMClassifier
+
     LGBM_AVAILABLE = True
 except ImportError:
     LGBMClassifier = None
     LGBM_AVAILABLE = False
+
+try:
+    from catboost import CatBoostClassifier
+
+    CATBOOST_AVAILABLE = True
+except ImportError:
+    CatBoostClassifier = None
+    CATBOOST_AVAILABLE = False
+
+try:
+    import optuna
+    import optuna.visualization
+
+    OPTUNA_AVAILABLE = True
+except ImportError:
+    OPTUNA_AVAILABLE = False
+
+from sklearn.ensemble import (
+    AdaBoostClassifier,
+    BaggingClassifier,
+    ExtraTreesClassifier,
+    GradientBoostingClassifier,
+)
+from sklearn.linear_model import RidgeClassifier, SGDClassifier
+from sklearn.naive_bayes import BernoulliNB, GaussianNB
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.svm import SVC, LinearSVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.discriminant_analysis import (
+    LinearDiscriminantAnalysis,
+    QuadraticDiscriminantAnalysis,
+)
+from sklearn.pipeline import Pipeline
+import pickle
+import os
 
 from ..utils import ParallelProcessor
 
 logger = logging.getLogger(__name__)
 
 
+# Models that don't accept random_state parameter
+NO_RANDOM_STATE_MODELS = {
+    "BernoulliNB",
+    "GaussianNB",
+    "LinearDiscriminantAnalysis",
+    "QuadraticDiscriminantAnalysis",
+    "KNeighbors",
+}
+
+
 class ModelingManager:
     """Manages model training, optimization, and ensemble creation."""
 
-    def __init__(self, config: Dict[str, Any], model_configs: Dict[str, Dict[str, Any]] = None, pre_configured_models: Dict[str, Any] = None):
+    def __init__(
+        self,
+        config: Dict[str, Any],
+        model_configs: Dict[str, Dict[str, Any]] = None,
+        pre_configured_models: Dict[str, Any] = None,
+    ):
         self.config = config
         self.model_configs = model_configs or {}
         self.pre_configured_models = pre_configured_models or {}
         self.parallel_processor = ParallelProcessor(max_workers=config["parallel_jobs"])
 
-    def train_all_models(self, X_train: np.ndarray, y_train: np.ndarray) -> Dict[str, Any]:
+    def train_all_models(
+        self, X_train: np.ndarray, y_train: np.ndarray
+    ) -> Dict[str, Any]:
         """
         Train all configured models sequentially to avoid pickling issues on Windows.
 
@@ -61,7 +119,61 @@ class ModelingManager:
         results = {}
         for model_name, model_class in available_models.items():
             try:
-                result = self._train_single_model(model_name, model_class, X_train, y_train)
+                # OPTUNA INTEGRATION
+                if (
+                    self.config.get("use_optuna")
+                    and not self.config.get("fast_mode")
+                    and OPTUNA_AVAILABLE
+                    and model_name in ["RandomForest", "XGBoost", "LightGBM"]
+                ):
+                    logger.info(f"   🔥 Optimizing {model_name} with Optuna...")
+                    study = optuna.create_study(
+                        direction="maximize", verbosity=optuna.logging.WARNING
+                    )
+                    study.optimize(
+                        lambda trial: objective(
+                            trial, model_name, X_train, y_train, self.config
+                        ),
+                        n_trials=self.config.get("optuna_trials", 10),
+                    )
+                    logger.info(
+                        f"   ✅ Best params for {model_name}: {study.best_params}"
+                    )
+
+                    # Update model config with best params
+                    if model_name not in self.model_configs:
+                        self.model_configs[model_name] = {}
+                    self.model_configs[model_name].update(study.best_params)
+
+                    # Generate Optuna plots
+                    try:
+                        optuna_dir = "output/graficos/optuna"
+                        os.makedirs(optuna_dir, exist_ok=True)
+
+                        # Optimization history
+                        try:
+                            fig = optuna.visualization.plot_optimization_history(study)
+                            fig.write_image(f"{optuna_dir}/history_{model_name}.png")
+                        except Exception as e:
+                            logger.warning(
+                                f"   ⚠️  Could not save Optuna history plot (check kaleido): {e}"
+                            )
+
+                        # Parameter importance
+                        try:
+                            fig = optuna.visualization.plot_param_importances(study)
+                            fig.write_image(f"{optuna_dir}/importance_{model_name}.png")
+                        except Exception as e:
+                            logger.warning(
+                                f"   ⚠️  Could not save Optuna importance plot: {e}"
+                            )
+
+                    except Exception as e:
+                        logger.warning(f"   ⚠️  Optuna plotting setup failed: {e}")
+
+                result = self._train_single_model(
+                    model_name, model_class, X_train, y_train
+                )
                 results[model_name] = result
                 logger.info(f"   ✅ {model_name} trained: {result['mean_score']:.4f}")
             except Exception as e:
@@ -69,8 +181,13 @@ class ModelingManager:
 
         return results
 
-    def _train_single_model(self, model_name: str, model_class, X_train: np.ndarray,
-                          y_train: np.ndarray) -> Dict[str, Any]:
+    def _train_single_model(
+        self,
+        model_name: str,
+        model_class,
+        X_train: np.ndarray,
+        y_train: np.ndarray,
+    ) -> Dict[str, Any]:
         """Train a single model with cross-validation."""
         try:
             # Use pre-configured model if available
@@ -81,22 +198,47 @@ class ModelingManager:
                 # Create model instance with optimized parameters
                 if model_name in self.model_configs:
                     model_params = self.model_configs[model_name].copy()
+
+                    # SAFETY CHECK: Remove random_state for models that don't support it
+                    if (
+                        model_name in NO_RANDOM_STATE_MODELS
+                        and "random_state" in model_params
+                    ):
+                        del model_params["random_state"]
+
                     # Add performance optimizations for slow models
                     if model_name in ["SVC", "KNeighbors"]:
-                        model_params.update({
-                            "max_iter": 10000 if model_name == "SVC" else None,
-                            "n_jobs": 1 if model_name == "KNeighbors" else None  # Set to 1 for safety
-                        })
+                        model_params.update(
+                            {
+                                "max_iter": (10000 if model_name == "SVC" else None),
+                                "n_jobs": (
+                                    1 if model_name == "KNeighbors" else None
+                                ),  # Set to 1 for safety
+                            }
+                        )
                     model = model_class(**model_params)
                 else:
-                    model = model_class(random_state=self.config["random_state"])
+                    # Get default parameters for the model
+                    default_params = self._get_model_default_params(model_name)
+                    model = model_class(**default_params)
+
+            # Convert sparse matrix to dense for models that don't support sparse input
+            if model_name in [
+                "GaussianNB",
+                "LinearDiscriminantAnalysis",
+                "QuadraticDiscriminantAnalysis",
+            ]:
+                if hasattr(X_train, "toarray"):
+                    X_train = X_train.toarray()
 
             # Perform cross-validation
             cv_scores = cross_val_score(
-                model, X_train, y_train,
+                model,
+                X_train,
+                y_train,
                 cv=self.config["cv_folds"],
                 scoring="accuracy",
-                n_jobs=1  # Avoid nested parallelism
+                n_jobs=1,  # Avoid nested parallelism
             )
 
             # Train final model
@@ -107,17 +249,31 @@ class ModelingManager:
                 "mean_score": cv_scores.mean(),
                 "std_score": cv_scores.std(),
                 "cv_scores": cv_scores.tolist(),
-                "model_name": model_name
+                "model_name": model_name,
+                "error": None,
             }
 
             return result
 
         except Exception as e:
             logger.error(f"   ❌ Error training {model_name}: {e}")
-            raise
+            # Return failed result instead of raising exception
+            result = {
+                "trained_model": None,
+                "mean_score": 0.0,
+                "std_score": 0.0,
+                "cv_scores": [],
+                "model_name": model_name,
+                "error": str(e),
+            }
+            return result
 
-    def create_ensembles(self, X_train: np.ndarray, y_train: np.ndarray,
-                        model_results: Dict[str, Any]) -> Dict[str, Any]:
+    def create_ensembles(
+        self,
+        X_train: np.ndarray,
+        y_train: np.ndarray,
+        model_results: Dict[str, Any],
+    ) -> Dict[str, Any]:
         """
         Create ensemble models from trained base models.
 
@@ -136,43 +292,61 @@ class ModelingManager:
         # Prepare base models for ensemble
         base_models = []
         for model_name, result in model_results.items():
-            if "trained_model" in result:
-                base_models.append((model_name, result["trained_model"]))
+            if result.get("trained_model") is not None:
+                model = result["trained_model"]
+                # Only include models with predict_proba for soft voting ensemble
+                if hasattr(model, "predict_proba"):
+                    base_models.append((model_name, model))
+                else:
+                    logger.warning(
+                        f"   ⚠️  Excluding {model_name} from VotingEnsemble (no predict_proba)"
+                    )
 
         if len(base_models) < 3:
-            logger.warning(f"   ⚠️  Apenas {len(base_models)} modelos válidos. Mínimo: 3")
+            logger.warning(
+                f"   ⚠️  Apenas {len(base_models)} modelos válidos. Mínimo: 3"
+            )
             return ensemble_results
+
+        # Convert to dense if necessary for ensemble training
+        # VotingClassifier and StackingClassifier refit base models.
+        # Models like GaussianNB fail with sparse input.
+        X_train_ensemble = X_train
+        if hasattr(X_train, "toarray"):
+            logger.info(
+                "   🔄 Converting sparse matrix to dense for Ensemble training..."
+            )
+            X_train_ensemble = X_train.toarray()
 
         try:
             # Voting Classifier
             voting_clf = VotingClassifier(
-                estimators=base_models,
-                voting="soft",
-                n_jobs=1
+                estimators=base_models, voting="soft", n_jobs=1
             )
 
             voting_scores = cross_val_score(
-                voting_clf, X_train, y_train,
+                voting_clf,
+                X_train_ensemble,
+                y_train,
                 cv=self.config["cv_folds"],
-                scoring="accuracy"
+                scoring="accuracy",
             )
 
-            voting_clf.fit(X_train, y_train)
+            voting_clf.fit(X_train_ensemble, y_train)
 
             ensemble_results["VotingEnsemble"] = {
                 "trained_model": voting_clf,
                 "mean_score": voting_scores.mean(),
                 "std_score": voting_scores.std(),
                 "cv_scores": voting_scores.tolist(),
-                "model_name": "VotingEnsemble"
+                "model_name": "VotingEnsemble",
             }
 
             logger.info(f"   ✅ Voting Ensemble: {voting_scores.mean():.4f}")
 
             # Stacking Classifier
             meta_model = LogisticRegression(
-                random_state=self.config["random_state"],
-                max_iter=1000
+                random_state=self.config["random_state"], max_iter=1000
             )
 
             stacking_clf = StackingClassifier(
@@ -180,23 +354,25 @@ class ModelingManager:
                 final_estimator=meta_model,
                 cv=self.config["cv_folds"],
                 n_jobs=1,
-                passthrough=True
+                passthrough=True,
             )
 
             stacking_scores = cross_val_score(
-                stacking_clf, X_train, y_train,
+                stacking_clf,
+                X_train_ensemble,
+                y_train,
                 cv=self.config["cv_folds"],
-                scoring="accuracy"
+                scoring="accuracy",
             )
 
-            stacking_clf.fit(X_train, y_train)
+            stacking_clf.fit(X_train_ensemble, y_train)
 
             ensemble_results["StackingEnsemble"] = {
                 "trained_model": stacking_clf,
                 "mean_score": stacking_scores.mean(),
                 "std_score": stacking_scores.std(),
                 "cv_scores": stacking_scores.tolist(),
-                "model_name": "StackingEnsemble"
+                "model_name": "StackingEnsemble",
             }
 
             logger.info(f"   ✅ Stacking Ensemble: {stacking_scores.mean():.4f}")
@@ -223,27 +399,28 @@ class ModelingManager:
             "LinearSVC": "sklearn.svm.LinearSVC",
             "DecisionTree": "sklearn.tree.DecisionTreeClassifier",
             "BernoulliNB": "sklearn.naive_bayes.BernoulliNB",
-            "LinearDiscriminantAnalysis": "sklearn.discriminant_analysis.LinearDiscriminantAnalysis",
-            "QuadraticDiscriminantAnalysis": "sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis",
+            "LinearDiscriminantAnalysis": (
+                "sklearn.discriminant_analysis.LinearDiscriminantAnalysis"
+            ),
+            "QuadraticDiscriminantAnalysis": (
+                "sklearn.discriminant_analysis.QuadraticDiscriminantAnalysis"
+            ),
         }
 
         # Check for optional libraries
-        try:
-            from xgboost import XGBClassifier
+        if XGB_AVAILABLE:
             models["XGBoost"] = XGBClassifier
-        except ImportError:
+        else:
             logger.warning("   ⚠️  XGBoost not available")
 
-        try:
-            from lightgbm import LGBMClassifier
+        if LGBM_AVAILABLE:
             models["LightGBM"] = LGBMClassifier
-        except ImportError:
+        else:
             logger.warning("   ⚠️  LightGBM not available")
 
-        try:
-            from catboost import CatBoostClassifier
+        if CATBOOST_AVAILABLE:
             models["CatBoost"] = CatBoostClassifier
-        except ImportError:
+        else:
             logger.warning("   ⚠️  CatBoost not available")
 
         # Convert string paths to actual classes
@@ -261,6 +438,49 @@ class ModelingManager:
 
         logger.info(f"   📊 Available models: {list(available_models.keys())}")
         return available_models
+
+    def _get_model_default_params(self, model_name: str) -> Dict[str, Any]:
+        """Get default parameters for a model to ensure robust training."""
+        base_params = {}
+        if model_name not in NO_RANDOM_STATE_MODELS:
+            base_params["random_state"] = self.config["random_state"]
+
+        # Models that need special parameters for ensemble compatibility
+        special_params = {
+            "SVC": {
+                "probability": True,  # Required for soft voting in ensembles
+                "max_iter": 10000,  # Prevent convergence issues
+            },
+            "LinearSVC": {
+                "max_iter": 10000,  # Prevent convergence issues
+            },
+            "MLPClassifier": {
+                "max_iter": 1000,  # Prevent convergence issues
+                "early_stopping": True,
+            },
+            "SGDClassifier": {
+                "max_iter": 1000,  # Prevent convergence issues
+                "loss": "log_loss",  # Enable probabilities
+            },
+            "LogisticRegression": {
+                "max_iter": 1000,  # Prevent convergence issues
+            },
+            "KNeighbors": {
+                "n_jobs": 1,  # Avoid nested parallelism
+            },
+            "XGBoost": {
+                "verbosity": 0,  # Reduce output
+            },
+            "LightGBM": {
+                "verbosity": -1,  # Reduce output
+            },
+        }
+
+        # Add special parameters if available
+        if model_name in special_params:
+            base_params.update(special_params[model_name])
+
+        return base_params
 
 
 def train_single_model(
@@ -308,40 +528,12 @@ def build_stacking_ensemble(base_models, X_train, y_train):
 
 def get_base_models(config):
     """Get base models dictionary."""
-    from sklearn.ensemble import (
-        AdaBoostClassifier,
-        BaggingClassifier,
-        ExtraTreesClassifier,
-        GradientBoostingClassifier,
-        RandomForestClassifier,
-    )
-    from sklearn.linear_model import LogisticRegression, RidgeClassifier, SGDClassifier
-    from sklearn.naive_bayes import BernoulliNB, GaussianNB
-    from sklearn.neighbors import KNeighborsClassifier
-    from sklearn.svm import SVC, LinearSVC
-    from sklearn.tree import DecisionTreeClassifier
-    from sklearn.discriminant_analysis import (
-        LinearDiscriminantAnalysis,
-        QuadraticDiscriminantAnalysis,
-    )
-
-    try:
-        from xgboost import XGBClassifier
-        XGB_AVAILABLE = True
-    except ImportError:
-        XGB_AVAILABLE = False
-        XGBClassifier = None
-
-    try:
-        from lightgbm import LGBMClassifier
-        LGBM_AVAILABLE = True
-    except ImportError:
-        LGBM_AVAILABLE = False
-        LGBMClassifier = None
-
     models = {
         "Random Forest": RandomForestClassifier(
-            n_estimators=100, random_state=config["random_state"]
+            n_estimators=200,  # Aumenta o número de árvores (padrão era 100)
+            max_depth=10,  # Limita a profundidade para evitar overfitting
+            min_samples_split=5,  # Exige mais amostras para dividir um nó
+            random_state=config["random_state"],
         ),
         "Gradient Boosting": GradientBoostingClassifier(
             n_estimators=100, random_state=config["random_state"]
@@ -359,13 +551,11 @@ def get_base_models(config):
             random_state=config["random_state"], max_iter=1000
         ),
         "SGD Classifier": SGDClassifier(
-            random_state=config["random_state"], max_iter=1000
+            random_state=config["random_state"], max_iter=1000, loss="log_loss"
         ),
         "Ridge Classifier": RidgeClassifier(random_state=config["random_state"]),
         "SVC": SVC(probability=True, random_state=config["random_state"]),
-        "Linear SVC": LinearSVC(
-            random_state=config["random_state"], max_iter=10000
-        ),
+        "Linear SVC": LinearSVC(random_state=config["random_state"], max_iter=10000),
         "KNN": KNeighborsClassifier(),
         "Decision Tree": DecisionTreeClassifier(random_state=config["random_state"]),
         "Gaussian NB": GaussianNB(),
@@ -389,7 +579,7 @@ def get_base_models(config):
 
 def objective(trial, model_name, X, y, config):
     """Objective function for Optuna optimization."""
-    if model_name == "Random Forest":
+    if model_name in ["Random Forest", "RandomForest"]:
         params = {
             "n_estimators": trial.suggest_int("n_estimators", 50, 300),
             "max_depth": trial.suggest_int("max_depth", 3, 20),
@@ -427,9 +617,6 @@ def objective(trial, model_name, X, y, config):
 
 def save_model_pipeline(preprocessor, model, filepath):
     """Save preprocessor and model as a pipeline."""
-    from sklearn.pipeline import Pipeline
-    import pickle
-
     pipeline = Pipeline([("preprocessor", preprocessor), ("model", model)])
     with open(filepath, "wb") as f:
         pickle.dump(pipeline, f)
@@ -447,8 +634,6 @@ def load_and_predict(pipeline_path: str, test_data: pd.DataFrame) -> np.ndarray:
     Returns:
         Array of predictions
     """
-    import pickle
-
     try:
         # Load the pipeline
         with open(pipeline_path, "rb") as f:
