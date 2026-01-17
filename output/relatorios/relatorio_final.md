@@ -20,9 +20,9 @@ inteligência artificial para tentar prever quem
 sobreviveria ou não ao naufrágio, baseado em dados
 dos passageiros.
 
-Foram treinados 2 modelos de classificação diferentes - pense neles como diferentes 'cérebros' de IA tentando resolver o mesmo problema. Utilizamos 23 características (features) criadas a partir dos dados originais dos passageiros, como idade, sexo, classe social, etc.
+Foram treinados 22 modelos de classificação diferentes - pense neles como diferentes 'cérebros' de IA tentando resolver o mesmo problema. Utilizamos 28 características (features) criadas a partir dos dados originais dos passageiros, como idade, sexo, classe social, etc.
 
-O melhor modelo alcançou uma acurácia de 0.8500 (ou 85.0%) na validação cruzada, o que significa que ele acertou as previsões em quase 90% dos casos testados. Isso representa uma melhoria significativa em relação ao script original, que tinha apenas 76.7% de acurácia.
+O melhor modelo alcançou uma acurácia de 0.8373 (ou 83.7%) na validação cruzada, o que significa que ele acertou as previsões em quase 90% dos casos testados. Isso representa uma melhoria significativa em relação ao script original, que tinha apenas 76.7% de acurácia.
 
 **O que isso significa para leigos?**
 
@@ -77,6 +77,26 @@ Foram comparados os seguintes algoritmos de classificação:
 
 1. **RandomForest**
 2. **LogisticRegression**
+3. **SVC**
+4. **KNeighbors**
+5. **GaussianNB**
+6. **MLPClassifier**
+7. **GradientBoosting**
+8. **ExtraTrees**
+9. **AdaBoost**
+10. **Bagging**
+11. **SGDClassifier**
+12. **RidgeClassifier**
+13. **LinearSVC**
+14. **DecisionTree**
+15. **BernoulliNB**
+16. **LinearDiscriminantAnalysis**
+17. **QuadraticDiscriminantAnalysis**
+18. **XGBoost**
+19. **LightGBM**
+20. **CatBoost**
+21. **VotingEnsemble**
+22. **StackingEnsemble**
 
 ### Validação Cruzada
 
@@ -90,14 +110,34 @@ A Tabela 1 apresenta os resultados da validação cruzada para todos os modelos 
 
 | Modelo | Acurácia Média | Desvio Padrão | Melhor Score |
 |--------|---------------|---------------|--------------|
-| RandomForest | 0.8500 | 0.0200 | 0.8700 |
-| LogisticRegression | 0.7800 | 0.0300 | 0.8000 |
+| LogisticRegression | 0.8373 | 0.0079 | 0.8485 |
+| LinearSVC | 0.8350 | 0.0110 | 0.8485 |
+| SVC | 0.8339 | 0.0088 | 0.8418 |
+| RidgeClassifier | 0.8316 | 0.0073 | 0.8384 |
+| VotingEnsemble | 0.8316 | 0.0099 | 0.8418 |
+| SGDClassifier | 0.8294 | 0.0088 | 0.8418 |
+| CatBoost | 0.8283 | 0.0145 | 0.8418 |
+| StackingEnsemble | 0.8283 | 0.0099 | 0.8384 |
+| RandomForest | 0.8260 | 0.0084 | 0.8350 |
+| GradientBoosting | 0.8238 | 0.0161 | 0.8384 |
+| XGBoost | 0.8215 | 0.0287 | 0.8451 |
+| ExtraTrees | 0.8193 | 0.0063 | 0.8283 |
+| AdaBoost | 0.8182 | 0.0073 | 0.8283 |
+| Bagging | 0.8171 | 0.0151 | 0.8384 |
+| LightGBM | 0.8159 | 0.0294 | 0.8384 |
+| MLPClassifier | 0.8103 | 0.0260 | 0.8350 |
+| BernoulliNB | 0.8103 | 0.0278 | 0.8316 |
+| LinearDiscriminantAnalysis | 0.8103 | 0.0289 | 0.8451 |
+| KNeighbors | 0.8047 | 0.0172 | 0.8283 |
+| DecisionTree | 0.8036 | 0.0161 | 0.8182 |
+| QuadraticDiscriminantAnalysis | 0.7172 | 0.0172 | 0.7340 |
+| GaussianNB | 0.6049 | 0.0141 | 0.6195 |
 
 **Tabela 1**: Resultados da validação cruzada (média ± desvio padrão)
 
 ### Análise dos Resultados
 
-O modelo com melhor desempenho foi o **RandomForest**, alcançando uma acurácia média de 0.8500 com desvio padrão de 0.0200.
+O modelo com melhor desempenho foi o **LogisticRegression**, alcançando uma acurácia média de 0.8373 com desvio padrão de 0.0079.
 
 #### Fatores de Sobrevivência Identificados
 
@@ -111,31 +151,36 @@ A análise dos modelos revelou os seguintes fatores mais importantes para a sobr
 
 ### Features Engenhariaadas
 
-Foram criadas 23 features a partir dos dados originais:
+Foram criadas 28 features a partir dos dados originais:
 
-• **age_normalized** - Idade normalizada (escalonamento padrão)
-• **fare_log** - Logaritmo da tarifa (tratamento de valores extremos)
-• **family_size** - Tamanho da família (SibSp + Parch + 1)
-• **title_encoded** - Título codificado (Sr., Sra., Srta., etc.)
-• **cabin_deck** - Convés da cabine (A, B, C, D, E, F, G)
-• **embarked_onehot_S** - Porto de embarque Southampton (one-hot)
-• **embarked_onehot_C** - Porto de embarque Cherbourg (one-hot)
-• **embarked_onehot_Q** - Porto de embarque Queenstown (one-hot)
-• **sex_male** - Gênero masculino (binário: 0=feminino, 1=masculino)
-• **pclass_1** - Classe 1 (one-hot encoding)
-• **pclass_2** - Classe 2 (one-hot encoding)
-• **pclass_3** - Classe 3 (one-hot encoding)
-• **sibsp_scaled** - Número de irmãos/cônjuges (escalonado)
-• **parch_scaled** - Número de pais/filhos (escalonado)
-• **age_fare_interaction** - Interação idade-tarifa (age × fare)
-• **family_wealth_score** - Pontuação de riqueza familiar (pclass × fare)
-• **cabin_number** - Número da cabine (extraído da string)
-• **ticket_prefix** - Prefixo do bilhete (letras iniciais)
-• **name_length** - Comprimento do nome (número de caracteres)
-• **age_group** - Grupo etário (criança, adulto, idoso)
 • **Pclass** - Classe do passageiro (1, 2, 3)
+• **Name** - Feature derivada
 • **Sex** - Gênero (male, female)
+• **Age** - Feature derivada
+• **SibSp** - Feature derivada
+• **Parch** - Feature derivada
+• **Ticket** - Feature derivada
+• **Fare** - Feature derivada
+• **Cabin** - Feature derivada
 • **Embarked** - Porto de embarque (S, C, Q)
+• **Title** - Feature derivada
+• **Title_Group** - Agrupamento de títulos (Mr, Mrs, Miss, Master, Rare)
+• **FamilySize** - Feature derivada
+• **IsAlone** - Feature derivada
+• **AgeGroup** - Feature derivada
+• **FareGroup** - Feature derivada
+• **CabinDeck** - Feature derivada
+• **TicketFreq** - Feature derivada
+• **Age*Pclass** - Feature derivada
+• **FarePerPerson** - Feature derivada
+• **Title*Pclass** - Feature derivada
+• **Age*Sex** - Feature derivada
+• **FamilySizeCat** - Feature derivada
+• **Age^2** - Feature derivada
+• **Fare^2** - Feature derivada
+• **Age*Fare** - Feature derivada
+• **Title_encoded** - Feature derivada
+• **CabinDeck_encoded** - Feature derivada
 
 ## Discussão
 
@@ -157,7 +202,7 @@ Os insights gerados podem ser aplicados em:
 
 ## Conclusão
 
-Este trabalho demonstrou a aplicação bem-sucedida de técnicas de machine learning para análise do desastre do Titanic. O pipeline desenvolvido alcançou uma acurácia de 0.8000, identificando fatores-chave para a sobrevivência.
+Este trabalho demonstrou a aplicação bem-sucedida de técnicas de machine learning para análise do desastre do Titanic. O pipeline desenvolvido alcançou uma acurácia de 0.6195, identificando fatores-chave para a sobrevivência.
 
 Os resultados confirmam a importância de variáveis socioeconômicas e demográficas na determinação do prognóstico em situações de emergência. A metodologia empregada, baseada em validação cruzada e engenharia de features, garante a robustez das conclusões obtidas.
 
@@ -212,11 +257,31 @@ A configuração do pipeline é definida pelos seguintes parâmetros em formato 
 
 ```json
 {
-  "generate_md": true,
-  "generate_docx": true,
-  "generate_pdf": true,
-  "include_calibration_plots": true,
-  "include_feature_importance": true
+  "debug_mode": true,
+  "random_state": 25,
+  "parallel_jobs": 1,
+  "cv_folds": 3,
+  "cache_enabled": false,
+  "fast_mode": true,
+  "feature_selection": false,
+  "run_smoke_tests": true,
+  "optuna_trials": 0,
+  "use_knn_imputation": true,
+  "enhanced_balance": false,
+  "generate_all_plots": true,
+  "log_level": 20,
+  "max_features_for_shap": 100,
+  "kfold_te_splits": 5,
+  "smote_k": 5,
+  "smote_strategy": "auto",
+  "calibration_method": "isotonic",
+  "calibration_cv": 3,
+  "permutation_repeats": 5,
+  "randomized_n_iter": 100,
+  "report_include_images": true,
+  "selection_threshold": 0.01,
+  "te_prior": 10,
+  "use_optuna": false
 }
 ```
 
@@ -329,11 +394,11 @@ O pipeline atual representa uma evolução significativa em relação à impleme
 #### Métricas de Comparação
 
 - **Acurácia Original**: 76.7%
-- **Acurácia Atual**: 0.8500 (+0.0830)
+- **Acurácia Atual**: 0.8373 (+0.0703)
 - **Features Originais**: 8
-- **Features Atuais**: 23
+- **Features Atuais**: 28
 - **Modelos Originais**: ~5
-- **Modelos Atuais**: 2
+- **Modelos Atuais**: 22
 - **Tempo de Execução**: Otimizado com paralelização
 
 ## Repositório do Projeto
@@ -342,5 +407,5 @@ O código fonte completo deste projeto está disponível no GitHub: [https://git
 
 ---
 
-*Relatório gerado em: 17/01/2026 11:56:54*
+*Relatório gerado em: 17/01/2026 16:16:54*
 *Pipeline Titanic ML - Versão 5.0*
