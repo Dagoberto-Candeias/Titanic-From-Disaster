@@ -19,8 +19,10 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '.'))
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-from titanic_pipeline.utils import optimize_memory_usage
+from titanic_pipeline.utils import optimize_memory_usage, CacheManager
 from titanic_pipeline.core.modeling import load_and_predict
+from titanic_pipeline.config import ConfigManager
+from titanic_pipeline.features import FeatureEngineer
 
 def make_predictions(
     input_data_path: str = "data/raw/test.csv",
@@ -49,20 +51,28 @@ def make_predictions(
     # 2. Carregar dados e modelo
     logger.info(f"📖 Carregando dados de '{input_data_path}' e modelo de '{model_pipeline_path}'...")
     test_data = pd.read_csv(input_data_path)
+    passenger_ids = test_data['PassengerId'].copy()
 
-    logger.info("🧠 Otimizando uso de memória dos dados de teste...")
-    test_data = optimize_memory_usage(test_data)
+    # 3. Engenharia de Features
+    logger.info("⚙️ Aplicando engenharia de features...")
+    config_manager = ConfigManager()
+    config = config_manager.load_config()["config"]
+    cache_manager = CacheManager(config.get("cache_dir", "output/cache"), enabled=config.get("cache_enabled", True))
+    
+    fe = FeatureEngineer(config, cache_manager)
+    X_test, _, feature_cols = fe.engineer_features(test_data, is_training=False)
+    test_data_processed = pd.DataFrame(X_test, columns=feature_cols)
 
-    # 3. Fazer predições usando a função encapsulada
+    # 4. Fazer predições usando a função encapsulada
     try:
-        predictions = load_and_predict(model_pipeline_path, test_data)
+        predictions = load_and_predict(model_pipeline_path, test_data_processed)
     except (FileNotFoundError, Exception) as e:
         logger.error(f"❌ Falha no processo de predição: {e}")
         return
 
-    # 4. Gerar arquivo de submissão
+    # 5. Gerar arquivo de submissão
     logger.info(f"📤 Gerando arquivo de submissão em '{submission_path}'...")
-    submission_df = pd.DataFrame({'PassengerId': test_data['PassengerId'], 'Survived': predictions.astype(int)})
+    submission_df = pd.DataFrame({'PassengerId': passenger_ids, 'Survived': predictions.astype(int)})
     submission_df.to_csv(submission_path, index=False)
 
     elapsed = datetime.now() - start_time

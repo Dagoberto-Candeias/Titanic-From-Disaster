@@ -205,7 +205,7 @@ models["NewModel"] = NewModelClassifier(random_state=42)
 4. Push: `git push origin feature/nova-melhoria`
 5. Abra PR (prefixo `blackboxai/` para branches automáticas)
 
-Histórico recente: PR "Extended Validation with Repeated CV, SHAP and Calibration" mesclado (branch `blackboxai/extended-validation`).
+Histórico recente: Todas as melhorias consolidadas na branch principal (main).
 
 ### Troubleshooting
 - **Imports falham**: Rode `python test_imports.py`; instale dependências faltantes

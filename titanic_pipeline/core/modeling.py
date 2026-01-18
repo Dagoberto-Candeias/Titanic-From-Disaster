@@ -66,6 +66,12 @@ from sklearn.discriminant_analysis import (
 )
 from sklearn.pipeline import Pipeline
 import pickle
+try:
+    import joblib
+    SERIALIZER = joblib
+except ImportError:
+    import pickle
+    SERIALIZER = pickle
 import os
 
 from ..utils import ParallelProcessor
@@ -618,8 +624,8 @@ def objective(trial, model_name, X, y, config):
 def save_model_pipeline(preprocessor, model, filepath):
     """Save preprocessor and model as a pipeline."""
     pipeline = Pipeline([("preprocessor", preprocessor), ("model", model)])
-    with open(filepath, "wb") as f:
-        pickle.dump(pipeline, f)
+    # Use joblib for better sklearn compatibility if available, otherwise pickle
+    SERIALIZER.dump(pipeline, filepath)
     logger.info(f"Pipeline saved to {filepath}")
 
 
@@ -635,11 +641,20 @@ def load_and_predict(pipeline_path: str, test_data: pd.DataFrame) -> np.ndarray:
         Array of predictions
     """
     try:
-        # Load the pipeline
-        with open(pipeline_path, "rb") as f:
-            pipeline = pickle.load(f)
+        # Try loading with the primary serializer first (joblib if available)
+        try:
+            pipeline = SERIALIZER.load(pipeline_path)
+            logger.info(f"Pipeline loaded from {pipeline_path} using {SERIALIZER.__name__}")
+        except Exception:
+            # Fallback to pickle for backward compatibility with existing files
+            logger.warning(f"Failed to load with {SERIALIZER.__name__}, trying pickle fallback...")
+            with open(pipeline_path, "rb") as f:
+                pipeline = pickle.load(f)
+            logger.info(f"Pipeline loaded from {pipeline_path} using pickle fallback")
 
-        logger.info(f"Pipeline loaded from {pipeline_path}")
+        # Verify it has a predict method
+        if not hasattr(pipeline, "predict"):
+            raise TypeError(f"Loaded object is not a valid model/pipeline (type: {type(pipeline)}). It lacks a 'predict' method.")
 
         # Make predictions
         predictions = pipeline.predict(test_data)
