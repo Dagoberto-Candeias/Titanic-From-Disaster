@@ -1,4 +1,12 @@
-pytest
-pre-commit
-black
-flake8
+pandas
+seaborn
+matplotlib
+python-docx
+fpdf
+scikit-learn
+tqdm
+scipy
+scipy
+tqdm
+scipy
+scipy

@@ -1,115 +1,37 @@
-# Titanic ML Pipeline - ELT579 UFV
+# Gerador de Relatórios de Análise do Titanic
 
-## 📋 Descrição
-Este projeto implementa um pipeline completo e avançado de machine learning para o problema clássico do Titanic, utilizando dados do Kaggle. O pipeline inclui:
+Este projeto contém um script automatizado para análise exploratória de dados e modelagem preditiva sobre o desastre do Titanic. Ele gera relatórios detalhados em múltiplos formatos (Markdown, Word e PDF) contendo gráficos, estatísticas e interpretações.
 
-- **Arquitetura Modular**: Pipeline orquestrado com classes especializadas (TitanicPipeline, ModelingManager, ReportingManager)
-- **Pré-processamento avançado**: Imputação KNN/Iterative, encoding categórico, normalização
-- **Engenharia de features**: Target encoding, features polinomiais, interações, bins e missing indicators
-- **Balanceamento de classes**: SMOTE + undersampling (opcional)
-- **Treinamento de múltiplos modelos**: RandomForest, XGBoost, LightGBM, SVM, Logistic Regression, etc. (18+ modelos)
-- **Otimização de hiperparâmetros**: Optuna (configurável, desabilitado por padrão para performance)
-- **Avaliação robusta**: Cross-validation estratificada (5 folds) + RepeatedStratifiedKFold (5x3=15 folds para validação estendida)
-- **Explicabilidade**: SHAP plots (bar, beeswarm), curvas de calibração
-- **Geração de relatórios**: Métricas JSON, logs estruturados, visualizações (ROC, confusion matrix, correlation heatmap)
-- **Testes abrangentes**: Smoke tests, unit tests (pytest), validação de schema
-- **Sistema de cache versionado**: Reutilização inteligente de computações custosas
-- **Configuração centralizada**: Gerenciamento de configurações via ConfigManager
+## 📋 Funcionalidades
 
-O pipeline foi corrigido para remover erros críticos (typos, imports circulares, chamadas incorretas), implementadas melhorias (cache versionado, ensemble robusto, tratamento granular de erros, validação de features) e estendido com validação robusta via Repeated CV, SHAP e calibração. Todos os commits foram mesclados via PR no GitHub.
+- **Análise de Dados**: Processamento e limpeza do dataset do Titanic.
+- **Visualização**: Geração automática de gráficos (sobrevivência por sexo, classe, idade, correlação, etc.).
+- **Machine Learning**: Treinamento de um modelo Random Forest para prever sobrevivência e analisar a importância das variáveis.
+- **Relatórios**: Geração de arquivos finais em:
+  - `output/relatorios/Relatorio_Final_Titanic.md`
+  - `output/relatorios/Relatorio_Final_Titanic.docx`
+  - `output/relatorios/Relatorio_Final_Titanic.pdf`
 
-Status atual: Funcional, testado e pronto para submissão Kaggle (acurácia ~82-85%).
+## 🛠️ Pré-requisitos
 
-## 🚀 Início Rápido
+Certifique-se de ter o Python instalado (versão 3.8 ou superior recomendada).
 
-### Pré-requisitos
-- Python 3.8+
-- Dados: `train.csv` e `test.csv` no diretório `data/raw/`
+### Bibliotecas Necessárias
 
-### Instalação Rápida
+As dependências do projeto estão listadas no arquivo `requirements.txt`. As principais bibliotecas utilizadas são:
+
+- `pandas`: Manipulação de dados.
+- `seaborn` & `matplotlib`: Visualização de dados.
+- `scikit-learn`: Machine Learning.
+- `python-docx`: Geração de documentos Word.
+- `fpdf`: Geração de documentos PDF.
+- `tqdm`: Barra de progresso.
+
+## 🚀 Instalação e Execução
+
+1. **Instale as dependências:**
 ```bash
 pip install -r requirements.txt
-```
-
-### Execução
-```bash
-python train.py
-```
-
-### Resultados
-- `output/submission.csv`: Pronto para Kaggle
-- `output/relatorios/metrics.json`: Métricas detalhadas
-- `output/graficos/`: Visualizações (ROC, SHAP, etc.)
-
-**Tempo estimado:** 5-15 min (com cache: <1 min)
-
-## 🏗️ Arquitetura do Projeto
-
-### Estrutura de Diretórios
-```
-titanic-from-disaster/
-├── train.py                                      # Script principal de treinamento
-├── predict.py                                    # Previsão em dados novos
-├── config.py                                     # Configurações globais
-
-├── titanic_pipeline/                             # Módulos organizados
-│   ├── core/
-│   │   ├── modeling.py                           # Treinamento de modelos e ensembles
-│   │   ├── pipeline.py                           # Pipeline principal
-│   │   ├── preprocessing.py                      # Pré-processamento e imputação
-│   │   ├── reporting.py                          # Geração de relatórios e métricas
-│   │   └── utils.py                              # Utilitários (cache, validação)
-│   ├── features/
-│   │   ├── engineer.py                           # Engenharia de features avançada
-│   │   ├── preprocessing.py                      # Pré-processamento de features
-│   │   └── selectors.py                          # Seleção de features
-│   └── utils/
-│       ├── cache.py                              # Sistema de cache versionado
-│       ├── helpers.py                            # Helpers gerais
-│       ├── memory.py                             # Otimização de memória
-│       ├── parallel.py                           # Processamento paralelo
-│       └── validation.py                         # Validação de dados e schema
-├── tests/                                        # Testes
-│   ├── conftest.py                               # Configuração pytest
-│   ├── test_modeling.py                          # Testes de modelagem
-│   ├── test_optimize_memory_additional.py        # Testes de otimização de memória
-│   ├── test_pipeline.py                          # Testes do pipeline
-│   ├── test_preprocessing.py                     # Testes de pré-processamento
-│   ├── test_reporting.py                         # Testes de relatórios
-│   └── test_utils.py                             # Testes de utilitários
-├── scripts/                                      # Scripts auxiliares
-│   ├── retrain_and_explain.py                    # Retreinamento com validação estendida e SHAP
-│   └── generate_shap.py                          # Geração de plots SHAP
-├── output/                                       # Resultados gerados
-│   ├── models/                                   # Modelos salvos (.pkl)
-│   ├── relatorios/                               # Relatórios (metrics.json, timing_report.json)
-│   ├── graficos/                                 # Gráficos (ROC, SHAP, calibração, etc.)
-│   ├── cache/                                    # Cache versionado (v1.0.0+)
-│   └── submission.csv                            # Predições para Kaggle
-├── data/raw/                                     # Dados originais
-│   ├── train.csv                                 # 891 amostras
-│   └── test.csv                                  # 418 amostras
-└── arquivo/                                      # Documentação adicional (guias, relatórios anotados)
-```
-
-## 🚀 Instalação e Configuração
-
-### Pré-requisitos
-- Python 3.8+
-- pip
-- Git (para versionamento)
-
-### Instalação
-```bash
-# Clone o repositório
-git clone https://github.com/Dagoberto-Candeias/UFV.git  # Ajuste URL se necessário
-cd "c:/Projetos/UFV/ELT 579/Scripts e Datasets/Titanic From Disaster"
-
-# Instale as dependências
-pip install -r requirements.txt
-
-# Para desenvolvimento e testes (opcional)
-pip install pytest pytest-cov
 ```
 
 ### Dependências Principais

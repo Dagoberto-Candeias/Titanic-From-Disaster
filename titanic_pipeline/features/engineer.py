@@ -12,12 +12,16 @@ from ..utils import CacheManager
 logger = logging.getLogger(__name__)
 
 
+
+
 class FeatureEngineer:
     """Handles feature engineering for Titanic dataset."""
 
     def __init__(self, config: Dict[str, Any], cache_manager: CacheManager):
         self.config = config
         self.cache_manager = cache_manager
+        # Store target encoding mappings for prediction consistency
+        self.target_encoding_mappings = {}
 
     def engineer_features(
         self, df: pd.DataFrame, is_training: bool = True
@@ -53,12 +57,8 @@ class FeatureEngineer:
             if self.config.get("polynomial_features", True):
                 data = self._polynomial_features(data)
 
-            # Target encoding if enabled and training
-            if (
-                self.config.get("target_encoding", True)
-                and is_training
-                and y is not None
-            ):
+            # Target encoding if enabled
+            if self.config.get("target_encoding", True):
                 data = self._target_encoding(data, y)
 
             # Handle missing values
@@ -83,7 +83,7 @@ class FeatureEngineer:
         data = df.copy()
 
         # Title extraction from Name
-        data["Title"] = data["Name"].str.extract(r" ([A-Za-z]+)\.", expand=False)
+        data["title"] = data["Name"].str.extract(r" ([A-Za-z]+)\.", expand=False)
         title_mapping = {
             "Mr": "Mr",
             "Mrs": "Mrs",
@@ -104,7 +104,7 @@ class FeatureEngineer:
             "Capt": "Officer",
             "Sir": "Royalty",
         }
-        data["Title"] = data["Title"].map(title_mapping).fillna("Other")
+        data["title"] = data["title"].map(title_mapping).fillna("Other")
 
         # Title Grouping (New Feature)
         title_group_mapping = {
@@ -116,33 +116,37 @@ class FeatureEngineer:
             "Royalty": "Rare",
             "Other": "Rare",
         }
-        data["Title_Group"] = data["Title"].map(title_group_mapping)
+        data["title_group"] = data["title"].map(title_group_mapping)
 
         # Family size
-        data["FamilySize"] = data["SibSp"] + data["Parch"] + 1
+        data["family_size"] = data["SibSp"] + data["Parch"] + 1
 
         # Is alone
-        data["IsAlone"] = (data["FamilySize"] == 1).astype(int)
+        data["is_alone"] = (data["family_size"] == 1).astype(int)
+
+        # Is Child
+        age_temp = data["Age"].fillna(data["Age"].median())
+        data["is_child"] = (age_temp < 12).astype(int)
 
         # Age groups
-        data["AgeGroup"] = pd.cut(
+        data["age_group"] = pd.cut(
             data["Age"],
             bins=[0, 12, 18, 35, 60, 100],
             labels=["Child", "Teen", "Young", "Adult", "Senior"],
         )
 
         # Fare groups
-        data["FareGroup"] = pd.qcut(
+        data["fare_group"] = pd.qcut(
             data["Fare"].fillna(data["Fare"].median()),
             q=4,
             labels=["Low", "Medium", "High", "VeryHigh"],
         )
 
         # Cabin deck
-        data["CabinDeck"] = data["Cabin"].str[0].fillna("Unknown")
+        data["cabin_deck"] = data["Cabin"].str[0].fillna("Unknown")
 
         # Ticket frequency
-        data["TicketFreq"] = data.groupby("Ticket")["Ticket"].transform("count")
+        data["ticket_freq"] = data.groupby("Ticket")["Ticket"].transform("count")
 
         return data
 
@@ -151,20 +155,20 @@ class FeatureEngineer:
         data = df.copy()
 
         # Age * Pclass interaction
-        data["Age*Pclass"] = data["Age"] * data["Pclass"]
+        data["age_pclass_interaction"] = data["Age"] * data["Pclass"]
 
         # Fare per person
-        data["FarePerPerson"] = data["Fare"] / data["FamilySize"]
+        data["fare_per_person"] = data["Fare"] / data["family_size"]
 
         # Title and Pclass interaction
-        data["Title*Pclass"] = data["Title"] + "_" + data["Pclass"].astype(str)
+        data["title_pclass_interaction"] = data["title"] + "_" + data["Pclass"].astype(str)
 
         # Age and Sex interaction
-        data["Age*Sex"] = data["Age"] * (data["Sex"] == "male").astype(int)
+        data["age_sex_interaction"] = data["Age"] * (data["Sex"] == "male").astype(int)
 
         # Family size categories
-        data["FamilySizeCat"] = pd.cut(
-            data["FamilySize"], bins=[0, 1, 4, 20], labels=["Alone", "Small", "Large"]
+        data["family_size_cat"] = pd.cut(
+            data["family_size"], bins=[0, 1, 4, 20], labels=["Alone", "Small", "Large"]
         )
 
         return data
@@ -174,13 +178,13 @@ class FeatureEngineer:
         data = df.copy()
 
         # Age squared
-        data["Age^2"] = data["Age"] ** 2
+        data["age_squared"] = data["Age"] ** 2
 
         # Fare squared
-        data["Fare^2"] = data["Fare"] ** 2
+        data["fare_squared"] = data["Fare"] ** 2
 
         # Age * Fare
-        data["Age*Fare"] = data["Age"] * data["Fare"]
+        data["age_fare_interaction"] = data["Age"] * data["Fare"]
 
         return data
 
@@ -188,21 +192,40 @@ class FeatureEngineer:
         """Apply target encoding to categorical features."""
         data = df.copy()
 
-        # Create target encoding for Title
-        title_means = (
-            pd.DataFrame({"Title": data["Title"], "Target": y})
-            .groupby("Title")["Target"]
-            .mean()
-        )
-        data["Title_encoded"] = data["Title"].map(title_means)
+        if y is not None:
+            # Training: compute and store mappings
+            title_means = (
+                pd.DataFrame({"title": data["title"], "Target": y})
+                .groupby("title")["Target"]
+                .mean()
+            )
+            self.target_encoding_mappings["title"] = title_means.to_dict()
 
-        # Create target encoding for CabinDeck
-        deck_means = (
-            pd.DataFrame({"CabinDeck": data["CabinDeck"], "Target": y})
-            .groupby("CabinDeck")["Target"]
-            .mean()
-        )
-        data["CabinDeck_encoded"] = data["CabinDeck"].map(deck_means)
+            deck_means = (
+                pd.DataFrame({"cabin_deck": data["cabin_deck"], "Target": y})
+                .groupby("cabin_deck")["Target"]
+                .mean()
+            )
+            self.target_encoding_mappings["cabin_deck"] = deck_means.to_dict()
+
+            # Apply encoding
+            data["title_encoded"] = data["title"].map(title_means)
+            data["cabin_deck_encoded"] = data["cabin_deck"].map(deck_means)
+        else:
+            # Prediction: use stored mappings or defaults
+            if "title" in self.target_encoding_mappings:
+                data["title_encoded"] = data["title"].map(self.target_encoding_mappings["title"])
+            else:
+                data["title_encoded"] = 0.5  # Default fallback
+
+            if "cabin_deck" in self.target_encoding_mappings:
+                data["cabin_deck_encoded"] = data["cabin_deck"].map(self.target_encoding_mappings["cabin_deck"])
+            else:
+                data["cabin_deck_encoded"] = 0.5  # Default fallback
+
+            # Fill any NaN values with global mean
+            data["title_encoded"] = data["title_encoded"].fillna(0.5)
+            data["cabin_deck_encoded"] = data["cabin_deck_encoded"].fillna(0.5)
 
         return data
 

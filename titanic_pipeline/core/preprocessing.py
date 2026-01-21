@@ -5,7 +5,9 @@ Contains functions for data preprocessing, feature engineering, and imputation.
 
 import logging
 import pandas as pd
-from sklearn.compose import ColumnTransformer
+from sklearn.compose import (
+    ColumnTransformer,
+)
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, PolynomialFeatures
@@ -33,18 +35,33 @@ def preprocess_data(train, test, feature_cols, apply_smote=False, config=None):
         col for col in feature_cols if col in train.columns and col in test.columns
     ]
     
-    # Identify categorical columns (object type or with few unique values)
+    # Identify categorical and numerical columns
     categorical_features = []
     numerical_features = []
-    
+
+    # Known categorical features (these should be treated as categorical even if they look numeric)
+    known_categorical = [
+        "Sex", "Embarked", "title", "title_group", "age_group", "fare_group",
+        "cabin_deck", "family_size_cat", "Pclass", "SibSp", "Parch", "is_alone",
+        "is_child", "ticket_freq"
+    ]
+
+    # Known numerical features (these should be treated as numerical)
+    known_numerical = [
+        "Age", "Fare", "family_size", "age_pclass_interaction", "fare_per_person",
+        "age_sex_interaction", "age_squared", "fare_squared", "age_fare_interaction",
+        "title_encoded", "cabin_deck_encoded"
+    ]
+
     for col in feature_cols:
-        # Check if column is object type or has few unique values
-        if (train[col].dtype == 'object' or 
-            train[col].nunique() < 10 or 
-            col in ["Sex", "Embarked", "Title_Group", "Deck", "TicketPrefix"] or
-            col.startswith('feat_') and ('Bin' in col or 'Category' in col or 'missing' in col)):
+        if col in known_numerical:
+            numerical_features.append(col)
+        elif (train[col].dtype == 'object' or
+              col in known_categorical or
+              col.startswith('feat_') and ('Bin' in col or 'Category' in col or 'missing' in col)):
             categorical_features.append(col)
         else:
+            # Default to numerical for any remaining features
             numerical_features.append(col)
     
     logger.info(f"Categorical features: {categorical_features}")

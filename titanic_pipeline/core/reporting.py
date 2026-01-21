@@ -46,6 +46,7 @@ FEATURE_DESCRIPTIONS = {
     "Sex": "Gênero (male, female)",
     "Embarked": "Porto de embarque (S, C, Q)",
     "Title_Group": "Agrupamento de títulos (Mr, Mrs, Miss, Master, Rare)",
+    "IsChild": "Indicador se é criança (Idade < 12)",
 }
 
 
@@ -77,6 +78,7 @@ class ReportingManager:
         feature_cols: List[str],
         X_train: Any,
         y_train: Any,
+        preprocessor: Any = None,
     ) -> None:
         """
         Generate all configured reports.
@@ -86,6 +88,7 @@ class ReportingManager:
             feature_cols: List of feature column names
             X_train: Training features
             y_train: Training labels
+            preprocessor: Fitted preprocessor object (optional)
         """
         # Create output directories
         self.reports_dir.mkdir(parents=True, exist_ok=True)
@@ -94,6 +97,19 @@ class ReportingManager:
         # some report helper methods expect self.X_train / self.y_train
         self.X_train = X_train
         self.y_train = y_train
+
+        # Tentar recuperar nomes das features transformadas se o preprocessor estiver disponível
+        final_feature_names = feature_cols
+        if preprocessor is not None:
+            try:
+                if hasattr(preprocessor, "get_feature_names_out"):
+                    final_feature_names = list(preprocessor.get_feature_names_out())
+                    logger.info(f"   📊 Extracted {len(final_feature_names)} transformed feature names from preprocessor.")
+            except Exception as e:
+                logger.warning(f"   ⚠️  Could not extract feature names from preprocessor: {e}")
+        
+        # Atualizar feature_cols para usar os nomes corretos nos gráficos
+        plot_feature_cols = final_feature_names
 
         report_methods = {
             "generate_md": self._generate_markdown_report,
@@ -111,32 +127,32 @@ class ReportingManager:
                 self._generate_calibration_plots(model_results, X_train, y_train)
 
             if self.config.get("include_feature_importance", True):
-                self._generate_feature_importance_plots(model_results, feature_cols)
+                self._generate_feature_importance_plots(model_results, plot_feature_cols)
 
             # --- CORREÇÃO: Chamando as funções de gráficos que estavam faltando ---
-            generate_roc_curves(model_results, X_train, y_train, feature_cols)
+            generate_roc_curves(model_results, X_train, y_train, plot_feature_cols)
 
             # Preparar DataFrame para o heatmap de correlação
             try:
                 if hasattr(X_train, "columns"):
                     train_df = X_train.copy()
                     # Ensure feature_cols are present
-                    if not set(feature_cols).issubset(set(train_df.columns)):
+                    if not set(plot_feature_cols).issubset(set(train_df.columns)):
                         logger.warning(
                             "Feature columns mismatch in X_train DataFrame. Skipping heatmap."
                         )
                         train_df = None
                 elif hasattr(X_train, "toarray"):
-                    if X_train.shape[1] == len(feature_cols):
-                        train_df = pd.DataFrame(X_train.toarray(), columns=feature_cols)
+                    if X_train.shape[1] == len(plot_feature_cols):
+                        train_df = pd.DataFrame(X_train.toarray(), columns=plot_feature_cols)
                     else:
                         logger.warning(
-                            f"Shape mismatch for heatmap: X_train {X_train.shape} vs feature_cols {len(feature_cols)}. Skipping heatmap."
+                            f"Shape mismatch for heatmap: X_train {X_train.shape} vs feature_cols {len(plot_feature_cols)}. Skipping heatmap."
                         )
                         train_df = None
                 else:
-                    if X_train.shape[1] == len(feature_cols):
-                        train_df = pd.DataFrame(X_train, columns=feature_cols)
+                    if X_train.shape[1] == len(plot_feature_cols):
+                        train_df = pd.DataFrame(X_train, columns=plot_feature_cols)
                     else:
                         logger.warning(
                             f"Shape mismatch for heatmap: X_train {X_train.shape} vs feature_cols {len(feature_cols)}. Skipping heatmap."
@@ -146,7 +162,7 @@ class ReportingManager:
                 if train_df is not None and y_train is not None:
                     y_vals = y_train.values if hasattr(y_train, "values") else y_train
                     train_df["Survived"] = y_vals
-                    generate_feature_correlation_heatmap(train_df, feature_cols)
+                    generate_feature_correlation_heatmap(train_df, plot_feature_cols)
             except Exception as e:
                 logger.warning(
                     f"Skipping correlation heatmap due to data format issues: {e}"
@@ -161,14 +177,14 @@ class ReportingManager:
                 reverse=True,
             )
             if sorted_models:
-                generate_shap_comparison_plot(sorted_models[:3], X_train, feature_cols)
+                generate_shap_comparison_plot(sorted_models[:3], X_train, plot_feature_cols)
                 best_model_name, best_model_data = sorted_models[0]
                 if best_model_data.get("trained_model"):
                     generate_permutation_importance(
                         best_model_data["trained_model"],
                         X_train,
                         y_train,
-                        feature_cols,
+                        plot_feature_cols,
                         model_name=best_model_name,
                     )
 
