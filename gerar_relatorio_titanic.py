@@ -1,30 +1,16 @@
-import sys
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
 import os
 from datetime import datetime
-
-# Verificação de dependências antes da importação
-try:
-    import pandas as pd
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-    from docx import Document
-    from docx.shared import Inches
-    from fpdf import FPDF
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.model_selection import train_test_split, cross_validate, cross_val_predict
-    from sklearn.metrics import classification_report, confusion_matrix, accuracy_score, roc_curve, auc
-    from sklearn.preprocessing import LabelEncoder
-    from scipy.stats import chi2_contingency
-    from tqdm import tqdm
-except ImportError as e:
-    print("="*60)
-    print("❌ ERRO CRÍTICO: Bibliotecas necessárias não encontradas.")
-    print(f"   Detalhe: {e}")
-    print("="*60)
-    print("Por favor, instale as dependências executando o comando abaixo:")
-    print("\npip install pandas seaborn matplotlib python-docx fpdf scikit-learn tqdm scipy\n")
-    print("="*60)
-    sys.exit(1)
+from docx import Document
+from docx.shared import Inches
+from fpdf import FPDF
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+from sklearn.preprocessing import LabelEncoder
+from scipy.stats import chi2_contingency
 
 # Configuração de Estilo dos Gráficos
 sns.set_theme(style="whitegrid")
@@ -36,45 +22,31 @@ class RelatorioBuilder:
     para Markdown, DOCX e PDF.
     """
     def __init__(self, titulo):
-        # Inicializa o construtor com um título e uma lista vazia para o conteúdo
         self.titulo = titulo
         self.conteudo = [] # Lista de dicionários {'tipo': 'texto|img|tabela|titulo', 'valor': ...}
 
     def adicionar_titulo(self, texto, nivel=1):
-        # Adiciona um título à lista de conteúdo com o nível especificado
         self.conteudo.append({'tipo': 'titulo', 'valor': texto, 'nivel': nivel})
 
     def adicionar_texto(self, texto):
-        # Adiciona um parágrafo de texto à lista de conteúdo
         self.conteudo.append({'tipo': 'texto', 'valor': texto})
 
     def adicionar_imagem(self, caminho_img, legenda=""):
-        # Adiciona uma imagem à lista de conteúdo com caminho e legenda
         self.conteudo.append({'tipo': 'imagem', 'valor': caminho_img, 'legenda': legenda})
 
     def adicionar_tabela(self, dataframe, legenda=""):
-        # Adiciona uma tabela (DataFrame) à lista de conteúdo
         self.conteudo.append({'tipo': 'tabela', 'valor': dataframe, 'legenda': legenda})
 
     def salvar_md(self, nome_arquivo):
-        # Gera e salva o relatório em formato Markdown (.md)
         with open(nome_arquivo, 'w', encoding='utf-8') as f:
             f.write(f"# {self.titulo}\n\n")
-            for item in tqdm(self.conteudo, desc="Gerando Markdown"):
+            for item in self.conteudo:
                 if item['tipo'] == 'titulo':
                     f.write(f"{'#' * (item['nivel'] + 1)} {item['valor']}\n\n")
                 elif item['tipo'] == 'texto':
                     f.write(f"{item['valor']}\n\n")
                 elif item['tipo'] == 'imagem':
-                    # Ajuste de caminho relativo para o Markdown
-                    caminho_img = item['valor']
-                    try:
-                        dir_md = os.path.dirname(nome_arquivo)
-                        if dir_md:
-                            caminho_img = os.path.relpath(item['valor'], dir_md).replace(os.sep, '/')
-                    except ValueError:
-                        pass
-                    f.write(f"![{item['legenda']}]({caminho_img})\n")
+                    f.write(f"![{item['legenda']}]({item['valor']})\n")
                     f.write(f"*{item['legenda']}*\n\n")
                 elif item['tipo'] == 'tabela':
                     f.write(f"### {item['legenda']}\n")
@@ -83,7 +55,6 @@ class RelatorioBuilder:
         print(f"[SUCESSO] Relatório Markdown salvo em: {nome_arquivo}")
 
     def salvar_docx(self, nome_arquivo):
-        # Gera e salva o relatório em formato Word (.docx)
         doc = Document()
         doc.add_heading(self.titulo, 0)
 
@@ -91,7 +62,7 @@ class RelatorioBuilder:
             if item['tipo'] == 'titulo':
                 doc.add_heading(item['valor'], level=item['nivel'])
             elif item['tipo'] == 'texto':
-                doc.add_paragraph(item['valor']) # type: ignore
+                doc.add_paragraph(item['valor'])
             elif item['tipo'] == 'imagem':
                 try:
                     doc.add_picture(item['valor'], width=Inches(5.5))
@@ -116,7 +87,6 @@ class RelatorioBuilder:
         print(f"[SUCESSO] Relatório DOCX salvo em: {nome_arquivo}")
 
     def salvar_pdf(self, nome_arquivo):
-        # Gera e salva o relatório em formato PDF (.pdf)
         pdf = FPDF()
         pdf.set_auto_page_break(auto=True, margin=15)
         pdf.add_page()
@@ -125,7 +95,7 @@ class RelatorioBuilder:
         pdf.set_font("Arial", "B", 16)
         pdf.cell(0, 10, self.titulo.encode('latin-1', 'replace').decode('latin-1'), ln=True, align='C')
         pdf.ln(10)
-        
+
         for item in self.conteudo:
             texto_safe = str(item['valor']).encode('latin-1', 'replace').decode('latin-1')
             
@@ -181,29 +151,8 @@ class RelatorioBuilder:
 
 def analisar_dados_titanic():
     # 1. Carregamento e Limpeza
-    # Define as colunas que serão utilizadas para otimizar o carregamento de memória
-    USE_COLUMNS = [
-        'Survived', 'Pclass', 'Sex', 'Age', 'Fare', 'Embarked',
-        'SibSp', 'Parch', 'Name', 'Cabin', 'Ticket'
-    ]
     try:
-        # Busca robusta pelo arquivo (diretório atual ou relativo ao script)
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        possible_paths = [
-            'train.csv',
-            'data/raw/train.csv',
-            os.path.join(script_dir, 'train.csv'),
-            os.path.join(script_dir, 'data', 'raw', 'train.csv')
-        ]
-        
-        found_path = next((p for p in possible_paths if os.path.exists(p)), None)
-        
-        if found_path:
-            print(f"✅ Arquivo de dados encontrado em: {found_path}")
-            # Carrega apenas as colunas necessárias para otimizar o uso de memória
-            df = pd.read_csv(found_path, usecols=USE_COLUMNS)
-        else:
-            raise FileNotFoundError
+        df = pd.read_csv('train.csv')
     except FileNotFoundError:
         # Criação de dados dummy caso o arquivo não exista para o exemplo rodar
         print("AVISO: 'train.csv' não encontrado. Gerando dados de exemplo.")
@@ -214,21 +163,17 @@ def analisar_dados_titanic():
             'Age': [22, 38, 26, 35, 35, 27, 2, 14, 4, 50] * 10,
             'Fare': [7.25, 71.28, 7.92, 53.1, 8.05, 11.13, 21.07, 30.07, 16.7, 8.05] * 10,
             'Embarked': ['S', 'C', 'S', 'S', 'S', 'Q', 'S', 'S', 'S', 'S'] * 10,
-            'SibSp': [1, 1, 0, 1, 0, 0, 0, 3, 0, 1] * 10,
+             'SibSp': [1, 1, 0, 1, 0, 0, 0, 3, 0, 1] * 10,
             'Parch': [0, 0, 0, 0, 0, 0, 0, 1, 2, 0] * 10,
             'Name': ['Braund, Mr. Owen', 'Cumings, Mrs. John', 'Heikkinen, Miss. Laina', 'Futrelle, Mrs. Jacques', 'Allen, Mr. William', 'Moran, Mr. James', 'McCarthy, Mr. Timothy', 'Palsson, Master. Gosta', 'Johnson, Mrs. Oscar', 'Nasser, Mrs. Nicholas'] * 10,
-            'Cabin': [None, 'C85', None, 'C123', None, None, 'E46', None, None, None] * 10,
-            'Ticket': ['A/5 21171', 'PC 17599', 'STON/O2. 3101282', '113803', '373450', '330877', '17463', '349909', '347742', '237736'] * 10
         }
         df = pd.DataFrame(data)
 
     # Tratamento básico
-    # Preenche valores ausentes na idade com a mediana e no embarque com a moda
     df['Age'] = df['Age'].fillna(df['Age'].median())
     df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
     
     # 2. Geração de Gráficos
-    # Cria o diretório para salvar os gráficos se não existir
     os.makedirs('output/graficos', exist_ok=True)
     
     # Gráfico 1: Sobrevivência por Sexo
@@ -238,17 +183,17 @@ def analisar_dados_titanic():
     plt.xlabel('Sexo')
     plt.ylabel('Contagem')
     plt.legend(title='Sobreviveu', labels=['Não', 'Sim'])
-    img_sexo = 'graficos/sobrevivencia_sexo.png'
+    img_sexo = 'output/graficos/sobrevivencia_sexo.png'
     plt.savefig(img_sexo)
     plt.close()
 
     # Gráfico 2: Sobrevivência por Classe
     plt.figure(figsize=(8, 5))
-    sns.barplot(data=df, x='Pclass', y='Survived', palette='magma', errorbar=None)
+    sns.barplot(data=df, x='Pclass', y='Survived', hue='Pclass', palette='magma', errorbar=None, legend=False)
     plt.title('Taxa de Sobrevivência por Classe')
     plt.xlabel('Classe (1 = Alta, 3 = Baixa)')
     plt.ylabel('Taxa de Sobrevivência (0 a 1)')
-    img_classe = 'graficos/sobrevivencia_classe.png'
+    img_classe = 'output/graficos/sobrevivencia_classe.png'
     plt.savefig(img_classe)
     plt.close()
 
@@ -256,7 +201,7 @@ def analisar_dados_titanic():
     plt.figure(figsize=(8, 5))
     sns.histplot(data=df, x='Age', hue='Survived', kde=True, element="step", palette='coolwarm')
     plt.title('Distribuição de Idade e Sobrevivência')
-    img_idade = 'graficos/distribuicao_idade.png'
+    img_idade = 'output/graficos/distribuicao_idade.png'
     plt.savefig(img_idade)
     plt.close()
 
@@ -264,10 +209,28 @@ def analisar_dados_titanic():
     plt.figure(figsize=(10, 8))
     numeric_df = df.select_dtypes(include=['float64', 'int64'])
     corr = numeric_df.corr()
-    sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f", linewidths=0.5)
+    sns.heatmap(corr, annot=True, cmap='coolwarm', fmt=".2f")
     plt.title('Mapa de Calor de Correlação')
-    img_corr = 'graficos/correlacao.png'
+     img_corr = 'output/graficos/correlacao.png'
     plt.savefig(img_corr)
+    plt.close()
+
+    # Gráfico 9: Teste Qui-Quadrado (Heatmap Categórico)
+    categorical_cols = ['Survived', 'Pclass', 'Sex', 'Embarked']
+    chi2_matrix = pd.DataFrame(index=categorical_cols, columns=categorical_cols, dtype=float)
+    for col1 in categorical_cols:
+        for col2 in categorical_cols:
+            if col1 == col2:
+                chi2_matrix.loc[col1, col2] = 0.0
+            else:
+                contingency = pd.crosstab(df[col1], df[col2])
+                chi2, p, _, _ = chi2_contingency(contingency)
+                chi2_matrix.loc[col1, col2] = p
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(chi2_matrix, annot=True, cmap='coolwarm_r', fmt=".2e")
+    plt.title('P-valores do Teste Qui-Quadrado (Associação)')
+    img_chi2 = 'output/graficos/chi2_heatmap.png'
+    plt.savefig(img_chi2)
     plt.close()
 
     # 3. Modelagem Simples (Machine Learning)
@@ -275,7 +238,6 @@ def analisar_dados_titanic():
     df_ml = df.copy()
     df_ml['Sex'] = le.fit_transform(df_ml['Sex'])
     df_ml['Embarked'] = le.fit_transform(df_ml['Embarked'])
-    
     X = df_ml[['Pclass', 'Sex', 'Age', 'Fare']]
     y = df_ml['Survived']
     
@@ -297,7 +259,7 @@ def analisar_dados_titanic():
     return {
         'df_head': df.head(),
         'stats': df.describe(),
-        'imgs': {'sexo': img_sexo, 'classe': img_classe, 'idade': img_idade, 'cm': img_cm, 'corr': img_corr},
+        'imgs': {'sexo': img_sexo, 'classe': img_classe, 'idade': img_idade, 'cm': img_cm, 'corr': img_corr, 'family': img_family, 'chi2': img_chi2},
         'ml': {'acc': acc, 'report': report, 'feature_imp': feature_imp},
         'counts': df['Survived'].value_counts(normalize=True)
     }
@@ -305,7 +267,7 @@ def analisar_dados_titanic():
 def gerar_relatorio_completo():
     print("Iniciando análise de dados...")
     dados = analisar_dados_titanic()
-    
+
     builder = RelatorioBuilder("Relatório Final: Análise do Titanic")
 
     # --- INTRODUÇÃO ---
@@ -448,12 +410,10 @@ def gerar_relatorio_completo():
     builder.adicionar_texto(f"\nRelatório gerado automaticamente em: {data_atual}")
 
     # --- SALVAR ARQUIVOS ---
-    # Salva o relatório nos três formatos solicitados
     print("Gerando arquivos finais...")
-    os.makedirs('output/relatorios', exist_ok=True)
-    builder.salvar_md("output/relatorios/Relatorio_Final_Titanic.md")
-    builder.salvar_docx("output/relatorios/Relatorio_Final_Titanic.docx")
-    builder.salvar_pdf("output/relatorios/Relatorio_Final_Titanic.pdf")
+    builder.salvar_md("Relatorio_Final_Titanic.md")
+    builder.salvar_docx("Relatorio_Final_Titanic.docx")
+    builder.salvar_pdf("Relatorio_Final_Titanic.pdf")
     print("Processo concluído com sucesso!")
 
 if __name__ == "__main__":

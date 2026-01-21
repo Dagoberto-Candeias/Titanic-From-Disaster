@@ -6,7 +6,3 @@ fpdf
 scikit-learn
 tqdm
 scipy
-scipy
-tqdm
-scipy
-scipy
