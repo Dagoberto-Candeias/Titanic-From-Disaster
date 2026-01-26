@@ -1,6 +1,6 @@
 {
   "dataset_name": "train.csv",
-  "timestamp": "2026-01-13T23:35:22.350347",
+  "timestamp": "2026-01-25T22:02:58.059209",
   "total_rows": 891,
   "total_columns": 12,
   "expected_columns": [
@@ -35,17 +35,17 @@
   "extra_columns": [],
   "is_valid": true,
   "data_types": {
-    "PassengerId": "int16",
-    "Survived": "int8",
-    "Pclass": "int8",
+    "PassengerId": "int64",
+    "Survived": "int64",
+    "Pclass": "int64",
     "Name": "object",
-    "Sex": "category",
-    "Age": "float32",
-    "SibSp": "int8",
-    "Parch": "int8",
+    "Sex": "object",
+    "Age": "float64",
+    "SibSp": "int64",
+    "Parch": "int64",
     "Ticket": "object",
-    "Fare": "float32",
-    "Cabin": "category",
-    "Embarked": "category"
+    "Fare": "float64",
+    "Cabin": "object",
+    "Embarked": "object"
   }
 }

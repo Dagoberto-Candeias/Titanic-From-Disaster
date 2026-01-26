@@ -1,0 +1,10 @@
+{
+  "class_counts": {
+    "0": 549,
+    "1": 342
+  },
+  "class_ratio": 1.605263157894737,
+  "apply_smote": true,
+  "detection_threshold": 1.5,
+  "timestamp": "2026-01-25T22:02:58.069574"
+}

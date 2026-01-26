@@ -2,7 +2,7 @@
 # TITANIC - APRENDIZADO DE MÁQUINA DO DESASTRE
 # Autor: Dagoberto Candeias de Moraes (118550)
 # Disciplina: ELT579 - Aprendizado de Máquina
-# Versão: 4.0 (Corrigida e Otimizada)
+# Versão: 4.1 (Corrigida, Otimizada e Limpa)
 # =============================================================================
 
 # Importações da biblioteca padrão
@@ -19,8 +19,13 @@ import warnings
 from datetime import datetime
 
 # Importações de terceiros
+# Configuração crítica para ambientes sem display (Headless)
 import matplotlib
-matplotlib.use('Agg')  # Set backend for headless environments
+try:
+    matplotlib.use('Agg')
+except Exception:
+    pass # Ignora se já estiver configurado ou falhar silenciosamente
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -115,8 +120,18 @@ except ImportError:
     KALEIDO_AVAILABLE = False
     kaleido = None
 
+try:
+    from tqdm import tqdm
+    TQDM_AVAILABLE = True
+except ImportError:
+    TQDM_AVAILABLE = False
+    print("\n⚠️  AVISO: Biblioteca 'tqdm' não encontrada. Barras de progresso não serão exibidas.")
+    print("   👉 Para corrigir, execute: pip install tqdm\n")
+
 # Fix for module import path (after absolute imports, before relative)
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, current_dir)
+sys.path.insert(0, os.path.dirname(current_dir))
 
 # Imports do pipeline Titanic
 from titanic_pipeline.preprocessing import (
@@ -223,6 +238,7 @@ DEFAULT_LOGGING_CONFIG = {
         "console": {
             "class": "logging.StreamHandler",
             "formatter": "simple",
+            "level": "WARNING",  # Limpa o terminal, mostra apenas avisos/erros
         },
     },
     "root": {
@@ -251,126 +267,146 @@ except ImportError:
     EXPECTED_TEST_SCHEMA = DEFAULT_EXPECTED_TEST_SCHEMA.copy()
     LOGGING_CONFIG = DEFAULT_LOGGING_CONFIG.copy()
 
+# Garante que o diretório de logs existe antes de configurar o logger
+if 'handlers' in LOGGING_CONFIG and 'file' in LOGGING_CONFIG['handlers']:
+    os.makedirs(os.path.dirname(LOGGING_CONFIG['handlers']['file'].get('filename', 'titanic_ml.log')) or '.', exist_ok=True)
+
 logging.config.dictConfig(LOGGING_CONFIG)
 logger = logging.getLogger(__name__)
 
 EXPECTED_TRAIN_COLUMNS = list(EXPECTED_TRAIN_SCHEMA.keys())
 EXPECTED_TEST_COLUMNS = list(EXPECTED_TEST_SCHEMA.keys())
 
-# Protegendo import do AdvancedFeatureEngineer com fallback
-try:
-    from features import AdvancedFeatureEngineer
-    logger.info("✅ AdvancedFeatureEngineer imported successfully from features.py")
-except ImportError as e:
-    logger.warning(
-        f"⚠️  Failed to import AdvancedFeatureEngineer: {e}. "
-        "Using fallback implementation."
-    )
+class AdvancedFeatureEngineer:
+    """Classe para engenharia de features avançada."""
 
-    class AdvancedFeatureEngineer:
-        """Fallback class for AdvancedFeatureEngineer when features.py is not available."""
+    def __init__(self):
+        pass
 
-        def __init__(self):
-            pass
-
-        def create_advanced_features(
-            self, df: pd.DataFrame, is_training: bool = True
-        ) -> pd.DataFrame:
-            """Create advanced features using mock implementation."""
-            logger.warning(
-                "   Using MOCK create_advanced_features with sequential processing."
+    def create_advanced_features(
+        self, df: pd.DataFrame, is_training: bool = True
+    ) -> pd.DataFrame:
+        """Cria features avançadas."""
+        df = df.copy()
+        # Apply feature engineering functions sequentially
+        df = create_family_features(df)
+        df = extract_title(df)
+        df = extract_deck(df)
+        df = extract_ticket_prefix(df)
+        # Interações
+        df["AgeClass"] = df["Age"] * df["Pclass"]
+        df["FarePerPerson"] = df["Fare"] / (
+            df["SibSp"] + df["Parch"] + 1
+        ).replace(0, 1)
+        if "Title" in df.columns:
+            df["Title_Interactions"] = df["Title"] + "_" + df["Sex"]
+        # Bins avançados
+        df["feat_AgeBin"] = pd.cut(
+            df["Age"],
+            bins=[0, 12, 18, 35, 60, 100],
+            labels=["Child", "Teen", "Young", "Adult", "Senior"],
+        ).astype(str)
+        df["feat_FareBin"] = pd.cut(
+            df["Fare"],
+            bins=[-1, 7.91, 14.45, 31, 1000],
+            labels=["Low", "Medium", "High", "Luxury"],
+        ).astype(str)
+        df["feat_AgeCategory_v2"] = pd.cut(
+            df["Age"],
+            bins=[0, 18, 35, 60, 100],
+            labels=["Minor", "YoungAdult", "Adult", "Senior"],
+        ).astype(str)
+        df["feat_FareCategory_v2"] = pd.cut(
+            df["Fare"],
+            bins=[-1, 10, 50, 1000],
+            labels=["Cheap", "Moderate", "Expensive"],
+        ).astype(str)
+        # Indicadores de missing
+        df["feat_Age_missing"] = df["Age"].isnull().astype(int)
+        df["feat_Cabin_missing"] = df["Cabin"].isnull().astype(int)
+        df["feat_Embarked_missing"] = df["Embarked"].isnull().astype(int)
+        df["feat_Fare_missing"] = df["Fare"].isnull().astype(int)
+        # Target Encoding (se treino)
+        if is_training and "Survived" in df.columns:
+            df["feat_Title_te"] = kfold_target_encode(
+                df, "Title", "Survived", suffix="_te"
             )
-            df = df.copy()
-            # Apply feature engineering functions sequentially
-            df = create_family_features(df)
-            df = extract_title(df)
-            df = extract_deck(df)
-            df = extract_ticket_prefix(df)
-            # Interações
-            df["AgeClass"] = df["Age"] * df["Pclass"]
-            df["FarePerPerson"] = df["Fare"] / (
-                df["SibSp"] + df["Parch"] + 1
-            ).replace(0, 1)
-            if "Title" in df.columns:
-                df["Title_Interactions"] = df["Title"] + "_" + df["Sex"]
-            # Bins avançados
-            df["feat_AgeBin"] = pd.cut(
-                df["Age"],
-                bins=[0, 12, 18, 35, 60, 100],
-                labels=["Child", "Teen", "Young", "Adult", "Senior"],
-            ).astype(str)
-            df["feat_FareBin"] = pd.cut(
-                df["Fare"],
-                bins=[-1, 7.91, 14.45, 31, 1000],
-                labels=["Low", "Medium", "High", "Luxury"],
-            ).astype(str)
-            df["feat_AgeCategory_v2"] = pd.cut(
-                df["Age"],
-                bins=[0, 18, 35, 60, 100],
-                labels=["Minor", "YoungAdult", "Adult", "Senior"],
-            ).astype(str)
-            df["feat_FareCategory_v2"] = pd.cut(
-                df["Fare"],
-                bins=[-1, 10, 50, 1000],
-                labels=["Cheap", "Moderate", "Expensive"],
-            ).astype(str)
-            # Indicadores de missing
-            df["feat_Age_missing"] = df["Age"].isnull().astype(int)
-            df["feat_Cabin_missing"] = df["Cabin"].isnull().astype(int)
-            df["feat_Embarked_missing"] = df["Embarked"].isnull().astype(int)
-            df["feat_Fare_missing"] = df["Fare"].isnull().astype(int)
-            # Target Encoding (se treino)
-            if is_training and "Survived" in df.columns:
-                df["feat_Title_te"] = kfold_target_encode(
-                    df, "Title", "Survived", suffix="_te"
-                )
-                ticket_prefix_series = df["Ticket"].str[:3]
-                ticket_prefix_series.name = "TicketPrefix"
-                df["feat_TicketPrefix_te"] = kfold_target_encode(
-                    df, ticket_prefix_series, "Survived", suffix="_te"
-                )
-                deck_series = df["Cabin"].str[0].fillna("U")
-                deck_series.name = "Deck"
-                df["feat_Deck_te"] = kfold_target_encode(
-                    df, deck_series, "Survived", suffix="_te"
-                )
-                df["feat_Embarked_te"] = kfold_target_encode(
-                    df, "Embarked", "Survived", suffix="_te"
-                )
-            else:
-                # Para teste, usar médias globais ou mapear de treino (simplificado)
-                df["feat_Title_te"] = 0.5  # Placeholder
-                df["feat_TicketPrefix_te"] = 0.5
-                df["feat_Deck_te"] = 0.5
-                df["feat_Embarked_te"] = 0.5
-            return df
+            ticket_prefix_series = df["Ticket"].str[:3]
+            ticket_prefix_series.name = "TicketPrefix"
+            df["feat_TicketPrefix_te"] = kfold_target_encode(
+                df, ticket_prefix_series, "Survived", suffix="_te"
+            )
+            deck_series = df["Cabin"].str[0].fillna("U")
+            deck_series.name = "Deck"
+            df["feat_Deck_te"] = kfold_target_encode(
+                df, deck_series, "Survived", suffix="_te"
+            )
+            df["feat_Embarked_te"] = kfold_target_encode(
+                df, "Embarked", "Survived", suffix="_te"
+            )
+        else:
+            # Para teste, usar médias globais ou mapear de treino (simplificado)
+            df["feat_Title_te"] = 0.5  # Placeholder
+            df["feat_TicketPrefix_te"] = 0.5
+            df["feat_Deck_te"] = 0.5
+            df["feat_Embarked_te"] = 0.5
+        return df
 
-        def advanced_missing_imputation(self, df: pd.DataFrame) -> pd.DataFrame:
-            """Perform advanced missing imputation using mock implementation."""
-            logger.warning("   Using MOCK advanced_missing_imputation.")
-            df = df.copy()
-            df["Age"] = df["Age"].fillna(df["Age"].median())
-            df["Fare"] = df["Fare"].fillna(df["Fare"].median())
-            df["Embarked"] = df["Embarked"].fillna(df["Embarked"].mode()[0])
-            return df
+    def advanced_missing_imputation(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Executa imputação avançada de dados faltantes."""
+        df = df.copy()
+        df["Age"] = df["Age"].fillna(df["Age"].median())
+        df["Fare"] = df["Fare"].fillna(df["Fare"].median())
+        df["Embarked"] = df["Embarked"].fillna(df["Embarked"].mode()[0])
+        return df
 
-        def select_features_via_model(self, X_train, y_train, feature_names):
-            """Select features via model using mock implementation."""
-            logger.warning("   Using MOCK select_features_via_model.")
-            return feature_names, None
+    def select_features_via_model(self, X_train, y_train, feature_names):
+        """Seleciona features usando um modelo (placeholder)."""
+        logger.warning("   select_features_via_model não implementado, retornando todas as features.")
+        return feature_names, None
 
-        def validate_imputation(self, df, original_df=None):
-            """Validate imputation using mock implementation."""
-            logger.info("   Using MOCK validate_imputation.")
-            return True
+    def validate_imputation(self, df, original_df=None):
+        """Valida a imputação (placeholder)."""
+        logger.info("   validate_imputation não implementado.")
+        return True
 
 
 # Suppress warnings
 warnings.filterwarnings("ignore")
 
 
-# Basic logging setup as fallback (duplicate removed)
-# The initial logging setup is sufficient; this duplicate is removed to avoid conflicts.
+def patch_sklearn_models():
+    """
+    Adiciona o método .copy() a modelos que não o implementam nativamente (ex: SVC, XGBoost).
+    Isso resolve incompatibilidades com pipelines que esperam .copy() em vez de clone().
+    """
+    from sklearn.base import clone
+    # Importar classes que precisam de patch e não estão no escopo global
+    try:
+        from sklearn.svm import SVC
+        from sklearn.ensemble import AdaBoostClassifier, BaggingClassifier
+    except ImportError:
+        return
+
+    def custom_copy(self):
+        return clone(self)
+        
+    models_to_patch = [SVC, AdaBoostClassifier, BaggingClassifier]
+    
+    # Adiciona modelos opcionais se estiverem disponíveis no escopo global
+    if XGB_AVAILABLE and XGBClassifier:
+        models_to_patch.append(XGBClassifier)
+    if LGBM_AVAILABLE and LGBMClassifier:
+        models_to_patch.append(LGBMClassifier)
+        
+    for model_class in models_to_patch:
+        if not hasattr(model_class, 'copy'):
+            setattr(model_class, 'copy', custom_copy)
+    print("   🔧 Patching sklearn models with .copy() method...")
+
+# Aplica patch imediatamente para garantir que funcione em processos filhos e importações
+patch_sklearn_models()
+
 
 def preprocess_data(train, test, feature_cols, apply_smote=False):
     """(DEPRECATED) Centralized data preprocessing function. Use modular_preprocess_data instead."""
@@ -383,15 +419,6 @@ def main():
     parser = argparse.ArgumentParser(
         description="Titanic ML Pipeline - Enhanced with manual configuration",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
-Examples:
-  python %(prog)s --fast_mode False --enhanced_balance True
-  python %(prog)s --config_file config.json --parallel_jobs 4
-  python %(prog)s --optuna_trials 100 --force_optimizations
-
-Optional dependencies can be installed with:
-  python requirements_suggestions.py --auto-install
-        """
     )
     parser.add_argument(
         "--fast_mode", type=lambda x: str(x).lower() in ['true', '1', 'yes'],
@@ -448,9 +475,14 @@ Optional dependencies can be installed with:
         CONFIG["fast_mode"] = False  # Override fast mode if forced
 
     script_start_time = datetime.now()
-    logger.info("=" * 80)
-    logger.info("TITANIC - OPTIMIZED PARALLEL ANALYSIS")
-    logger.info("=" * 80)
+    print("\n" + "=" * 80)
+    print("TITANIC - OPTIMIZED PARALLEL ANALYSIS")
+    print("=" * 80)
+    print(f"   📍 Diretório de execução (CWD): {os.getcwd()}")
+    if TQDM_AVAILABLE:
+        print("   ✅ Barras de progresso (tqdm): ATIVADAS")
+    else:
+        print("   ⚠️  Barras de progresso (tqdm): DESATIVADAS (Instale 'tqdm' para visualizar)")
 
     # 14. Check library availability and set fast mode (Item 14) - Refined settings
     critical_libs = [XGB_AVAILABLE, LGBM_AVAILABLE]
@@ -481,7 +513,7 @@ Optional dependencies can be installed with:
 
     try:
         # 1. Create necessary directories
-        logger.info("📁 CRIANDO DIRETÓRIOS...")  # noqa
+        print("\n📁 CRIANDO DIRETÓRIOS...")
         start_time = datetime.now()
 
         os.makedirs("output/graficos", exist_ok=True)
@@ -494,11 +526,57 @@ Optional dependencies can be installed with:
             f"   ✅ Diretórios criados em {elapsed.total_seconds():.2f}s"
         )  # noqa
 
-        logger.info("📊 CARREGANDO E VALIDANDO DADOS...")  # noqa
+        print("\n📊 CARREGANDO E VALIDANDO DADOS...")
         start_time = datetime.now()
 
-        train = pd.read_csv("train.csv")
-        test = pd.read_csv("test.csv")
+        # Robust data loading
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        
+        def find_data_file(filename):
+            candidates = [
+                filename,
+                os.path.join("data", "raw", filename),
+                os.path.join(project_root, filename),
+                os.path.join(project_root, "data", "raw", filename),
+            ]
+            for path in candidates:
+                if os.path.exists(path):
+                    print(f"   🔎 Arquivo encontrado: {path}")
+                    return path
+            return None
+
+        train_path = find_data_file("train.csv")
+        test_path = find_data_file("test.csv")
+
+        if not train_path or not test_path:
+            # Gera mensagem de erro detalhada apenas se falhar
+            print("\n" + "!" * 80)
+            print("❌ ERRO CRÍTICO: Arquivos de dados ('train.csv' e/ou 'test.csv') não encontrados!")
+            print("!" * 80)
+            print("\nO script procurou nos seguintes locais (e não encontrou):")
+            
+            # Mostra os caminhos tentados para o train.csv como exemplo
+            candidates_example = [
+                "train.csv",
+                os.path.join("data", "raw", "train.csv"),
+                os.path.join(project_root, "train.csv"),
+                os.path.join(project_root, "data", "raw", "train.csv"),
+            ]
+            for path in candidates_example:
+                print(f"   - {os.path.abspath(path)}")
+            
+            print("\n👉 AÇÃO NECESSÁRIA: Mova os arquivos 'train.csv' e 'test.csv' para a pasta raiz do projeto:")
+            print(f"   📂 {project_root}")
+            print("!" * 80 + "\n")
+            
+            # Loga o erro para o arquivo sem poluir o console novamente (se configurado)
+            logger.error("Falha crítica: Arquivos de dados não encontrados.")
+            return False
+
+        print(f"   📂 Carregando treino de: {train_path}")
+        train = pd.read_csv(train_path)
+        print(f"   📂 Carregando teste de: {test_path}")
+        test = pd.read_csv(test_path)
 
         data_hash = hashlib.md5(
             pd.util.hash_pandas_object(train).values.tobytes()
@@ -558,7 +636,7 @@ Optional dependencies can be installed with:
             f"{elapsed.total_seconds():.2f}s"
         )
 
-        logger.info("🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...")  # noqa
+        print("\n🔧 CRIANDO FEATURES AVANÇADAS COM CACHE...")
         start_time = datetime.now()
 
         feature_engineer = AdvancedFeatureEngineer()
@@ -622,7 +700,7 @@ Optional dependencies can be installed with:
         )
 
         # Process test data similarly
-        logger.info("🔧 Processando features para o conjunto de teste...")
+        print("🔧 Processando features para o conjunto de teste...")
         test_start_time = datetime.now()
 
         cache_key_imputation_test = get_cache_key(data_hash, "imputation_test")
@@ -653,7 +731,7 @@ Optional dependencies can be installed with:
         )
 
         if CONFIG.get("feature_selection", False):
-            logger.info("🎯 SELECIONANDO FEATURES...")  # noqa
+            print("\n🎯 SELECIONANDO FEATURES...")
             start_time = datetime.now()
 
             feature_cols_all = [
@@ -717,7 +795,7 @@ Optional dependencies can be installed with:
         )
 
         # 3.6. Run Smoke Tests (mandatory) # noqa
-        logger.info("🧪 EXECUTANDO SMOKE TESTS...")
+        print("\n🧪 EXECUTANDO SMOKE TESTS...")
         start_time = datetime.now()
         try:
             from output.tests.smoke_tests import run_smoke_tests
@@ -741,8 +819,8 @@ Optional dependencies can be installed with:
                     f"Details: {smoke_results.get('details', 'N/A')}"
                 )
         except ImportError:
-            logger.warning(
-                "   ⚠️  Arquivo smoke_tests.py não encontrado, pulando testes"
+            logger.info(
+                "   ℹ️  Arquivo smoke_tests.py não encontrado, pulando testes"
             )  # noqa
         except Exception as e:
             logger.error(f"   ❌ Erro nos smoke tests: {e}")
@@ -758,7 +836,7 @@ Optional dependencies can be installed with:
                 f"{len(unit_results)} passed - {unit_results}"
             )
 
-        logger.info("📈 GERANDO GRÁFICO EDA...")  # noqa
+        print("\n📈 GERANDO GRÁFICO EDA...")
         start_time = datetime.now()
 
         cache_key_eda = get_cache_key(data_hash, "eda_plot")
@@ -817,7 +895,7 @@ Optional dependencies can be installed with:
             f"{elapsed.total_seconds():.2f}s"
         )
 
-        logger.info("🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...")  # noqa
+        print("\n🤖 TREINANDO MODELOS COM PARALELIZAÇÃO...")
         start_time = datetime.now()
 
         cache_key_models = get_cache_key(data_hash, "model_results")
@@ -841,7 +919,7 @@ Optional dependencies can be installed with:
             logger.info("Resultados dos modelos carregados do cache")
         else:
             # Use ModelingManager for improved parallel processing with timeouts
-            logger.info("   🚀 Iniciando treinamento paralelo com ModelingManager...")
+            print("   🚀 Iniciando treinamento paralelo com ModelingManager...")
 
             # Get model configurations from get_base_models
             model_configs = get_base_models(CONFIG)
@@ -875,7 +953,7 @@ Optional dependencies can be installed with:
                         f"Could not set optuna logging verbosity: {e}"
                     )
 
-                logger.info("🔥 OTIMIZANDO HIPERPARÂMETROS COM OPTUNA...")
+                print("\n🔥 OTIMIZANDO HIPERPARÂMETROS COM OPTUNA...")
                 optuna_start_time = datetime.now()
 
                 models_to_optimize = ["Random Forest", "XGBoost", "LightGBM"]
@@ -904,6 +982,7 @@ Optional dependencies can be installed with:
                                 trial, model_name, X_train_opt, y_train_opt, CONFIG
                             ),
                             n_trials=CONFIG.get("optuna_trials", 30),
+                            show_progress_bar=TQDM_AVAILABLE,
                         )
 
                         df = study.trials_dataframe()
@@ -991,9 +1070,9 @@ Optional dependencies can be installed with:
                     f"{optuna_elapsed.total_seconds():.2f}s"
                 )
             except Exception as e:
-                logger.error(f"❌ Erro na otimização Optuna: {e}", exc_info=True)
+                logger.warning(f"   ⚠️  Erro na otimização Optuna: {e}")
 
-        logger.info("CRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...")
+        print("\nCRIANDO ENSEMBLE E GRÁFICO DE COMPARAÇÃO...")
         start_time = datetime.now()
 
         valid_results = {
@@ -1061,7 +1140,7 @@ Optional dependencies can be installed with:
             }
 
             # Build stacking ensemble (Item 6) # noqa
-            logger.info("🏗️ CRIANDO ENSEMBLE STACKING...")
+            print("🏗️ CRIANDO ENSEMBLE STACKING...")
             stacking = modular_build_stacking_ensemble(
                 ensemble_models, X_train_ensemble, y_train_ensemble
             )
@@ -1100,7 +1179,7 @@ Optional dependencies can be installed with:
         # Systematic Calibration (Item 7) # noqa
         try:
             if CALIBRATED_AVAILABLE and not CONFIG.get("fast_mode", False):
-                logger.info("📊 APLICANDO CALIBRAÇÃO SISTEMÁTICA...")
+                print("\n📊 APLICANDO CALIBRAÇÃO SISTEMÁTICA...")
                 top_models_for_calibration = sorted(
                     [
                         (k, v)
@@ -1115,7 +1194,12 @@ Optional dependencies can be installed with:
                     ("Ensemble_Voting", resultados.get("Ensemble_Voting")),
                     ("Ensemble_Stacking", resultados.get("Ensemble_Stacking")),
                 ]
-                for model_name, perf in top_models_for_calibration:
+                
+                iter_calibration = top_models_for_calibration
+                if TQDM_AVAILABLE:
+                    iter_calibration = tqdm(top_models_for_calibration, desc="   📊 Calibrando", unit="model")
+
+                for model_name, perf in iter_calibration:
                     if perf and perf.get("trained_model") is not None and hasattr(perf["trained_model"], 'predict_proba'):
                         original_model = perf["trained_model"]
                         calibrated_model = CalibratedClassifierCV(
@@ -1168,7 +1252,7 @@ Optional dependencies can be installed with:
                 else:
                     logger.info("   ⚠️  Calibração pulada (libs indisponíveis ou fast_mode)")
         except Exception as e:
-            logger.error(f"❌ Erro na calibração: {e}", exc_info=True)
+            logger.warning(f"   ⚠️  Erro na calibração: {e}")
 
         cache_key_comparison = get_cache_key(data_hash, "comparison_plot")
         comparison_cached = load_cached_result(cache_key_comparison)
@@ -1224,7 +1308,7 @@ Optional dependencies can be installed with:
             f"{elapsed.total_seconds():.2f}s"
         )
 
-        logger.info("GERANDO MATRIZ DE CONFUSÃO...")
+        print("\nGERANDO MATRIZ DE CONFUSÃO...")
         start_time = datetime.now()
 
         best_model_name = max(
@@ -1271,7 +1355,7 @@ Optional dependencies can be installed with:
         )
 
         if SHAP_AVAILABLE and not CONFIG.get("fast_mode", False):
-            logger.info(
+            print(
                 "🧠 GERANDO ANÁLISE DE INTERPRETABILIDADE (SHAP) PARA TOP 3 MODELOS..."
             )  # noqa
             start_time = datetime.now()
@@ -1292,7 +1376,11 @@ Optional dependencies can be installed with:
             )
             X_shap_sample_values = X_shap_sample_df.values.astype(float)
 
-            for model_name, perf in top_3_models:
+            iter_shap = top_3_models
+            if TQDM_AVAILABLE:
+                iter_shap = tqdm(top_3_models, desc="   🧠 Gerando SHAP", unit="model")
+
+            for model_name, perf in iter_shap:
                 model = perf.get("trained_model")
                 if model is None:
                     continue
@@ -1309,7 +1397,7 @@ Optional dependencies can be installed with:
                         ),
                     ):
                         explainer = shap.TreeExplainer(model)
-                        shap_values = explainer.shap_values(X_shap_sample_values)  # noqa
+                        shap_values = explainer.shap_values(X_shap_sample_values, check_additivity=False)  # noqa
                     else:
                         predict_fn = model.predict_proba
                         explainer = shap.KernelExplainer(
@@ -1343,9 +1431,8 @@ Optional dependencies can be installed with:
                     )
 
                 except Exception as e:
-                    logger.error(
-                        f"      ❌ Falha ao gerar SHAP para {model_name}: {e}",
-                        exc_info=True,
+                    logger.warning(
+                        f"      ⚠️  Falha ao gerar SHAP para {model_name}: {e}"
                     )
 
                 # 8.4. Generate SHAP Comparison Plot (Item 6) # noqa
@@ -1370,7 +1457,7 @@ Optional dependencies can be installed with:
                             top_3_tree_models, X_train_shap, feature_names_out
                         )
                     except Exception as e:
-                        logger.error(f"Erro ao gerar comparação SHAP: {e}")
+                        logger.warning(f"   ⚠️  Erro ao gerar comparação SHAP: {e}")
 
                 logger.info(
                     f"   Análise SHAP concluída em "
@@ -1379,13 +1466,18 @@ Optional dependencies can be installed with:
 
             # 8.5. Generate Permutation Importance (Item 8) # noqa
             if not CONFIG.get("fast_mode", False):
-                logger.info("🔄 GERANDO IMPORTÂNCIA DE PERMUTAÇÃO...")
+                print("\n🔄 GERANDO IMPORTÂNCIA DE PERMUTAÇÃO...")
                 start_time = datetime.now()
 
                 top_3_models = sorted(
                     valid_results.items(), key=lambda x: x[1]["mean_score"], reverse=True
                 )[:3]
-                for model_name, perf in top_3_models:
+                
+                iter_perm = top_3_models
+                if TQDM_AVAILABLE:
+                    iter_perm = tqdm(top_3_models, desc="   🔄 Permutation Importance", unit="model")
+
+                for model_name, perf in iter_perm:
                     model = perf.get("trained_model")
                     if model is not None:
                         logger.info(f"   Gerando permutação para {model_name}...")
@@ -1399,7 +1491,7 @@ Optional dependencies can be installed with:
                                 model_name=model_name,
                             )
                         except Exception as e:
-                            logger.error(f"Erro ao gerar importância de permutação para {model_name}: {e}")
+                            logger.warning(f"   ⚠️  Erro ao gerar importância de permutação para {model_name}: {e}")
 
                 elapsed = datetime.now() - start_time
                 logger.info(
@@ -1408,7 +1500,7 @@ Optional dependencies can be installed with:
 
             # 8.6. Generate Calibration Plots (Item 7) # noqa
             if not CONFIG.get("fast_mode", False):
-                logger.info("📊 GERANDO GRÁFICOS DE CALIBRAÇÃO...")
+                print("\n📊 GERANDO GRÁFICOS DE CALIBRAÇÃO...")
                 start_time = datetime.now()
 
                 if best_model is not None:
@@ -1417,7 +1509,7 @@ Optional dependencies can be installed with:
                             best_model, X_train_shap, y_train, best_model_name
                         )
                     except Exception as e:
-                        logger.error(f"Erro ao gerar gráficos de calibração: {e}")
+                        logger.warning(f"   ⚠️  Erro ao gerar gráficos de calibração: {e}")
 
                 elapsed = datetime.now() - start_time
                 logger.info(
@@ -1429,7 +1521,7 @@ Optional dependencies can be installed with:
                 modular_generate_model_performance_timeline(resultados)
 
         # 8. Generate final predictions # noqa
-        logger.info("GERANDO PREDIÇÕES FINAIS...")
+        print("\nGERANDO PREDIÇÕES FINAIS...")
         start_time = datetime.now()
 
         final_model = resultados.get("Ensemble_Stacking", {}).get("trained_model")
@@ -1451,7 +1543,7 @@ Optional dependencies can be installed with:
         )
         submission_path = "output/submission_titanic_final.csv"
         submission.to_csv(submission_path, index=False)
-        logger.info(f"   ✅ Submission gerada e salva em: {submission_path}")
+        print(f"   ✅ Submission gerada e salva em: {submission_path}")
 
         # A função `improved_generate_submission` foi integrada aqui para usar o X_test_processed
         # e o preprocessor já ajustado, eliminando a necessidade de reprocessar os dados
@@ -1471,6 +1563,15 @@ Optional dependencies can be installed with:
         )  # Corrected start time reference
         save_timing_report(script_total_time, resultados)
         modular_generate_reports(resultados, feature_cols, X_train_processed, y_train)
+
+        # Renomear relatório para evitar confusão com o Relatório Executivo final
+        relatorio_orig = "output/relatorios/RELATORIO_FINAL_TITANIC.md"
+        relatorio_dest = "output/relatorios/parcial_pipeline_avancado.md"
+        if os.path.exists(relatorio_orig):
+            if os.path.exists(relatorio_dest):
+                os.remove(relatorio_dest)
+            os.rename(relatorio_orig, relatorio_dest)
+            print(f"   📄 Relatório técnico salvo como parcial: {relatorio_dest}")
 
         modular_generate_changelog_and_manifest(
             feature_cols, resultados, script_total_time
@@ -1493,27 +1594,28 @@ Optional dependencies can be installed with:
         logger.info(f"Best model '{best_model_name}' saved separately")
 
         # 10. Final verification
-        logger.info("VERIFICANDO ARQUIVOS GERADOS...")
+        print("\nVERIFICANDO ARQUIVOS GERADOS...")
         arquivos_esperados = [
             "output/submission_titanic_final.csv",
             "output/graficos/01_eda_completa.png",
             "output/graficos/02_comparacao_modelos.png",
             "output/graficos/03_matriz_confusao.png",
-            "output/relatorios/RELATORIO_FINAL_TITANIC.md",
+            "output/relatorios/parcial_pipeline_avancado.md",
             "output/relatorios/resultados_modelos.csv",
         ]
         arquivos_encontrados = sum(
             1 for arquivo in arquivos_esperados if os.path.exists(arquivo)
         )
         logger.info(
-            f"Resumo: {arquivos_encontrados}/{len(arquivos_esperados)} arquivos gerados"
+            f"Resumo: {arquivos_encontrados}/{len(arquivos_esperados)} arquivos gerados (Ver log para detalhes)"
         )
 
         if arquivos_encontrados >= 5:
-            logger.info("SUCESSO TOTAL! TODOS OS ARQUIVOS GERADOS!")
+            print("SUCESSO TOTAL! TODOS OS ARQUIVOS GERADOS!")
         else:
             logger.error("Alguns arquivos não foram gerados corretamente.")
 
+        print(f"\n📄 Log completo da execução disponível em: {os.path.abspath('titanic_ml.log')}")
         return True
 
     except Exception:
@@ -1569,4 +1671,5 @@ def run_unit_tests():
 # =============================================================================
 
 if __name__ == "__main__":
-    main()  # Chama a função principal unificada
+    if not main():
+        sys.exit(1)

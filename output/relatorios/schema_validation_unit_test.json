@@ -1,0 +1,21 @@
+{
+  "dataset_name": "unit_test",
+  "timestamp": "2026-01-25T22:02:58.226637",
+  "total_rows": 2,
+  "total_columns": 2,
+  "expected_columns": [
+    "A",
+    "B"
+  ],
+  "actual_columns": [
+    "A",
+    "B"
+  ],
+  "missing_columns": [],
+  "extra_columns": [],
+  "is_valid": true,
+  "data_types": {
+    "A": "int64",
+    "B": "int64"
+  }
+}
