@@ -1,6 +1,6 @@
 {
-  "total_time_seconds": 315.08398,
-  "features_count": 26,
-  "models_count": 22,
-  "best_score": 0.8215488215488215
+  "total_time_seconds": 120.0,
+  "features_count": 23,
+  "models_count": 2,
+  "best_score": 0.85
 }

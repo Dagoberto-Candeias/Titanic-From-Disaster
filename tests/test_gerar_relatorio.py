@@ -1,8 +1,10 @@
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock, mock_open
 import pandas as pd
 import numpy as np
 import pytest
+import sys
 import os
+from sklearn.tree import DecisionTreeClassifier
 
 # Adiciona o diretório 'src' ao path para importar os módulos do projeto
 SRC_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'src')
@@ -89,49 +91,43 @@ class TestGerarRelatorio:
         # Verifica se o savefig foi chamado (pelo menos uma vez por gráfico)
         assert mock_savefig.called
 
-    @patch('gerar_relatorio_titanic.plot_tree')
-    @patch('gerar_relatorio_titanic.shutil.copy2')
-    @patch('gerar_relatorio_titanic.cross_validate')
-    @patch('gerar_relatorio_titanic.permutation_importance')
-    @patch('sklearn.model_selection.GridSearchCV')
-    @patch('gerar_relatorio_titanic.pickle.dump')
-    @patch('gerar_relatorio_titanic.plt.savefig')
-    @patch('gerar_relatorio_titanic.plt.close')
-    @patch('gerar_relatorio_titanic.os.makedirs')
-    def test_treinar_modelo_baseline(self, mock_makedirs, mock_close, mock_savefig, mock_pickle_dump, mock_grid_search, mock_perm_imp, mock_cross_val, mock_copy2, mock_plot_tree, sample_df):
-        mock_copy2.return_value = None
-        mock_plot_tree.return_value = None
+    def test_treinar_modelo_baseline(self, mocker, sample_df):
         """Testa o treinamento do modelo baseline."""
+        mocker.patch('gerar_relatorio_titanic.os.makedirs')
+        mocker.patch('gerar_relatorio_titanic.plt.close')
+        mocker.patch('gerar_relatorio_titanic.plt.savefig')
+        mock_pickle_dump = mocker.patch('gerar_relatorio_titanic.pickle.dump')
+        mocker.patch('gerar_relatorio_titanic.shutil.copy2', return_value=None)
+        mocker.patch('gerar_relatorio_titanic.plot_tree')
+
+        mock_tree = MagicMock(spec=DecisionTreeClassifier)
 
         mock_estimator = MagicMock()
         mock_estimator.predict.side_effect = lambda *args, **kwargs: np.array([0, 1, 0, 1, 0, 1])
         mock_estimator.predict_proba.side_effect = lambda *args, **kwargs: np.array(
             [[0.6, 0.4], [0.3, 0.7], [0.8, 0.2], [0.2, 0.8], [0.9, 0.1], [0.1, 0.9]])
         mock_estimator.feature_importances_ = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.05])
-        from sklearn.tree import DecisionTreeClassifier
-        mock_tree = MagicMock(spec=DecisionTreeClassifier)
+
         # Make it appear fitted by setting required attributes
         mock_tree.tree_ = MagicMock()
         mock_tree.criterion = 'gini'
         mock_tree.feature_importances_ = np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.05])
         mock_estimator.estimators_ = [mock_tree]
-        mock_grid_search.return_value.fit.return_value = None  # Garante que o fit não faça nada
-        mock_grid_search.return_value.best_estimator_ = mock_estimator  # Define o mock_estimator como o "melhor"
-        mock_grid_search.return_value.best_params_ = {'n_estimators': 100, 'max_depth': 10}
-        mock_cross_val.return_value = {'test_score': np.array([0.8, 0.85, 0.82, 0.87, 0.83])}
+
+        mock_grid_search = mocker.patch('gerar_relatorio_titanic.GridSearchCV', return_value=MagicMock(fit=MagicMock(), best_estimator_=mock_estimator, best_params_={'n_estimators': 100, 'max_depth': 10}))
+        mock_perm_imp = mocker.patch('gerar_relatorio_titanic.permutation_importance', return_value=MagicMock(importances_mean=np.array([0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 0.05])))
+
+        mock_cross_val = mocker.patch('gerar_relatorio_titanic.cross_validate', return_value={'test_score': np.array([0.8, 0.85, 0.82, 0.87, 0.83])})
 
         # Usa um subset menor para ser mais rápido
         small_df = sample_df.head(20).copy()
 
-
         # Mock open para não criar arquivos reais
-        with patch('builtins.open', unittest.mock.mock_open()):
+        with patch('builtins.open', mock_open()):
             results = gerar_relatorio_titanic.treinar_modelo_baseline(small_df)
 
         assert isinstance(results, dict)
         assert 'ml' in results
-
-        # assert 'imgs' in results # removido para rodar local
 
         # Verifica se métricas foram calculadas
         assert 'acc' in results['ml']
