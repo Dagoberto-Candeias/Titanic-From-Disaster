@@ -41,14 +41,20 @@ class TitanicPipeline:
     and evaluation.
     """
 
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
-        """
-        Initialize the Titanic pipeline.
+    def __init__(
+        self,
+        config: Optional[Dict[str, Any]] = None,
+        config_override: Optional[Dict[str, Any]] = None,
+    ):
+        """Initialize the Titanic pipeline.
 
         Args:
             config: Configuration dictionary. If None, uses DEFAULT_CONFIG.
+            config_override: Configuration overrides to merge with config.
         """
         self.config = config or CONFIG.copy()
+        if config_override:
+            self.config.update(config_override)
         self.modeling_manager = ModelingManager(self.config)
         self.is_fitted = False
         logger.info("TitanicPipeline initialized")
