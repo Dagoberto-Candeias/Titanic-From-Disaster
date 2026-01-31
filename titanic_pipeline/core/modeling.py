@@ -1,6 +1,7 @@
-"""
-Modeling manager for Titanic ML Pipeline.
-Enhanced with parallel processing, memory optimization, and performance monitoring.
+"""Modeling manager for Titanic ML Pipeline.
+
+Enhanced with parallel processing, memory optimization, and
+performance monitoring.
 """
 
 import logging
@@ -65,18 +66,42 @@ from sklearn.discriminant_analysis import (
     QuadraticDiscriminantAnalysis,
 )
 from sklearn.pipeline import Pipeline
-import pickle
+
 try:
     import joblib
     SERIALIZER = joblib
 except ImportError:
     import pickle
     SERIALIZER = pickle
+
 import os
 
 from ..utils import ParallelProcessor
 
 logger = logging.getLogger(__name__)
+
+
+def train_model(model, X_train, y_train):
+    """Train a model."""
+    model.fit(X_train, y_train)
+    return model
+
+
+def evaluate_model(model, X_test, y_test):
+    """Evaluate a model."""
+    from sklearn.metrics import accuracy_score
+    predictions = model.predict(X_test)
+    return accuracy_score(y_test, predictions)
+
+
+def save_model(model, filepath):
+    """Save a model."""
+    SERIALIZER.dump(model, filepath)
+
+
+def load_model(filepath):
+    """Load a model."""
+    return SERIALIZER.load(filepath)
 
 
 # Models that don't accept random_state parameter
@@ -101,13 +126,14 @@ class ModelingManager:
         self.config = config
         self.model_configs = model_configs or {}
         self.pre_configured_models = pre_configured_models or {}
-        self.parallel_processor = ParallelProcessor(max_workers=config["parallel_jobs"])
+        self.parallel_processor = ParallelProcessor(
+            max_workers=config["parallel_jobs"]
+        )
 
     def train_all_models(
         self, X_train: np.ndarray, y_train: np.ndarray
     ) -> Dict[str, Any]:
-        """
-        Train all configured models sequentially to avoid pickling issues on Windows.
+        """Train all models sequentially to avoid pickling issues on Windows.
 
         Args:
             X_train: Training features
@@ -116,7 +142,8 @@ class ModelingManager:
         Returns:
             Dictionary with model results
         """
-        logger.info("   🔄 Training models sequentially to avoid pickling issues...")
+        msg = "   🔄 Training models sequentially to avoid pickling issues..."
+        logger.info(msg)
 
         # Get available models
         available_models = self._get_available_models()
@@ -142,9 +169,11 @@ class ModelingManager:
                         ),
                         n_trials=self.config.get("optuna_trials", 10),
                     )
-                    logger.info(
-                        f"   ✅ Best params for {model_name}: {study.best_params}"
+                    best_msg = (
+                        f"   ✅ Best params for {model_name}: "
+                        f"{study.best_params}"
                     )
+                    logger.info(best_msg)
 
                     # Update model config with best params
                     if model_name not in self.model_configs:
@@ -158,31 +187,45 @@ class ModelingManager:
 
                         # Optimization history
                         try:
-                            fig = optuna.visualization.plot_optimization_history(study)
-                            fig.write_image(f"{optuna_dir}/history_{model_name}.png")
-                        except Exception as e:
-                            logger.warning(
-                                f"   ⚠️  Could not save Optuna history plot (check kaleido): {e}"
+                            fig = (
+                                optuna.visualization
+                                .plot_optimization_history(study)
                             )
+                            fname = f"{optuna_dir}/history_{model_name}.png"
+                            fig.write_image(fname)
+                        except OSError as e:
+                            msg = (
+                                f"   ⚠️  Could not save Optuna history plot "
+                                f"(check kaleido): {e}"
+                            )
+                            logger.warning(msg)
 
                         # Parameter importance
                         try:
-                            fig = optuna.visualization.plot_param_importances(study)
-                            fig.write_image(f"{optuna_dir}/importance_{model_name}.png")
-                        except Exception as e:
-                            logger.warning(
-                                f"   ⚠️  Could not save Optuna importance plot: {e}"
+                            fig = (
+                                optuna.visualization
+                                .plot_param_importances(study)
                             )
+                            fname = f"{optuna_dir}/importance_{model_name}.png"
+                            fig.write_image(fname)
+                        except OSError as e:
+                            msg = (
+                                f"   ⚠️  Could not save Optuna importance "
+                                f"plot: {e}"
+                            )
+                            logger.warning(msg)
 
-                    except Exception as e:
-                        logger.warning(f"   ⚠️  Optuna plotting setup failed: {e}")
+                    except (ImportError, OSError, AttributeError) as e:
+                        msg = f"   ⚠️  Optuna plotting setup failed: {e}"
+                        logger.warning(msg)
 
                 result = self._train_single_model(
                     model_name, model_class, X_train, y_train
                 )
                 results[model_name] = result
-                logger.info(f"   ✅ {model_name} trained: {result['mean_score']:.4f}")
-            except Exception as e:
+                score = result['mean_score']
+                logger.info(f"   ✅ {model_name} trained: {score:.4f}")
+            except (ValueError, RuntimeError, AttributeError) as e:
                 logger.error(f"   ❌ {model_name} training failed: {e}")
 
         return results
@@ -199,13 +242,15 @@ class ModelingManager:
             # Use pre-configured model if available
             if model_name in self.pre_configured_models:
                 model = self.pre_configured_models[model_name]
-                logger.info(f"   📋 Using pre-configured model for {model_name}")
+                msg = f"   📋 Using pre-configured model for {model_name}"
+                logger.info(msg)
             else:
                 # Create model instance with optimized parameters
                 if model_name in self.model_configs:
                     model_params = self.model_configs[model_name].copy()
 
-                    # SAFETY CHECK: Remove random_state for models that don't support it
+                    # SAFETY CHECK: Remove random_state for models that
+                    # don't support it
                     if (
                         model_name in NO_RANDOM_STATE_MODELS
                         and "random_state" in model_params
@@ -214,21 +259,24 @@ class ModelingManager:
 
                     # Add performance optimizations for slow models
                     if model_name in ["SVC", "KNeighbors"]:
-                        model_params.update(
-                            {
-                                "max_iter": (10000 if model_name == "SVC" else None),
-                                "n_jobs": (
-                                    1 if model_name == "KNeighbors" else None
-                                ),  # Set to 1 for safety
-                            }
+                        max_iter_val = (
+                            10000 if model_name == "SVC" else None
                         )
+                        n_jobs_val = (
+                            1 if model_name == "KNeighbors" else None
+                        )
+                        model_params.update({
+                            "max_iter": max_iter_val,
+                            "n_jobs": n_jobs_val,  # Set to 1 for safety
+                        })
                     model = model_class(**model_params)
                 else:
                     # Get default parameters for the model
                     default_params = self._get_model_default_params(model_name)
                     model = model_class(**default_params)
 
-            # Convert sparse matrix to dense for models that don't support sparse input
+            # Convert sparse matrix to dense for models that don't
+            # support sparse input
             if model_name in [
                 "GaussianNB",
                 "LinearDiscriminantAnalysis",
@@ -261,7 +309,7 @@ class ModelingManager:
 
             return result
 
-        except Exception as e:
+        except (ValueError, RuntimeError, TypeError) as e:
             logger.error(f"   ❌ Error training {model_name}: {e}")
             # Return failed result instead of raising exception
             result = {
@@ -300,13 +348,16 @@ class ModelingManager:
         for model_name, result in model_results.items():
             if result.get("trained_model") is not None:
                 model = result["trained_model"]
-                # Only include models with predict_proba for soft voting ensemble
+                # Only include models with predict_proba for soft voting
+                # ensemble
                 if hasattr(model, "predict_proba"):
                     base_models.append((model_name, model))
                 else:
-                    logger.warning(
-                        f"   ⚠️  Excluding {model_name} from VotingEnsemble (no predict_proba)"
+                    msg = (
+                        f"   ⚠️  Excluding {model_name} from VotingEnsemble "
+                        f"(no predict_proba)"
                     )
+                    logger.warning(msg)
 
         if len(base_models) < 3:
             logger.warning(
@@ -319,9 +370,11 @@ class ModelingManager:
         # Models like GaussianNB fail with sparse input.
         X_train_ensemble = X_train
         if hasattr(X_train, "toarray"):
-            logger.info(
-                "   🔄 Converting sparse matrix to dense for Ensemble training..."
+            msg = (
+                "   🔄 Converting sparse matrix to dense for Ensemble "
+                "training..."
             )
+            logger.info(msg)
             X_train_ensemble = X_train.toarray()
 
         try:
@@ -381,8 +434,9 @@ class ModelingManager:
                 "model_name": "StackingEnsemble",
             }
 
-            logger.info(f"   ✅ Stacking Ensemble: {stacking_scores.mean():.4f}")
-        except Exception as e:
+            score = stacking_scores.mean()
+            logger.info(f"   ✅ Stacking Ensemble: {score:.4f}")
+        except (ValueError, RuntimeError, AttributeError) as e:
             logger.error(f"   ❌ Ensemble creation failed: {e}")
 
         return ensemble_results
@@ -559,11 +613,17 @@ def get_base_models(config):
         "SGD Classifier": SGDClassifier(
             random_state=config["random_state"], max_iter=1000, loss="log_loss"
         ),
-        "Ridge Classifier": RidgeClassifier(random_state=config["random_state"]),
+        "Ridge Classifier": RidgeClassifier(
+            random_state=config["random_state"]
+        ),
         "SVC": SVC(probability=True, random_state=config["random_state"]),
-        "Linear SVC": LinearSVC(random_state=config["random_state"], max_iter=10000),
+        "Linear SVC": LinearSVC(
+            random_state=config["random_state"], max_iter=10000
+        ),
         "KNN": KNeighborsClassifier(),
-        "Decision Tree": DecisionTreeClassifier(random_state=config["random_state"]),
+        "Decision Tree": DecisionTreeClassifier(
+            random_state=config["random_state"]
+        ),
         "Gaussian NB": GaussianNB(),
         "Bernoulli NB": BernoulliNB(),
         "LDA": LinearDiscriminantAnalysis(),
@@ -589,49 +649,71 @@ def objective(trial, model_name, X, y, config):
         params = {
             "n_estimators": trial.suggest_int("n_estimators", 50, 300),
             "max_depth": trial.suggest_int("max_depth", 3, 20),
-            "min_samples_split": trial.suggest_int("min_samples_split", 2, 20),
-            "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 10),
+            "min_samples_split": trial.suggest_int(
+                "min_samples_split", 2, 20
+            ),
+            "min_samples_leaf": trial.suggest_int(
+                "min_samples_leaf", 1, 10
+            ),
             "max_features": trial.suggest_categorical(
                 "max_features", ["sqrt", "log2", None]
             ),
         }
-        model = RandomForestClassifier(**params, random_state=config["random_state"])
+        model = RandomForestClassifier(
+            **params, random_state=config["random_state"]
+        )
     elif model_name == "XGBoost":
         params = {
             "n_estimators": trial.suggest_int("n_estimators", 50, 300),
             "max_depth": trial.suggest_int("max_depth", 3, 10),
-            "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3),
+            "learning_rate": trial.suggest_float(
+                "learning_rate", 0.01, 0.3
+            ),
             "subsample": trial.suggest_float("subsample", 0.5, 1.0),
-            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.5, 1.0),
+            "colsample_bytree": trial.suggest_float(
+                "colsample_bytree", 0.5, 1.0
+            ),
         }
         model = XGBClassifier(**params, random_state=config["random_state"])
     elif model_name == "LightGBM":
         params = {
             "n_estimators": trial.suggest_int("n_estimators", 50, 300),
             "max_depth": trial.suggest_int("max_depth", 3, 10),
-            "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3),
+            "learning_rate": trial.suggest_float(
+                "learning_rate", 0.01, 0.3
+            ),
             "subsample": trial.suggest_float("subsample", 0.5, 1.0),
-            "colsample_bytree": trial.suggest_float("colsample_bytree", 0.5, 1.0),
+            "colsample_bytree": trial.suggest_float(
+                "colsample_bytree", 0.5, 1.0
+            ),
         }
-        model = LGBMClassifier(**params, random_state=config["random_state"])
+        model = LGBMClassifier(
+            **params, random_state=config["random_state"]
+        )
     else:
         raise ValueError(f"Unsupported model: {model_name}")
 
-    scores = cross_val_score(model, X, y, cv=config["cv_folds"], scoring="accuracy")
+    scores = cross_val_score(
+        model, X, y, cv=config["cv_folds"], scoring="accuracy"
+    )
     return scores.mean()
 
 
 def save_model_pipeline(preprocessor, model, filepath):
     """Save preprocessor and model as a pipeline."""
-    pipeline = Pipeline([("preprocessor", preprocessor), ("model", model)])
-    # Use joblib for better sklearn compatibility if available, otherwise pickle
+    pipeline = Pipeline(
+        [("preprocessor", preprocessor), ("model", model)]
+    )
+    # Use joblib for better sklearn compatibility if available,
+    # otherwise pickle
     SERIALIZER.dump(pipeline, filepath)
     logger.info(f"Pipeline saved to {filepath}")
 
 
-def load_and_predict(pipeline_path: str, test_data: pd.DataFrame) -> np.ndarray:
-    """
-    Load a saved pipeline and make predictions on test data.
+def load_and_predict(
+    pipeline_path: str, test_data: pd.DataFrame
+) -> np.ndarray:
+    """Load a saved pipeline and make predictions on test data.
 
     Args:
         pipeline_path: Path to the saved pipeline pickle file
@@ -644,17 +726,31 @@ def load_and_predict(pipeline_path: str, test_data: pd.DataFrame) -> np.ndarray:
         # Try loading with the primary serializer first (joblib if available)
         try:
             pipeline = SERIALIZER.load(pipeline_path)
-            logger.info(f"Pipeline loaded from {pipeline_path} using {SERIALIZER.__name__}")
+            serializer_name = SERIALIZER.__name__
+            logger.info(
+                f"Pipeline loaded from {pipeline_path} using {serializer_name}"
+            )
         except Exception:
             # Fallback to pickle for backward compatibility with existing files
-            logger.warning(f"Failed to load with {SERIALIZER.__name__}, trying pickle fallback...")
+            msg = (
+                f"Failed to load with {SERIALIZER.__name__}, "
+                f"trying pickle fallback..."
+            )
+            logger.warning(msg)
             with open(pipeline_path, "rb") as f:
                 pipeline = pickle.load(f)
-            logger.info(f"Pipeline loaded from {pipeline_path} using pickle fallback")
+            logger.info(
+                f"Pipeline loaded from {pipeline_path} using pickle fallback"
+            )
 
         # Verify it has a predict method
         if not hasattr(pipeline, "predict"):
-            raise TypeError(f"Loaded object is not a valid model/pipeline (type: {type(pipeline)}). It lacks a 'predict' method.")
+            msg = (
+                f"Loaded object is not a valid model/pipeline "
+                f"(type: {type(pipeline)}). "
+                f"It lacks a 'predict' method."
+            )
+            raise TypeError(msg)
 
         # Make predictions
         predictions = pipeline.predict(test_data)
