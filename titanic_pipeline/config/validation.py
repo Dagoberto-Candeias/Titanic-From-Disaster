@@ -15,13 +15,14 @@ from .default import (
 class ConfigManager:
     """Manages configuration loading, validation, and merging."""
 
-    def __init__(self):
+    def __init__(self, config_override: Optional[Dict[str, Any]] = None):
         self.config = {}
         self.logging_config = {}
         self.train_schema = {}
         self.test_schema = {}
+        self.load_config(config_override)
 
-    def load_config(self) -> Dict[str, Any]:
+    def load_config(self, config_override: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Load and merge configuration from defaults and external file."""
         # Start with defaults
         self.config = DEFAULT_CONFIG.copy()
@@ -31,21 +32,30 @@ class ConfigManager:
 
         # Try to load external config
         try:
-            from config import CONFIG as IMPORTED_CONFIG
-            from config import EXPECTED_TRAIN_SCHEMA as IMPORTED_TRAIN_SCHEMA
-            from config import EXPECTED_TEST_SCHEMA as IMPORTED_TEST_SCHEMA
-            from config import LOGGING_CONFIG as IMPORTED_LOGGING_CONFIG
+            # Tenta importar de src.config se disponível no path
+            import sys
+            if 'src' not in sys.modules:
+                try:
+                    from src.config import CONFIG as IMPORTED_CONFIG
+                    from src.config import EXPECTED_TRAIN_SCHEMA as IMPORTED_TRAIN_SCHEMA
+                    from src.config import EXPECTED_TEST_SCHEMA as IMPORTED_TEST_SCHEMA
+                    from src.config import LOGGING_CONFIG as IMPORTED_LOGGING_CONFIG
+                    
+                    # Merge configurations
+                    self.config.update(IMPORTED_CONFIG)
+                    self.train_schema.update(IMPORTED_TRAIN_SCHEMA)
+                    self.test_schema.update(IMPORTED_TEST_SCHEMA)
+                    self.logging_config.update(IMPORTED_LOGGING_CONFIG)
+                    logging.info("✅ External configuration loaded successfully from src.config")
+                except ImportError:
+                    pass
+        except Exception as e:
+            logging.warning(f"⚠️  External config load skipped: {e}")
 
-            # Merge configurations
-            self.config.update(IMPORTED_CONFIG)
-            self.train_schema.update(IMPORTED_TRAIN_SCHEMA)
-            self.test_schema.update(IMPORTED_TEST_SCHEMA)
-            self.logging_config.update(IMPORTED_LOGGING_CONFIG)
-
-            logging.info("✅ External configuration loaded successfully")
-
-        except ImportError:
-            logging.warning("⚠️  External config not found, using defaults")
+        # Apply runtime overrides
+        if config_override:
+            self.config.update(config_override)
+            logging.info(f"🔧 Configuration overridden: {config_override}")
 
         # Apply platform-specific adjustments
         self._apply_platform_adjustments()
@@ -58,6 +68,17 @@ class ConfigManager:
             "logging_config": self.logging_config,
             "train_schema": self.train_schema,
             "test_schema": self.test_schema,
+        }
+
+    def get_config(self) -> Dict[str, Any]:
+        """Returns the current configuration dictionary."""
+        return self.config
+
+    def get_schemas(self) -> Dict[str, Any]:
+        """Returns the data schemas."""
+        return {
+            "train": self.train_schema,
+            "test": self.test_schema
         }
 
     def _apply_platform_adjustments(self):

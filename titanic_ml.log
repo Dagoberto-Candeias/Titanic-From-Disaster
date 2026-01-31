@@ -5486,3 +5486,1357 @@ FileNotFoundError: [Errno 2] No such file or directory: 'train.csv'
 2026-01-25 22:09:21,154 - titanic_pipeline.core.modeling - INFO - Pipeline saved to output/models/best_model_pipeline.pkl
 2026-01-25 22:09:21,189 - __main__ - INFO - Best model 'Ensemble_Voting' saved separately
 2026-01-25 22:09:21,190 - __main__ - INFO - Resumo: 5/6 arquivos gerados (Ver log para detalhes)
+2026-01-27 15:08:07,512 - __main__ - INFO - ⚡ FAST MODE ENABLED - Skipping heavy computations
+2026-01-27 15:08:07,513 - __main__ - INFO -    ✅ Diretórios criados em 0.00s
+2026-01-27 15:08:07,533 - __main__ - INFO -    ✅ Config salvo em output/relatorios/config_used.json
+2026-01-27 15:08:07,533 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-27 15:08:07,544 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-27 15:08:07,545 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-27 15:08:07,545 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-27 15:08:07,548 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-27 15:08:07,548 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-27 15:08:07,550 - __main__ - INFO - 🔄 DETECTADO DESBALANCEAMENTO DE CLASSES: Razão 1.61 > 1.5 (Maioria: 549, Minoria: 342). Ativando balanceamento automático.
+2026-01-27 15:08:07,553 - __main__ - INFO -    📝 Estatísticas de balanceamento salvas
+2026-01-27 15:08:07,554 - __main__ - INFO -    ✅ Dados carregados e validados: Train=(891, 12), Test=(418, 11) em 0.04s
+2026-01-27 15:08:07,557 - __main__ - INFO -    💾 Imputação de treino processada e cached
+2026-01-27 15:08:07,560 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-27 15:08:07,568 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-27 15:08:07,574 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-27 15:08:07,579 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-27 15:08:07,607 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-27 15:08:07,608 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-27 15:08:07,659 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-27 15:08:07,663 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-27 15:08:07,664 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-27 15:08:07,701 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-27 15:08:07,704 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-27 15:08:07,704 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-27 15:08:07,729 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-27 15:08:07,731 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-27 15:08:07,731 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-27 15:08:07,759 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-27 15:08:07,761 - __main__ - INFO -    💾 Features de treino processadas e cached
+2026-01-27 15:08:07,764 - __main__ - INFO -    📝 Changelog de features salvo
+2026-01-27 15:08:07,764 - __main__ - INFO -    ✅ Features avançadas criadas: 32 colunas em 0.21s
+2026-01-27 15:08:07,767 - __main__ - INFO -    💾 Imputação de teste processada e cached
+2026-01-27 15:08:07,770 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-27 15:08:07,773 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-27 15:08:07,777 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-27 15:08:07,780 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-27 15:08:07,797 - __main__ - INFO -    💾 Features de teste processadas e cached
+2026-01-27 15:08:07,797 - __main__ - INFO -    ✅ Teste processado em 0.03s
+2026-01-27 15:08:07,810 - __main__ - INFO -    🎯 Executando seleção de features (SelectFromModel)...
+2026-01-27 15:08:08,084 - __main__ - INFO -    ✅ Features selecionadas: 43/85
+2026-01-27 15:08:08,085 - __main__ - INFO -    ✅ Selecionadas 14/26 features
+2026-01-27 15:08:08,085 - __main__ - INFO -    Feature selection concluída em 0.29s
+2026-01-27 15:08:08,087 - __main__ - INFO -    ℹ️  Arquivo smoke_tests.py não encontrado, pulando testes
+2026-01-27 15:08:08,087 - __main__ - INFO -    Smoke tests concluídos em 0.00s
+2026-01-27 15:08:08,088 - __main__ - INFO - 🧪 EXECUTANDO UNIT TESTS...
+2026-01-27 15:08:08,088 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test
+2026-01-27 15:08:08,090 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test: 2 linhas, 2 colunas
+2026-01-27 15:08:08,091 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test.json
+2026-01-27 15:08:08,092 - titanic_pipeline.core.preprocessing - INFO - Categorical features: []
+2026-01-27 15:08:08,092 - titanic_pipeline.core.preprocessing - INFO - Numerical features: ['A', 'B']
+2026-01-27 15:08:08,137 - __main__ - INFO - Unit tests: 3/3 passed - {'validate_data_schema': True, 'preprocess_data': True, 'train_single_model': True}
+2026-01-27 15:08:10,073 - __main__ - INFO -    ✅ Gráfico EDA salvo: output/graficos/01_eda_completa.png em 1.94s
+2026-01-27 15:08:10,074 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 25
+2026-01-27 15:08:10,075 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Title_te', 'feat_TicketPrefix_te', 'feat_Deck_te', 'feat_Embarked_te']
+2026-01-27 15:08:10,076 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['feat_Cabin_missing']
+2026-01-27 15:08:10,076 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-27 15:08:10,104 - titanic_pipeline.core.modeling - INFO -    🔄 Training models sequentially to avoid pickling issues...
+2026-01-27 15:08:10,104 - titanic_pipeline.core.modeling - INFO -    📊 Available models: ['RandomForest', 'LogisticRegression', 'SVC', 'KNeighbors', 'GaussianNB', 'MLPClassifier', 'GradientBoosting', 'ExtraTrees', 'AdaBoost', 'Bagging', 'SGDClassifier', 'RidgeClassifier', 'LinearSVC', 'DecisionTree', 'BernoulliNB', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'XGBoost', 'LightGBM', 'CatBoost']
+2026-01-27 15:08:11,247 - titanic_pipeline.core.modeling - INFO -    ✅ RandomForest trained: 0.8058
+2026-01-27 15:08:11,292 - titanic_pipeline.core.modeling - INFO -    ✅ LogisticRegression trained: 0.8081
+2026-01-27 15:08:11,293 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training SVC: 'SVC' object has no attribute 'update'
+2026-01-27 15:08:11,294 - titanic_pipeline.core.modeling - INFO -    ✅ SVC trained: 0.0000
+2026-01-27 15:08:11,411 - titanic_pipeline.core.modeling - INFO -    ✅ KNeighbors trained: 0.7868
+2026-01-27 15:08:11,430 - titanic_pipeline.core.modeling - INFO -    ✅ GaussianNB trained: 0.7172
+2026-01-27 15:08:11,962 - titanic_pipeline.core.modeling - INFO -    ✅ MLPClassifier trained: 0.7901
+2026-01-27 15:08:13,060 - titanic_pipeline.core.modeling - INFO -    ✅ GradientBoosting trained: 0.8081
+2026-01-27 15:08:13,929 - titanic_pipeline.core.modeling - INFO -    ✅ ExtraTrees trained: 0.7980
+2026-01-27 15:08:13,929 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training AdaBoost: sklearn.ensemble._weight_boosting.AdaBoostClassifier() argument after ** must be a mapping, not AdaBoostClassifier
+2026-01-27 15:08:13,930 - titanic_pipeline.core.modeling - INFO -    ✅ AdaBoost trained: 0.0000
+2026-01-27 15:08:13,930 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training Bagging: sklearn.ensemble._bagging.BaggingClassifier() argument after ** must be a mapping, not BaggingClassifier
+2026-01-27 15:08:13,930 - titanic_pipeline.core.modeling - INFO -    ✅ Bagging trained: 0.0000
+2026-01-27 15:08:13,977 - titanic_pipeline.core.modeling - INFO -    ✅ SGDClassifier trained: 0.7340
+2026-01-27 15:08:14,027 - titanic_pipeline.core.modeling - INFO -    ✅ RidgeClassifier trained: 0.8126
+2026-01-27 15:08:14,055 - titanic_pipeline.core.modeling - INFO -    ✅ LinearSVC trained: 0.8081
+2026-01-27 15:08:14,092 - titanic_pipeline.core.modeling - INFO -    ✅ DecisionTree trained: 0.7542
+2026-01-27 15:08:14,115 - titanic_pipeline.core.modeling - INFO -    ✅ BernoulliNB trained: 0.7306
+2026-01-27 15:08:14,144 - titanic_pipeline.core.modeling - INFO -    ✅ LinearDiscriminantAnalysis trained: 0.8126
+2026-01-27 15:08:14,165 - titanic_pipeline.core.modeling - INFO -    ✅ QuadraticDiscriminantAnalysis trained: 0.7576
+2026-01-27 15:08:14,166 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training XGBoost: xgboost.sklearn.XGBClassifier() argument after ** must be a mapping, not XGBClassifier
+2026-01-27 15:08:14,167 - titanic_pipeline.core.modeling - INFO -    ✅ XGBoost trained: 0.0000
+2026-01-27 15:08:14,168 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training LightGBM: lightgbm.sklearn.LGBMClassifier() argument after ** must be a mapping, not LGBMClassifier
+2026-01-27 15:08:14,169 - titanic_pipeline.core.modeling - INFO -    ✅ LightGBM trained: 0.0000
+2026-01-27 15:08:25,931 - titanic_pipeline.core.modeling - INFO -    ✅ CatBoost trained: 0.8126
+2026-01-27 15:08:25,932 - __main__ - INFO -    💾 Resultados dos modelos cached
+2026-01-27 15:08:25,932 - __main__ - INFO - Modelos treinados: 20 modelos em 15.86s
+2026-01-27 15:08:25,933 - __main__ - WARNING - Excluding RidgeClassifier from ensemble (no predict_proba support)
+2026-01-27 15:08:25,933 - __main__ - WARNING - Excluding LinearSVC from ensemble (no predict_proba support)
+2026-01-27 15:11:05,512 - __main__ - INFO -    ✅ Ensemble stacking criado: Acc=0.8215
+2026-01-27 15:11:06,740 - __main__ - INFO - Ensemble criado e gráfico salvo em 160.81s
+2026-01-27 15:12:16,524 - __main__ - INFO - Matriz de confusão salva em 69.78s
+2026-01-27 15:12:16,541 - __main__ - INFO - Predições finais geradas: 418 amostras em 0.02s
+2026-01-27 15:12:16,544 - titanic_pipeline.core.reporting - INFO -    ⏱️  Timing report saved
+2026-01-27 15:12:16,550 - titanic_pipeline.core.reporting - INFO -    📝 Markdown report generated from template: output\relatorios\relatorio_final.md
+2026-01-27 15:12:17,123 - titanic_pipeline.core.reporting - INFO -    📄 Comprehensive DOCX report saved: output\relatorios\relatorio_final.docx
+2026-01-27 15:12:17,422 - titanic_pipeline.core.reporting - INFO -    📕 Comprehensive PDF report saved: output\relatorios\relatorio_final.pdf
+2026-01-27 15:12:17,426 - titanic_pipeline.core.reporting - INFO -    🌐 HTML report generated: output\relatorios\relatorio_final.html
+2026-01-27 15:12:24,965 - titanic_pipeline.core.reporting - INFO -    📊 Calibration plots generated
+2026-01-27 15:12:28,053 - titanic_pipeline.core.reporting - WARNING -    ⚠️  One or both models do not have feature importances. Skipping combined plot.
+2026-01-27 15:12:28,053 - titanic_pipeline.core.reporting - INFO -    📊 Feature importance plots generated
+2026-01-27 15:12:29,069 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-27 15:12:29,069 - titanic_pipeline.core.reporting - WARNING - Shape mismatch for heatmap: X_train (891, 15) vs feature_cols 14. Skipping heatmap.
+2026-01-27 15:12:29,919 - titanic_pipeline.core.reporting - INFO -    📊 Model performance timeline generated
+2026-01-27 15:12:29,920 - titanic_pipeline.core.reporting - WARNING -    ⚠️  Feature names count (14) mismatch with X columns (15). Using 14 meaningful + 1 generic names.
+2026-01-27 15:12:29,944 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:29,945 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:29,945 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:30,012 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:30,203 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:30,203 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:30,208 - shap - INFO - phi = array([ 0.04969095, -0.01359276,  0.00821529,  0.        ,  0.        ,
+        0.        , -0.02043322,  0.00988471,  0.00976025,  0.32047193,
+        0.        ,  0.01604096,  0.0072441 ,  0.00383063,  0.        ])
+2026-01-27 15:12:30,209 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:30,210 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:30,216 - shap - INFO - phi = array([-0.04969095,  0.01359276, -0.00821529,  0.        ,  0.        ,
+        0.        ,  0.02043322, -0.00988471, -0.00976025, -0.32047193,
+        0.        , -0.01604096, -0.0072441 , -0.00383063,  0.        ])
+2026-01-27 15:12:30,229 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:30,230 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:30,230 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:30,302 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:30,493 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:30,494 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:30,498 - shap - INFO - phi = array([-0.10523389,  0.        ,  0.        ,  0.        , -0.00813515,
+        0.        , -0.01633309, -0.01519431, -0.02341406, -0.25474196,
+        0.05319989, -0.02687613, -0.04084999, -0.01039027,  0.        ])
+2026-01-27 15:12:30,499 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:30,499 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:30,504 - shap - INFO - phi = array([ 0.10523389,  0.        ,  0.        ,  0.        ,  0.00813515,
+        0.        ,  0.01633309,  0.01519431,  0.02341406,  0.25474196,
+       -0.05319989,  0.02687613,  0.04084999,  0.01039027,  0.        ])
+2026-01-27 15:12:30,516 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:30,516 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:30,517 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:30,589 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:30,789 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:30,789 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:30,794 - shap - INFO - phi = array([ 0.06457513,  0.        , -0.04165822,  0.        ,  0.        ,
+       -0.03826994,  0.02950804,  0.02219675,  0.00990814, -0.21569622,
+        0.        ,  0.02014851,  0.01773702,  0.00618876,  0.        ])
+2026-01-27 15:12:30,795 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:30,795 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:30,801 - shap - INFO - phi = array([-0.06457513,  0.        ,  0.04165822,  0.        ,  0.        ,
+        0.03826994, -0.02950804, -0.02219675, -0.00990814,  0.21569622,
+        0.        , -0.02014851, -0.01773702, -0.00618876,  0.        ])
+2026-01-27 15:12:30,814 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:30,814 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:30,814 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:30,887 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:31,109 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:31,109 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:31,118 - shap - INFO - phi = array([-0.10193698,  0.        ,  0.        , -0.00240021, -0.00552005,
+       -0.00561916, -0.01488405, -0.01523486, -0.01965661, -0.25965929,
+        0.        , -0.02840086,  0.        , -0.00938519,  0.        ])
+2026-01-27 15:12:31,120 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:31,122 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:31,129 - shap - INFO - phi = array([0.10193698, 0.        , 0.        , 0.00240021, 0.00552005,
+       0.00561916, 0.01488405, 0.01523486, 0.01965661, 0.25965929,
+       0.        , 0.02840086, 0.        , 0.00938519, 0.        ])
+2026-01-27 15:12:31,144 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:31,144 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:31,145 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:31,226 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:31,451 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:31,451 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:31,455 - shap - INFO - phi = array([ 0.05306634,  0.01155452, -0.0295244 ,  0.        ,  0.        ,
+       -0.02605813,  0.02482899,  0.03792127,  0.00978473,  0.3220427 ,
+        0.        ,  0.01955124,  0.00921865,  0.        ,  0.        ])
+2026-01-27 15:12:31,456 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:31,457 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:31,463 - shap - INFO - phi = array([-0.05306634, -0.01155452,  0.0295244 ,  0.        ,  0.        ,
+        0.02605813, -0.02482899, -0.03792127, -0.00978473, -0.3220427 ,
+        0.        , -0.01955124, -0.00921865,  0.        ,  0.        ])
+2026-01-27 15:12:31,475 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:31,476 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:31,476 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:31,547 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:31,748 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:31,748 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:31,754 - shap - INFO - phi = array([ 0.05108924,  0.        , -0.0316123 ,  0.        ,  0.0029938 ,
+       -0.03014805,  0.02421393,  0.02169868,  0.00718158,  0.33752932,
+        0.        ,  0.01414115,  0.        ,  0.00456252,  0.        ])
+2026-01-27 15:12:31,756 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:31,756 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:31,762 - shap - INFO - phi = array([-0.05108924,  0.        ,  0.0316123 ,  0.        , -0.0029938 ,
+        0.03014805, -0.02421393, -0.02169868, -0.00718158, -0.33752932,
+        0.        , -0.01414115,  0.        , -0.00456252,  0.        ])
+2026-01-27 15:12:31,776 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:31,777 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:31,777 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:31,853 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:32,043 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:32,044 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:32,049 - shap - INFO - phi = array([-0.09588157,  0.05971672, -0.02988305,  0.        ,  0.        ,
+       -0.02612818,  0.02948238,  0.        , -0.02115913,  0.34306846,
+       -0.00949767, -0.05445609,  0.        , -0.0129301 ,  0.        ])
+2026-01-27 15:12:32,050 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:32,050 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:32,056 - shap - INFO - phi = array([ 0.09588157, -0.05971672,  0.02988305,  0.        ,  0.        ,
+        0.02612818, -0.02948238,  0.        ,  0.02115913, -0.34306846,
+        0.00949767,  0.05445609,  0.        ,  0.0129301 ,  0.        ])
+2026-01-27 15:12:32,069 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:32,069 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:32,070 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:32,142 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:32,335 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:32,336 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:32,340 - shap - INFO - phi = array([ 0.08379565, -0.04441117,  0.14324605,  0.01048167,  0.        ,
+        0.13828028,  0.        , -0.0647564 ,  0.02140852, -0.06462857,
+        0.        ,  0.0164643 ,  0.02232221,  0.        ,  0.        ])
+2026-01-27 15:12:32,341 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:32,341 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:32,347 - shap - INFO - phi = array([-0.08379565,  0.04441117, -0.14324605, -0.01048167,  0.        ,
+       -0.13828028,  0.        ,  0.0647564 , -0.02140852,  0.06462857,
+        0.        , -0.0164643 , -0.02232221,  0.        ,  0.        ])
+2026-01-27 15:12:32,361 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:32,361 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:32,362 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:32,434 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:32,623 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:32,624 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:32,629 - shap - INFO - phi = array([ 0.06037157,  0.        , -0.04519869,  0.02189056,  0.        ,
+        0.01145701, -0.01792456,  0.01632197,  0.01105261, -0.25335535,
+       -0.01573189,  0.01240105,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:12:32,631 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:32,631 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:32,638 - shap - INFO - phi = array([-0.06037157,  0.        ,  0.04519869, -0.02189056,  0.        ,
+       -0.01145701,  0.01792456, -0.01632197, -0.01105261,  0.25335535,
+        0.01573189, -0.01240105,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:12:32,652 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:32,652 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:32,652 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:32,733 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:32,928 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:32,928 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:32,933 - shap - INFO - phi = array([-0.05979674, -0.01402627,  0.        , -0.00216773,  0.        ,
+       -0.00791489, -0.01719449, -0.02095494, -0.00702944, -0.27820415,
+        0.        ,  0.01168842, -0.03933875,  0.        ,  0.        ])
+2026-01-27 15:12:32,934 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:32,934 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:32,940 - shap - INFO - phi = array([ 0.05979674,  0.01402627,  0.        ,  0.00216773,  0.        ,
+        0.00791489,  0.01719449,  0.02095494,  0.00702944,  0.27820415,
+        0.        , -0.01168842,  0.03933875,  0.        ,  0.        ])
+2026-01-27 15:12:32,957 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:32,958 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:32,958 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:33,033 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:33,227 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:33,227 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:33,232 - shap - INFO - phi = array([ 0.05234773, -0.04729654,  0.0080895 ,  0.01103378, -0.01016309,
+        0.00792702, -0.02124416, -0.06666734,  0.        , -0.19786395,
+        0.        ,  0.        ,  0.        , -0.00994534,  0.        ])
+2026-01-27 15:12:33,233 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:33,234 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:33,239 - shap - INFO - phi = array([-0.05234773,  0.04729654, -0.0080895 , -0.01103378,  0.01016309,
+       -0.00792702,  0.02124416,  0.06666734,  0.        ,  0.19786395,
+        0.        ,  0.        ,  0.        ,  0.00994534,  0.        ])
+2026-01-27 15:12:33,253 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:33,253 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:33,254 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:33,324 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:33,529 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:33,529 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:33,534 - shap - INFO - phi = array([-0.11678263,  0.04749504, -0.03028217,  0.        , -0.00529043,
+       -0.0279906 ,  0.02198506,  0.        , -0.02340074, -0.22989946,
+        0.        , -0.02992805,  0.        , -0.01131026,  0.        ])
+2026-01-27 15:12:33,535 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:33,536 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:33,543 - shap - INFO - phi = array([ 0.11678263, -0.04749504,  0.03028217,  0.        ,  0.00529043,
+        0.0279906 , -0.02198506,  0.        ,  0.02340074,  0.22989946,
+        0.        ,  0.02992805,  0.        ,  0.01131026,  0.        ])
+2026-01-27 15:12:33,555 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:33,555 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:33,556 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:33,630 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:33,826 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:33,827 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:33,832 - shap - INFO - phi = array([ 0.05152889,  0.        , -0.03168388,  0.        ,  0.        ,
+       -0.02902995,  0.02527232,  0.00882364,  0.00938429,  0.32938284,
+        0.        ,  0.01465585,  0.01287213,  0.00426151,  0.        ])
+2026-01-27 15:12:33,833 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:33,834 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:33,839 - shap - INFO - phi = array([-0.05152889,  0.        ,  0.03168388,  0.        ,  0.        ,
+        0.02902995, -0.02527232, -0.00882364, -0.00938429, -0.32938284,
+        0.        , -0.01465585, -0.01287213, -0.00426151,  0.        ])
+2026-01-27 15:12:33,852 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:33,852 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:33,852 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:33,925 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:34,165 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:34,165 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:34,173 - shap - INFO - phi = array([0.04541555, 0.01320045, 0.0057259 , 0.0409383 , 0.        ,
+       0.07503988, 0.        , 0.03755383, 0.01459717, 0.24292137,
+       0.        , 0.01146699, 0.00723398, 0.        , 0.        ])
+2026-01-27 15:12:34,175 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:34,175 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:34,187 - shap - INFO - phi = array([-0.04541555, -0.01320045, -0.0057259 , -0.0409383 ,  0.        ,
+       -0.07503988,  0.        , -0.03755383, -0.01459717, -0.24292137,
+        0.        , -0.01146699, -0.00723398,  0.        ,  0.        ])
+2026-01-27 15:12:34,201 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:34,202 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:34,202 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:34,283 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:34,499 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:34,500 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:34,505 - shap - INFO - phi = array([ 0.06441483, -0.01000951, -0.0412603 ,  0.        ,  0.        ,
+       -0.03591334,  0.0315456 ,  0.        ,  0.01088466, -0.21230246,
+        0.01154584,  0.02182004,  0.01871083,  0.        ,  0.        ])
+2026-01-27 15:12:34,506 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:34,507 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:34,516 - shap - INFO - phi = array([-0.06441483,  0.01000951,  0.0412603 ,  0.        ,  0.        ,
+        0.03591334, -0.0315456 ,  0.        , -0.01088466,  0.21230246,
+       -0.01154584, -0.02182004, -0.01871083,  0.        ,  0.        ])
+2026-01-27 15:12:34,531 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:34,532 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:34,532 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:34,620 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:34,838 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:34,839 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:34,845 - shap - INFO - phi = array([-0.07133674,  0.04489124, -0.03311702,  0.        ,  0.        ,
+       -0.03091721,  0.02662229,  0.04480865, -0.01571158, -0.28611901,
+        0.        ,  0.0133822 ,  0.00798482,  0.        ,  0.        ])
+2026-01-27 15:12:34,847 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:34,847 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:34,855 - shap - INFO - phi = array([ 0.07133674, -0.04489124,  0.03311702,  0.        ,  0.        ,
+        0.03091721, -0.02662229, -0.04480865,  0.01571158,  0.28611901,
+        0.        , -0.0133822 , -0.00798482,  0.        ,  0.        ])
+2026-01-27 15:12:34,871 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:34,872 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:34,872 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:34,951 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:35,138 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:35,138 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:35,144 - shap - INFO - phi = array([ 0.08160107, -0.04639443,  0.1788048 ,  0.01076586,  0.0127891 ,
+        0.15473127, -0.01914485, -0.05885298,  0.01980966,  0.        ,
+        0.        ,  0.01847203,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:12:35,146 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:35,146 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:35,152 - shap - INFO - phi = array([-0.08160107,  0.04639443, -0.1788048 , -0.01076586, -0.0127891 ,
+       -0.15473127,  0.01914485,  0.05885298, -0.01980966,  0.        ,
+        0.        , -0.01847203,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:12:35,166 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:35,167 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:35,167 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:35,241 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:35,434 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:35,435 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:35,440 - shap - INFO - phi = array([-0.03317757,  0.        , -0.03303398,  0.        ,  0.        ,
+       -0.02830086,  0.02698043,  0.006309  ,  0.        ,  0.35538219,
+       -0.00754881,  0.01523368,  0.01090623,  0.00690663,  0.        ])
+2026-01-27 15:12:35,442 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:35,442 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:35,449 - shap - INFO - phi = array([ 0.03317757,  0.        ,  0.03303398,  0.        ,  0.        ,
+        0.02830086, -0.02698043, -0.006309  ,  0.        , -0.35538219,
+        0.00754881, -0.01523368, -0.01090623, -0.00690663,  0.        ])
+2026-01-27 15:12:35,462 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:35,462 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:35,463 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:35,538 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:35,787 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:35,788 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:35,793 - shap - INFO - phi = array([ 0.07095209,  0.        ,  0.01418642,  0.        ,  0.        ,
+        0.        , -0.02380304,  0.05541023,  0.00709791, -0.24761289,
+        0.00484503,  0.02326589,  0.01277053,  0.00592203,  0.        ])
+2026-01-27 15:12:35,794 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:35,795 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:35,799 - shap - INFO - phi = array([-0.07095209,  0.        , -0.01418642,  0.        ,  0.        ,
+        0.        ,  0.02380304, -0.05541023, -0.00709791,  0.24761289,
+       -0.00484503, -0.02326589, -0.01277053, -0.00592203,  0.        ])
+2026-01-27 15:12:35,813 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:35,814 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:35,814 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:35,886 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:36,087 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:36,088 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:36,094 - shap - INFO - phi = array([ 0.04771274,  0.        , -0.03686923,  0.        ,  0.        ,
+       -0.03798042,  0.02472228,  0.02183721,  0.00778334, -0.28933757,
+       -0.01571583,  0.01357348, -0.06424392,  0.        ,  0.        ])
+2026-01-27 15:12:36,096 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:36,096 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:36,103 - shap - INFO - phi = array([-0.04771274,  0.        ,  0.03686923,  0.        ,  0.        ,
+        0.03798042, -0.02472228, -0.02183721, -0.00778334,  0.28933757,
+        0.01571583, -0.01357348,  0.06424392,  0.        ,  0.        ])
+2026-01-27 15:12:37,135 - titanic_pipeline.core.reporting - INFO -    📊 SHAP plot generated for Ensemble_Stacking: output\graficos\shap\shap_summary_Ensemble_Stacking.png
+2026-01-27 15:12:37,151 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:37,152 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:37,153 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:37,228 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:37,409 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:37,410 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:37,417 - shap - INFO - phi = array([ 0.05229296, -0.01378034,  0.00607951,  0.        ,  0.        ,
+        0.        , -0.01217107,  0.00924168,  0.00918174,  0.33778465,
+        0.        ,  0.01572818,  0.0072774 ,  0.        ,  0.00399803])
+2026-01-27 15:12:37,418 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:37,419 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:37,425 - shap - INFO - phi = array([-0.05229296,  0.01378034, -0.00607951,  0.        ,  0.        ,
+        0.        ,  0.01217107, -0.00924168, -0.00918174, -0.33778465,
+        0.        , -0.01572818, -0.0072774 ,  0.        , -0.00399803])
+2026-01-27 15:12:37,437 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:37,438 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:37,438 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:37,511 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:37,701 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:37,701 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:37,707 - shap - INFO - phi = array([-0.10562912,  0.        ,  0.        ,  0.        , -0.00850685,
+        0.        , -0.00840642, -0.00772736, -0.01420107, -0.26385121,
+        0.        , -0.02041048, -0.02928961, -0.00445588, -0.00650974])
+2026-01-27 15:12:37,708 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:37,709 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:37,715 - shap - INFO - phi = array([0.10562912, 0.        , 0.        , 0.        , 0.00850685,
+       0.        , 0.00840642, 0.00772736, 0.01420107, 0.26385121,
+       0.        , 0.02041048, 0.02928961, 0.00445588, 0.00650974])
+2026-01-27 15:12:37,726 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:37,726 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:37,727 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:37,800 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:37,997 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:37,998 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:38,003 - shap - INFO - phi = array([ 0.06374163,  0.        , -0.03638716,  0.        ,  0.00699651,
+       -0.03560937,  0.02597543,  0.01305778,  0.00767202, -0.23491632,
+        0.        ,  0.01785008,  0.0147218 ,  0.        ,  0.        ])
+2026-01-27 15:12:38,004 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:38,005 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:38,010 - shap - INFO - phi = array([-0.06374163,  0.        ,  0.03638716,  0.        , -0.00699651,
+        0.03560937, -0.02597543, -0.01305778, -0.00767202,  0.23491632,
+        0.        , -0.01785008, -0.0147218 ,  0.        ,  0.        ])
+2026-01-27 15:12:38,024 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:38,025 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:38,025 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:38,105 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:38,314 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:38,314 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:38,322 - shap - INFO - phi = array([-0.10377096,  0.        ,  0.        ,  0.        , -0.00865855,
+       -0.00694383, -0.01196723, -0.0117242 , -0.01676507, -0.27330853,
+        0.        , -0.0260815 ,  0.        , -0.00790985, -0.0077624 ])
+2026-01-27 15:12:38,324 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:38,325 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:38,337 - shap - INFO - phi = array([0.10377096, 0.        , 0.        , 0.        , 0.00865855,
+       0.00694383, 0.01196723, 0.0117242 , 0.01676507, 0.27330853,
+       0.        , 0.0260815 , 0.        , 0.00790985, 0.0077624 ])
+2026-01-27 15:12:38,355 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:38,356 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:38,356 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:38,441 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:38,641 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:38,641 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:38,649 - shap - INFO - phi = array([ 0.04638811,  0.01157405, -0.02696759,  0.        ,  0.00366949,
+        0.        ,  0.01461318,  0.02513081,  0.00813043,  0.33507442,
+        0.        ,  0.01345988,  0.00528819,  0.        ,  0.        ])
+2026-01-27 15:12:38,650 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:38,651 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:38,657 - shap - INFO - phi = array([-0.04638811, -0.01157405,  0.02696759,  0.        , -0.00366949,
+        0.        , -0.01461318, -0.02513081, -0.00813043, -0.33507442,
+        0.        , -0.01345988, -0.00528819,  0.        ,  0.        ])
+2026-01-27 15:12:38,671 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:38,671 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:38,672 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:38,749 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:38,951 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:38,951 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:38,956 - shap - INFO - phi = array([ 0.04921947,  0.        , -0.02460239,  0.        ,  0.00491818,
+       -0.02497171,  0.01675906,  0.01376105,  0.00728538,  0.34935047,
+        0.        ,  0.01373835,  0.        ,  0.0041962 ,  0.        ])
+2026-01-27 15:12:38,958 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:38,958 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:38,964 - shap - INFO - phi = array([-0.04921947,  0.        ,  0.02460239,  0.        , -0.00491818,
+        0.02497171, -0.01675906, -0.01376105, -0.00728538, -0.34935047,
+        0.        , -0.01373835,  0.        , -0.0041962 ,  0.        ])
+2026-01-27 15:12:38,975 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:38,975 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:38,976 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:39,046 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:39,256 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:39,257 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:39,262 - shap - INFO - phi = array([-0.09532055,  0.08233907, -0.02589262,  0.        ,  0.        ,
+       -0.02487505,  0.02574899,  0.        , -0.01797624,  0.3588823 ,
+        0.        , -0.05288555,  0.        , -0.01283382, -0.011644  ])
+2026-01-27 15:12:39,264 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:39,264 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:39,270 - shap - INFO - phi = array([ 0.09532055, -0.08233907,  0.02589262,  0.        ,  0.        ,
+        0.02487505, -0.02574899,  0.        ,  0.01797624, -0.3588823 ,
+        0.        ,  0.05288555,  0.        ,  0.01283382,  0.011644  ])
+2026-01-27 15:12:39,283 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:39,284 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:39,285 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:39,355 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:39,562 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:39,562 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:39,567 - shap - INFO - phi = array([ 0.09515456, -0.07293661,  0.1282009 ,  0.01402835,  0.        ,
+        0.12497481,  0.        , -0.04121358,  0.01716744, -0.03861864,
+        0.        ,  0.01780673,  0.02033935,  0.        ,  0.        ])
+2026-01-27 15:12:39,568 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:39,569 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:39,576 - shap - INFO - phi = array([-0.09515456,  0.07293661, -0.1282009 , -0.01402835,  0.        ,
+       -0.12497481,  0.        ,  0.04121358, -0.01716744,  0.03861864,
+        0.        , -0.01780673, -0.02033935,  0.        ,  0.        ])
+2026-01-27 15:12:39,592 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:39,593 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:39,593 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:39,673 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:39,890 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:39,891 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:39,898 - shap - INFO - phi = array([ 0.06217797,  0.        , -0.03886336,  0.02917486,  0.        ,
+        0.01135054, -0.01706804,  0.00827095,  0.00909141, -0.26770969,
+       -0.01282174,  0.01249226,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:12:39,899 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:39,902 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:39,913 - shap - INFO - phi = array([-0.06217797,  0.        ,  0.03886336, -0.02917486,  0.        ,
+       -0.01135054,  0.01706804, -0.00827095, -0.00909141,  0.26770969,
+        0.01282174, -0.01249226,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:12:39,931 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:39,934 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:39,934 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:40,020 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:40,272 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:40,273 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:40,284 - shap - INFO - phi = array([-0.06141872, -0.01474095,  0.        , -0.00319104, -0.00049433,
+       -0.00691918, -0.01181097, -0.01525733, -0.00567137, -0.29647538,
+        0.        ,  0.        , -0.03143207,  0.        ,  0.        ])
+2026-01-27 15:12:40,285 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:40,286 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:40,294 - shap - INFO - phi = array([0.06141872, 0.01474095, 0.        , 0.00319104, 0.00049433,
+       0.00691918, 0.01181097, 0.01525733, 0.00567137, 0.29647538,
+       0.        , 0.        , 0.03143207, 0.        , 0.        ])
+2026-01-27 15:12:40,309 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:40,310 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:40,310 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:40,388 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:40,585 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:40,586 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:40,591 - shap - INFO - phi = array([ 0.05349587, -0.06852189,  0.        ,  0.01209539, -0.00729218,
+        0.        , -0.0175575 , -0.04749579,  0.        , -0.21395698,
+       -0.00238143,  0.        ,  0.        , -0.00740691, -0.00912825])
+2026-01-27 15:12:40,593 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:12:40,593 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:40,600 - shap - INFO - phi = array([-0.05349587,  0.06852189,  0.        , -0.01209539,  0.00729218,
+        0.        ,  0.0175575 ,  0.04749579,  0.        ,  0.21395698,
+        0.00238143,  0.        ,  0.        ,  0.00740691,  0.00912825])
+2026-01-27 15:12:40,613 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:40,613 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:40,614 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:40,685 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:40,884 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:40,885 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:40,890 - shap - INFO - phi = array([-0.13147635,  0.06463491, -0.02375873,  0.        ,  0.        ,
+       -0.02300005,  0.        ,  0.        , -0.01632745, -0.24551096,
+       -0.00309234, -0.0278463 ,  0.        , -0.00806235, -0.0084841 ])
+2026-01-27 15:12:40,891 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:40,892 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:40,897 - shap - INFO - phi = array([ 0.13147635, -0.06463491,  0.02375873,  0.        ,  0.        ,
+        0.02300005,  0.        ,  0.        ,  0.01632745,  0.24551096,
+        0.00309234,  0.0278463 ,  0.        ,  0.00806235,  0.0084841 ])
+2026-01-27 15:12:40,910 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:40,911 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:40,911 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:41,019 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:41,201 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:41,202 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:41,206 - shap - INFO - phi = array([ 0.05354587,  0.        , -0.02543038,  0.        ,  0.        ,
+       -0.02361409,  0.01819114,  0.00973422,  0.01137798,  0.34555208,
+        0.        ,  0.01317159,  0.01171862,  0.00369705,  0.        ])
+2026-01-27 15:12:41,208 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:41,208 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:41,215 - shap - INFO - phi = array([-0.05354587,  0.        ,  0.02543038,  0.        ,  0.        ,
+        0.02361409, -0.01819114, -0.00973422, -0.01137798, -0.34555208,
+        0.        , -0.01317159, -0.01171862, -0.00369705,  0.        ])
+2026-01-27 15:12:41,229 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:41,230 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:41,231 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:41,308 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:41,513 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:41,514 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:41,519 - shap - INFO - phi = array([0.04426306, 0.01852528, 0.        , 0.04435899, 0.        ,
+       0.06345871, 0.        , 0.02863265, 0.01622631, 0.245836  ,
+       0.        , 0.01162947, 0.00807804, 0.00607413, 0.        ])
+2026-01-27 15:12:41,520 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:41,520 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:41,526 - shap - INFO - phi = array([-0.04426306, -0.01852528,  0.        , -0.04435899,  0.        ,
+       -0.06345871,  0.        , -0.02863265, -0.01622631, -0.245836  ,
+        0.        , -0.01162947, -0.00807804, -0.00607413,  0.        ])
+2026-01-27 15:12:41,539 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:41,539 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:41,540 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:41,612 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:41,803 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:41,803 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:41,808 - shap - INFO - phi = array([ 0.06297706, -0.02290355, -0.03392462,  0.        ,  0.        ,
+       -0.03101829,  0.02611376,  0.        ,  0.00942912, -0.23582481,
+        0.01096448,  0.0193419 ,  0.01580776,  0.        ,  0.        ])
+2026-01-27 15:12:41,810 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:41,810 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:41,817 - shap - INFO - phi = array([-0.06297706,  0.02290355,  0.03392462,  0.        ,  0.        ,
+        0.03101829, -0.02611376,  0.        , -0.00942912,  0.23582481,
+       -0.01096448, -0.0193419 , -0.01580776,  0.        ,  0.        ])
+2026-01-27 15:12:41,828 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:41,829 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:41,829 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:41,908 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:42,104 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:42,104 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:42,110 - shap - INFO - phi = array([-0.0748771 ,  0.06347257, -0.02761059, -0.00517034,  0.        ,
+       -0.02713632,  0.024898  ,  0.03266351, -0.01158076, -0.30561556,
+        0.        ,  0.01146596,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:12:42,112 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:42,112 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:12:42,120 - shap - INFO - phi = array([ 0.0748771 , -0.06347257,  0.02761059,  0.00517034,  0.        ,
+        0.02713632, -0.024898  , -0.03266351,  0.01158076,  0.30561556,
+        0.        , -0.01146596,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:12:42,132 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:42,134 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:42,134 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:42,208 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:42,408 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:42,409 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:42,414 - shap - INFO - phi = array([ 0.09132165, -0.06869234,  0.15903158,  0.01337687,  0.01261158,
+        0.14439396,  0.        , -0.03867972,  0.01501101,  0.01337342,
+        0.        ,  0.01854807,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:12:42,415 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:42,416 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:42,420 - shap - INFO - phi = array([-0.09132165,  0.06869234, -0.15903158, -0.01337687, -0.01261158,
+       -0.14439396,  0.        ,  0.03867972, -0.01501101, -0.01337342,
+        0.        , -0.01854807,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:12:42,433 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:42,433 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:42,434 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:42,506 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:42,714 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:42,715 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:42,720 - shap - INFO - phi = array([-0.02716643,  0.        , -0.02770628,  0.        ,  0.        ,
+       -0.02465786,  0.02017802,  0.00597173,  0.        ,  0.37504001,
+        0.        ,  0.01305032,  0.00770826,  0.00414333,  0.00512119])
+2026-01-27 15:12:42,722 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:12:42,722 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:42,728 - shap - INFO - phi = array([ 0.02716643,  0.        ,  0.02770628,  0.        ,  0.        ,
+        0.02465786, -0.02017802, -0.00597173,  0.        , -0.37504001,
+        0.        , -0.01305032, -0.00770826, -0.00414333, -0.00512119])
+2026-01-27 15:12:42,742 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:42,743 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:42,743 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:42,817 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:43,014 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:43,014 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:43,019 - shap - INFO - phi = array([ 0.06434524,  0.00703093,  0.00873438,  0.        ,  0.        ,
+        0.        , -0.01979254,  0.03740752,  0.00679236, -0.27581092,
+        0.        ,  0.01911333,  0.00892097,  0.        ,  0.00477595])
+2026-01-27 15:12:43,021 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:43,021 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:43,028 - shap - INFO - phi = array([-0.06434524, -0.00703093, -0.00873438,  0.        ,  0.        ,
+        0.        ,  0.01979254, -0.03740752, -0.00679236,  0.27581092,
+        0.        , -0.01911333, -0.00892097,  0.        , -0.00477595])
+2026-01-27 15:12:43,041 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:12:43,042 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:12:43,042 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:12:43,117 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:12:43,307 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:43,308 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:43,314 - shap - INFO - phi = array([ 0.04806048,  0.        , -0.02845546, -0.0067364 ,  0.        ,
+       -0.03124567,  0.01988804,  0.01640898,  0.        , -0.30729028,
+       -0.01364823,  0.01245224, -0.0531265 ,  0.        ,  0.        ])
+2026-01-27 15:12:43,315 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:12:43,316 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:12:43,322 - shap - INFO - phi = array([-0.04806048,  0.        ,  0.02845546,  0.0067364 ,  0.        ,
+        0.03124567, -0.01988804, -0.01640898,  0.        ,  0.30729028,
+        0.01364823, -0.01245224,  0.0531265 ,  0.        ,  0.        ])
+2026-01-27 15:12:44,091 - titanic_pipeline.core.reporting - INFO -    📊 SHAP plot generated for Ensemble_Voting: output\graficos\shap\shap_summary_Ensemble_Voting.png
+2026-01-27 15:12:45,227 - titanic_pipeline.core.reporting - INFO -    📊 SHAP plot generated for RidgeClassifier: output\graficos\shap\shap_summary_RidgeClassifier.png
+2026-01-27 15:12:45,228 - titanic_pipeline.core.reporting - INFO -    📊 SHAP plots generated successfully for 3 models
+2026-01-27 15:12:46,203 - titanic_pipeline.core.reporting - WARNING -    ⚠️  Feature names count (14) mismatch with X columns (15). Using generic names.
+2026-01-27 15:12:47,035 - titanic_pipeline.core.reporting - INFO -    📊 Permutation importance for Ensemble_Stacking generated
+2026-01-27 15:12:47,039 - titanic_pipeline.core.reporting - INFO - Model performance logged to output\relatorios\resultados_modelos.csv
+2026-01-27 15:12:47,042 - titanic_pipeline.core.reporting - INFO -    📝 Changelog and manifest generated
+2026-01-27 15:12:47,043 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['Pclass', 'SibSp', 'Parch', 'feat_Cabin_missing']
+2026-01-27 15:12:47,043 - titanic_pipeline.core.preprocessing - INFO - Numerical features: ['Age', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Title_te', 'feat_TicketPrefix_te', 'feat_Deck_te', 'feat_Embarked_te']
+2026-01-27 15:12:47,094 - titanic_pipeline.core.modeling - INFO - Pipeline saved to output/models/best_model_pipeline.pkl
+2026-01-27 15:12:47,102 - __main__ - INFO - Best model 'Ensemble_Voting' saved separately
+2026-01-27 15:12:47,103 - __main__ - INFO - Resumo: 5/6 arquivos gerados (Ver log para detalhes)
+2026-01-27 15:16:20,665 - __main__ - INFO - ⚡ FAST MODE ENABLED - Skipping heavy computations
+2026-01-27 15:16:20,666 - __main__ - INFO -    ✅ Diretórios criados em 0.00s
+2026-01-27 15:16:20,685 - __main__ - INFO -    ✅ Config salvo em output/relatorios/config_used.json
+2026-01-27 15:16:20,685 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: train.csv
+2026-01-27 15:16:20,689 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para train.csv: 891 linhas, 12 colunas
+2026-01-27 15:16:20,689 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_train.csv.json
+2026-01-27 15:16:20,689 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: test.csv
+2026-01-27 15:16:20,693 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para test.csv: 418 linhas, 11 colunas
+2026-01-27 15:16:20,693 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_test.csv.json
+2026-01-27 15:16:20,694 - __main__ - INFO - 🔄 DETECTADO DESBALANCEAMENTO DE CLASSES: Razão 1.61 > 1.5 (Maioria: 549, Minoria: 342). Ativando balanceamento automático.
+2026-01-27 15:16:20,696 - __main__ - INFO -    📝 Estatísticas de balanceamento salvas
+2026-01-27 15:16:20,696 - __main__ - INFO -    ✅ Dados carregados e validados: Train=(891, 12), Test=(418, 11) em 0.03s
+2026-01-27 15:16:20,699 - __main__ - INFO -    💾 Imputação de treino processada e cached
+2026-01-27 15:16:20,704 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-27 15:16:20,709 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-27 15:16:20,714 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-27 15:16:20,716 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-27 15:16:20,732 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-27 15:16:20,733 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Title
+2026-01-27 15:16:20,761 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Title.json
+2026-01-27 15:16:20,764 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-27 15:16:20,764 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna TicketPrefix
+2026-01-27 15:16:20,791 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_TicketPrefix.json
+2026-01-27 15:16:20,793 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-27 15:16:20,794 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Deck
+2026-01-27 15:16:20,821 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Deck.json
+2026-01-27 15:16:20,822 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 42
+2026-01-27 15:16:20,822 - titanic_pipeline.preprocessing - INFO - Iniciando target encoding para coluna Embarked
+2026-01-27 15:16:20,852 - titanic_pipeline.preprocessing - INFO - Target encoding concluído e salvo em output/cache/te_maps_Embarked.json
+2026-01-27 15:16:20,853 - __main__ - INFO -    💾 Features de treino processadas e cached
+2026-01-27 15:16:20,855 - __main__ - INFO -    📝 Changelog de features salvo
+2026-01-27 15:16:20,856 - __main__ - INFO -    ✅ Features avançadas criadas: 32 colunas em 0.16s
+2026-01-27 15:16:20,858 - __main__ - INFO -    💾 Imputação de teste processada e cached
+2026-01-27 15:16:20,861 - titanic_pipeline.preprocessing - INFO - Features de família criadas: FamilySize, IsAlone.
+2026-01-27 15:16:20,864 - titanic_pipeline.preprocessing - INFO - Feature Title extraída de Name.
+2026-01-27 15:16:20,867 - titanic_pipeline.preprocessing - INFO - Feature Deck extraída de Cabin.
+2026-01-27 15:16:20,869 - titanic_pipeline.preprocessing - INFO - Feature TicketPrefix extraída de Ticket.
+2026-01-27 15:16:20,887 - __main__ - INFO -    💾 Features de teste processadas e cached
+2026-01-27 15:16:20,888 - __main__ - INFO -    ✅ Teste processado em 0.03s
+2026-01-27 15:16:20,902 - __main__ - INFO -    🎯 Executando seleção de features (SelectFromModel)...
+2026-01-27 15:16:21,118 - __main__ - INFO -    ✅ Features selecionadas: 43/85
+2026-01-27 15:16:21,118 - __main__ - INFO -    ✅ Selecionadas 14/26 features
+2026-01-27 15:16:21,118 - __main__ - INFO -    Feature selection concluída em 0.23s
+2026-01-27 15:16:21,120 - __main__ - INFO -    ℹ️  Arquivo smoke_tests.py não encontrado, pulando testes
+2026-01-27 15:16:21,120 - __main__ - INFO -    Smoke tests concluídos em 0.00s
+2026-01-27 15:16:21,121 - __main__ - INFO - 🧪 EXECUTANDO UNIT TESTS...
+2026-01-27 15:16:21,121 - titanic_pipeline.core.utils - INFO - 🔍 VALIDANDO SCHEMA: unit_test
+2026-01-27 15:16:21,124 - titanic_pipeline.core.utils - INFO - ✅ Schema válido para unit_test: 2 linhas, 2 colunas
+2026-01-27 15:16:21,124 - titanic_pipeline.core.utils - INFO -    📄 Relatório salvo em output/relatorios/schema_validation_unit_test.json
+2026-01-27 15:16:21,126 - titanic_pipeline.core.preprocessing - INFO - Categorical features: []
+2026-01-27 15:16:21,126 - titanic_pipeline.core.preprocessing - INFO - Numerical features: ['A', 'B']
+2026-01-27 15:16:21,161 - __main__ - INFO - Unit tests: 3/3 passed - {'validate_data_schema': True, 'preprocess_data': True, 'train_single_model': True}
+2026-01-27 15:16:22,902 - __main__ - INFO -    ✅ Gráfico EDA salvo: output/graficos/01_eda_completa.png em 1.74s
+2026-01-27 15:16:22,903 - titanic_pipeline.utils.memory - INFO -    🎲 Global random seeds set to 25
+2026-01-27 15:16:22,904 - titanic_pipeline.preprocessing - INFO - Features numéricas: ['Pclass', 'Age', 'SibSp', 'Parch', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Title_te', 'feat_TicketPrefix_te', 'feat_Deck_te', 'feat_Embarked_te']
+2026-01-27 15:16:22,904 - titanic_pipeline.preprocessing - INFO - Features categóricas: ['feat_Cabin_missing']
+2026-01-27 15:16:22,904 - titanic_pipeline.preprocessing - INFO - Pipeline de pré-processamento criado com sucesso.
+2026-01-27 15:16:22,923 - titanic_pipeline.core.modeling - INFO -    🔄 Training models sequentially to avoid pickling issues...
+2026-01-27 15:16:22,924 - titanic_pipeline.core.modeling - INFO -    📊 Available models: ['RandomForest', 'LogisticRegression', 'SVC', 'KNeighbors', 'GaussianNB', 'MLPClassifier', 'GradientBoosting', 'ExtraTrees', 'AdaBoost', 'Bagging', 'SGDClassifier', 'RidgeClassifier', 'LinearSVC', 'DecisionTree', 'BernoulliNB', 'LinearDiscriminantAnalysis', 'QuadraticDiscriminantAnalysis', 'XGBoost', 'LightGBM', 'CatBoost']
+2026-01-27 15:16:23,945 - titanic_pipeline.core.modeling - INFO -    ✅ RandomForest trained: 0.8058
+2026-01-27 15:16:24,012 - titanic_pipeline.core.modeling - INFO -    ✅ LogisticRegression trained: 0.8081
+2026-01-27 15:16:24,013 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training SVC: 'SVC' object has no attribute 'update'
+2026-01-27 15:16:24,014 - titanic_pipeline.core.modeling - INFO -    ✅ SVC trained: 0.0000
+2026-01-27 15:16:24,165 - titanic_pipeline.core.modeling - INFO -    ✅ KNeighbors trained: 0.7868
+2026-01-27 15:16:24,193 - titanic_pipeline.core.modeling - INFO -    ✅ GaussianNB trained: 0.7172
+2026-01-27 15:16:24,769 - titanic_pipeline.core.modeling - INFO -    ✅ MLPClassifier trained: 0.7901
+2026-01-27 15:16:25,803 - titanic_pipeline.core.modeling - INFO -    ✅ GradientBoosting trained: 0.8081
+2026-01-27 15:16:26,555 - titanic_pipeline.core.modeling - INFO -    ✅ ExtraTrees trained: 0.7980
+2026-01-27 15:16:26,556 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training AdaBoost: sklearn.ensemble._weight_boosting.AdaBoostClassifier() argument after ** must be a mapping, not AdaBoostClassifier
+2026-01-27 15:16:26,556 - titanic_pipeline.core.modeling - INFO -    ✅ AdaBoost trained: 0.0000
+2026-01-27 15:16:26,557 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training Bagging: sklearn.ensemble._bagging.BaggingClassifier() argument after ** must be a mapping, not BaggingClassifier
+2026-01-27 15:16:26,557 - titanic_pipeline.core.modeling - INFO -    ✅ Bagging trained: 0.0000
+2026-01-27 15:16:26,609 - titanic_pipeline.core.modeling - INFO -    ✅ SGDClassifier trained: 0.7340
+2026-01-27 15:16:26,634 - titanic_pipeline.core.modeling - INFO -    ✅ RidgeClassifier trained: 0.8126
+2026-01-27 15:16:26,657 - titanic_pipeline.core.modeling - INFO -    ✅ LinearSVC trained: 0.8081
+2026-01-27 15:16:26,694 - titanic_pipeline.core.modeling - INFO -    ✅ DecisionTree trained: 0.7542
+2026-01-27 15:16:26,714 - titanic_pipeline.core.modeling - INFO -    ✅ BernoulliNB trained: 0.7306
+2026-01-27 15:16:26,736 - titanic_pipeline.core.modeling - INFO -    ✅ LinearDiscriminantAnalysis trained: 0.8126
+2026-01-27 15:16:26,755 - titanic_pipeline.core.modeling - INFO -    ✅ QuadraticDiscriminantAnalysis trained: 0.7576
+2026-01-27 15:16:26,756 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training XGBoost: xgboost.sklearn.XGBClassifier() argument after ** must be a mapping, not XGBClassifier
+2026-01-27 15:16:26,757 - titanic_pipeline.core.modeling - INFO -    ✅ XGBoost trained: 0.0000
+2026-01-27 15:16:26,758 - titanic_pipeline.core.modeling - ERROR -    ❌ Error training LightGBM: lightgbm.sklearn.LGBMClassifier() argument after ** must be a mapping, not LGBMClassifier
+2026-01-27 15:16:26,758 - titanic_pipeline.core.modeling - INFO -    ✅ LightGBM trained: 0.0000
+2026-01-27 15:16:38,418 - titanic_pipeline.core.modeling - INFO -    ✅ CatBoost trained: 0.8126
+2026-01-27 15:16:38,419 - __main__ - INFO -    💾 Resultados dos modelos cached
+2026-01-27 15:16:38,419 - __main__ - INFO - Modelos treinados: 20 modelos em 15.52s
+2026-01-27 15:16:38,420 - __main__ - WARNING - Excluding RidgeClassifier from ensemble (no predict_proba support)
+2026-01-27 15:16:38,420 - __main__ - WARNING - Excluding LinearSVC from ensemble (no predict_proba support)
+2026-01-27 15:19:42,133 - __main__ - INFO -    ✅ Ensemble stacking criado: Acc=0.8215
+2026-01-27 15:19:43,406 - __main__ - INFO - Ensemble criado e gráfico salvo em 184.99s
+2026-01-27 15:21:00,682 - __main__ - INFO - Matriz de confusão salva em 77.27s
+2026-01-27 15:21:00,696 - __main__ - INFO - Predições finais geradas: 418 amostras em 0.01s
+2026-01-27 15:21:00,698 - titanic_pipeline.core.reporting - INFO -    ⏱️  Timing report saved
+2026-01-27 15:21:00,703 - titanic_pipeline.core.reporting - INFO -    📝 Markdown report generated from template: output\relatorios\relatorio_final.md
+2026-01-27 15:21:01,217 - titanic_pipeline.core.reporting - INFO -    📄 Comprehensive DOCX report saved: output\relatorios\relatorio_final.docx
+2026-01-27 15:21:01,494 - titanic_pipeline.core.reporting - INFO -    📕 Comprehensive PDF report saved: output\relatorios\relatorio_final.pdf
+2026-01-27 15:21:01,497 - titanic_pipeline.core.reporting - INFO -    🌐 HTML report generated: output\relatorios\relatorio_final.html
+2026-01-27 15:21:09,671 - titanic_pipeline.core.reporting - INFO -    📊 Calibration plots generated
+2026-01-27 15:21:13,393 - titanic_pipeline.core.reporting - WARNING -    ⚠️  One or both models do not have feature importances. Skipping combined plot.
+2026-01-27 15:21:13,394 - titanic_pipeline.core.reporting - INFO -    📊 Feature importance plots generated
+2026-01-27 15:21:14,626 - titanic_pipeline.core.reporting - INFO -    📊 ROC curves generated
+2026-01-27 15:21:14,627 - titanic_pipeline.core.reporting - WARNING - Shape mismatch for heatmap: X_train (891, 15) vs feature_cols 14. Skipping heatmap.
+2026-01-27 15:21:15,785 - titanic_pipeline.core.reporting - INFO -    📊 Model performance timeline generated
+2026-01-27 15:21:15,787 - titanic_pipeline.core.reporting - WARNING -    ⚠️  Feature names count (14) mismatch with X columns (15). Using 14 meaningful + 1 generic names.
+2026-01-27 15:21:15,806 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:15,807 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:15,808 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:15,883 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:16,099 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:16,099 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:16,107 - shap - INFO - phi = array([ 0.04969095, -0.01359276,  0.00821529,  0.        ,  0.        ,
+        0.        , -0.02043322,  0.00988471,  0.00976025,  0.32047193,
+        0.        ,  0.01604096,  0.0072441 ,  0.00383063,  0.        ])
+2026-01-27 15:21:16,109 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:16,109 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:16,115 - shap - INFO - phi = array([-0.04969095,  0.01359276, -0.00821529,  0.        ,  0.        ,
+        0.        ,  0.02043322, -0.00988471, -0.00976025, -0.32047193,
+        0.        , -0.01604096, -0.0072441 , -0.00383063,  0.        ])
+2026-01-27 15:21:16,129 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:16,130 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:16,130 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:16,229 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:16,471 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:16,471 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:16,478 - shap - INFO - phi = array([-0.10523389,  0.        ,  0.        ,  0.        , -0.00813515,
+        0.        , -0.01633309, -0.01519431, -0.02341406, -0.25474196,
+        0.05319989, -0.02687613, -0.04084999, -0.01039027,  0.        ])
+2026-01-27 15:21:16,479 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:16,480 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:16,488 - shap - INFO - phi = array([ 0.10523389,  0.        ,  0.        ,  0.        ,  0.00813515,
+        0.        ,  0.01633309,  0.01519431,  0.02341406,  0.25474196,
+       -0.05319989,  0.02687613,  0.04084999,  0.01039027,  0.        ])
+2026-01-27 15:21:16,502 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:16,502 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:16,503 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:16,581 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:16,812 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:16,813 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:16,819 - shap - INFO - phi = array([ 0.06457513,  0.        , -0.04165822,  0.        ,  0.        ,
+       -0.03826994,  0.02950804,  0.02219675,  0.00990814, -0.21569622,
+        0.        ,  0.02014851,  0.01773702,  0.00618876,  0.        ])
+2026-01-27 15:21:16,820 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:16,821 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:16,828 - shap - INFO - phi = array([-0.06457513,  0.        ,  0.04165822,  0.        ,  0.        ,
+        0.03826994, -0.02950804, -0.02219675, -0.00990814,  0.21569622,
+        0.        , -0.02014851, -0.01773702, -0.00618876,  0.        ])
+2026-01-27 15:21:16,841 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:16,842 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:16,842 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:16,945 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:17,180 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:17,180 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:17,187 - shap - INFO - phi = array([-0.10193698,  0.        ,  0.        , -0.00240021, -0.00552005,
+       -0.00561916, -0.01488405, -0.01523486, -0.01965661, -0.25965929,
+        0.        , -0.02840086,  0.        , -0.00938519,  0.        ])
+2026-01-27 15:21:17,188 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:17,188 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:17,195 - shap - INFO - phi = array([0.10193698, 0.        , 0.        , 0.00240021, 0.00552005,
+       0.00561916, 0.01488405, 0.01523486, 0.01965661, 0.25965929,
+       0.        , 0.02840086, 0.        , 0.00938519, 0.        ])
+2026-01-27 15:21:17,208 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:17,209 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:17,209 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:17,290 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:17,515 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:17,516 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:17,522 - shap - INFO - phi = array([ 0.05306634,  0.01155452, -0.0295244 ,  0.        ,  0.        ,
+       -0.02605813,  0.02482899,  0.03792127,  0.00978473,  0.3220427 ,
+        0.        ,  0.01955124,  0.00921865,  0.        ,  0.        ])
+2026-01-27 15:21:17,524 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:17,525 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:17,534 - shap - INFO - phi = array([-0.05306634, -0.01155452,  0.0295244 ,  0.        ,  0.        ,
+        0.02605813, -0.02482899, -0.03792127, -0.00978473, -0.3220427 ,
+        0.        , -0.01955124, -0.00921865,  0.        ,  0.        ])
+2026-01-27 15:21:17,550 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:17,551 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:17,552 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:17,635 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:17,855 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:17,856 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:17,863 - shap - INFO - phi = array([ 0.05108924,  0.        , -0.0316123 ,  0.        ,  0.0029938 ,
+       -0.03014805,  0.02421393,  0.02169868,  0.00718158,  0.33752932,
+        0.        ,  0.01414115,  0.        ,  0.00456252,  0.        ])
+2026-01-27 15:21:17,865 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:17,865 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:17,872 - shap - INFO - phi = array([-0.05108924,  0.        ,  0.0316123 ,  0.        , -0.0029938 ,
+        0.03014805, -0.02421393, -0.02169868, -0.00718158, -0.33752932,
+        0.        , -0.01414115,  0.        , -0.00456252,  0.        ])
+2026-01-27 15:21:17,887 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:17,888 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:17,888 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:17,973 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:18,210 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:18,210 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:18,218 - shap - INFO - phi = array([-0.09588157,  0.05971672, -0.02988305,  0.        ,  0.        ,
+       -0.02612818,  0.02948238,  0.        , -0.02115913,  0.34306846,
+       -0.00949767, -0.05445609,  0.        , -0.0129301 ,  0.        ])
+2026-01-27 15:21:18,219 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:18,220 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:18,225 - shap - INFO - phi = array([ 0.09588157, -0.05971672,  0.02988305,  0.        ,  0.        ,
+        0.02612818, -0.02948238,  0.        ,  0.02115913, -0.34306846,
+        0.00949767,  0.05445609,  0.        ,  0.0129301 ,  0.        ])
+2026-01-27 15:21:18,238 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:18,239 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:18,239 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:18,313 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:18,562 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:18,562 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:18,570 - shap - INFO - phi = array([ 0.08379565, -0.04441117,  0.14324605,  0.01048167,  0.        ,
+        0.13828028,  0.        , -0.0647564 ,  0.02140852, -0.06462857,
+        0.        ,  0.0164643 ,  0.02232221,  0.        ,  0.        ])
+2026-01-27 15:21:18,572 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:18,572 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:18,582 - shap - INFO - phi = array([-0.08379565,  0.04441117, -0.14324605, -0.01048167,  0.        ,
+       -0.13828028,  0.        ,  0.0647564 , -0.02140852,  0.06462857,
+        0.        , -0.0164643 , -0.02232221,  0.        ,  0.        ])
+2026-01-27 15:21:18,602 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:18,602 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:18,603 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:18,728 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:19,046 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:19,047 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:19,070 - shap - INFO - phi = array([ 0.06037157,  0.        , -0.04519869,  0.02189056,  0.        ,
+        0.01145701, -0.01792456,  0.01632197,  0.01105261, -0.25335535,
+       -0.01573189,  0.01240105,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:21:19,073 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:19,074 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:19,092 - shap - INFO - phi = array([-0.06037157,  0.        ,  0.04519869, -0.02189056,  0.        ,
+       -0.01145701,  0.01792456, -0.01632197, -0.01105261,  0.25335535,
+        0.01573189, -0.01240105,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:21:19,119 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:19,121 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:19,123 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:19,251 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:19,682 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:19,690 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:19,731 - shap - INFO - phi = array([-0.05979674, -0.01402627,  0.        , -0.00216773,  0.        ,
+       -0.00791489, -0.01719449, -0.02095494, -0.00702944, -0.27820415,
+        0.        ,  0.01168842, -0.03933875,  0.        ,  0.        ])
+2026-01-27 15:21:19,733 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:19,734 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:19,763 - shap - INFO - phi = array([ 0.05979674,  0.01402627,  0.        ,  0.00216773,  0.        ,
+        0.00791489,  0.01719449,  0.02095494,  0.00702944,  0.27820415,
+        0.        , -0.01168842,  0.03933875,  0.        ,  0.        ])
+2026-01-27 15:21:19,789 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:19,790 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:19,791 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:19,923 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:20,186 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:20,187 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:20,196 - shap - INFO - phi = array([ 0.05234773, -0.04729654,  0.0080895 ,  0.01103378, -0.01016309,
+        0.00792702, -0.02124416, -0.06666734,  0.        , -0.19786395,
+        0.        ,  0.        ,  0.        , -0.00994534,  0.        ])
+2026-01-27 15:21:20,197 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:20,198 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:20,207 - shap - INFO - phi = array([-0.05234773,  0.04729654, -0.0080895 , -0.01103378,  0.01016309,
+       -0.00792702,  0.02124416,  0.06666734,  0.        ,  0.19786395,
+        0.        ,  0.        ,  0.        ,  0.00994534,  0.        ])
+2026-01-27 15:21:20,224 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:20,224 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:20,225 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:20,311 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:20,573 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:20,574 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:20,582 - shap - INFO - phi = array([-0.11678263,  0.04749504, -0.03028217,  0.        , -0.00529043,
+       -0.0279906 ,  0.02198506,  0.        , -0.02340074, -0.22989946,
+        0.        , -0.02992805,  0.        , -0.01131026,  0.        ])
+2026-01-27 15:21:20,586 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:20,586 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:20,595 - shap - INFO - phi = array([ 0.11678263, -0.04749504,  0.03028217,  0.        ,  0.00529043,
+        0.0279906 , -0.02198506,  0.        ,  0.02340074,  0.22989946,
+        0.        ,  0.02992805,  0.        ,  0.01131026,  0.        ])
+2026-01-27 15:21:20,611 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:20,612 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:20,613 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:20,692 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:20,914 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:20,915 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:20,923 - shap - INFO - phi = array([ 0.05152889,  0.        , -0.03168388,  0.        ,  0.        ,
+       -0.02902995,  0.02527232,  0.00882364,  0.00938429,  0.32938284,
+        0.        ,  0.01465585,  0.01287213,  0.00426151,  0.        ])
+2026-01-27 15:21:20,924 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:20,925 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:20,934 - shap - INFO - phi = array([-0.05152889,  0.        ,  0.03168388,  0.        ,  0.        ,
+        0.02902995, -0.02527232, -0.00882364, -0.00938429, -0.32938284,
+        0.        , -0.01465585, -0.01287213, -0.00426151,  0.        ])
+2026-01-27 15:21:20,949 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:20,950 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:20,950 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:21,033 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:21,282 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:21,283 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:21,292 - shap - INFO - phi = array([0.04541555, 0.01320045, 0.0057259 , 0.0409383 , 0.        ,
+       0.07503988, 0.        , 0.03755383, 0.01459717, 0.24292137,
+       0.        , 0.01146699, 0.00723398, 0.        , 0.        ])
+2026-01-27 15:21:21,297 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:21,299 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:21,327 - shap - INFO - phi = array([-0.04541555, -0.01320045, -0.0057259 , -0.0409383 ,  0.        ,
+       -0.07503988,  0.        , -0.03755383, -0.01459717, -0.24292137,
+        0.        , -0.01146699, -0.00723398,  0.        ,  0.        ])
+2026-01-27 15:21:21,347 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:21,348 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:21,348 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:21,433 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:21,665 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:21,666 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:21,677 - shap - INFO - phi = array([ 0.06441483, -0.01000951, -0.0412603 ,  0.        ,  0.        ,
+       -0.03591334,  0.0315456 ,  0.        ,  0.01088466, -0.21230246,
+        0.01154584,  0.02182004,  0.01871083,  0.        ,  0.        ])
+2026-01-27 15:21:21,679 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:21,680 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:21,689 - shap - INFO - phi = array([-0.06441483,  0.01000951,  0.0412603 ,  0.        ,  0.        ,
+        0.03591334, -0.0315456 ,  0.        , -0.01088466,  0.21230246,
+       -0.01154584, -0.02182004, -0.01871083,  0.        ,  0.        ])
+2026-01-27 15:21:21,703 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:21,704 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:21,704 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:21,787 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:22,034 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:22,034 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:22,042 - shap - INFO - phi = array([-0.07133674,  0.04489124, -0.03311702,  0.        ,  0.        ,
+       -0.03091721,  0.02662229,  0.04480865, -0.01571158, -0.28611901,
+        0.        ,  0.0133822 ,  0.00798482,  0.        ,  0.        ])
+2026-01-27 15:21:22,044 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:22,045 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:22,053 - shap - INFO - phi = array([ 0.07133674, -0.04489124,  0.03311702,  0.        ,  0.        ,
+        0.03091721, -0.02662229, -0.04480865,  0.01571158,  0.28611901,
+        0.        , -0.0133822 , -0.00798482,  0.        ,  0.        ])
+2026-01-27 15:21:22,073 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:22,074 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:22,075 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:22,162 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:22,407 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:22,408 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:22,415 - shap - INFO - phi = array([ 0.08160107, -0.04639443,  0.1788048 ,  0.01076586,  0.0127891 ,
+        0.15473127, -0.01914485, -0.05885298,  0.01980966,  0.        ,
+        0.        ,  0.01847203,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:21:22,417 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:22,418 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:22,513 - shap - INFO - phi = array([-0.08160107,  0.04639443, -0.1788048 , -0.01076586, -0.0127891 ,
+       -0.15473127,  0.01914485,  0.05885298, -0.01980966,  0.        ,
+        0.        , -0.01847203,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:21:22,533 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:22,538 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:22,543 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:22,623 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:22,859 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:22,859 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:22,868 - shap - INFO - phi = array([-0.03317757,  0.        , -0.03303398,  0.        ,  0.        ,
+       -0.02830086,  0.02698043,  0.006309  ,  0.        ,  0.35538219,
+       -0.00754881,  0.01523368,  0.01090623,  0.00690663,  0.        ])
+2026-01-27 15:21:22,870 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:22,873 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:22,882 - shap - INFO - phi = array([ 0.03317757,  0.        ,  0.03303398,  0.        ,  0.        ,
+        0.02830086, -0.02698043, -0.006309  ,  0.        , -0.35538219,
+        0.00754881, -0.01523368, -0.01090623, -0.00690663,  0.        ])
+2026-01-27 15:21:22,903 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:22,904 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:22,905 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:22,986 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:23,216 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:23,216 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:23,226 - shap - INFO - phi = array([ 0.07095209,  0.        ,  0.01418642,  0.        ,  0.        ,
+        0.        , -0.02380304,  0.05541023,  0.00709791, -0.24761289,
+        0.00484503,  0.02326589,  0.01277053,  0.00592203,  0.        ])
+2026-01-27 15:21:23,233 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:23,234 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:23,253 - shap - INFO - phi = array([-0.07095209,  0.        , -0.01418642,  0.        ,  0.        ,
+        0.        ,  0.02380304, -0.05541023, -0.00709791,  0.24761289,
+       -0.00484503, -0.02326589, -0.01277053, -0.00592203,  0.        ])
+2026-01-27 15:21:23,269 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:23,270 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:23,270 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:23,354 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:23,626 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:23,626 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:23,635 - shap - INFO - phi = array([ 0.04771274,  0.        , -0.03686923,  0.        ,  0.        ,
+       -0.03798042,  0.02472228,  0.02183721,  0.00778334, -0.28933757,
+       -0.01571583,  0.01357348, -0.06424392,  0.        ,  0.        ])
+2026-01-27 15:21:23,637 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:23,637 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:23,645 - shap - INFO - phi = array([-0.04771274,  0.        ,  0.03686923,  0.        ,  0.        ,
+        0.03798042, -0.02472228, -0.02183721, -0.00778334,  0.28933757,
+        0.01571583, -0.01357348,  0.06424392,  0.        ,  0.        ])
+2026-01-27 15:21:25,060 - titanic_pipeline.core.reporting - INFO -    📊 SHAP plot generated for Ensemble_Stacking: output\graficos\shap\shap_summary_Ensemble_Stacking.png
+2026-01-27 15:21:25,075 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:25,077 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:25,077 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:25,157 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:25,480 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:25,481 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:25,489 - shap - INFO - phi = array([ 0.05229296, -0.01378034,  0.00607951,  0.        ,  0.        ,
+        0.        , -0.01217107,  0.00924168,  0.00918174,  0.33778465,
+        0.        ,  0.01572818,  0.0072774 ,  0.        ,  0.00399803])
+2026-01-27 15:21:25,491 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:25,492 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:25,507 - shap - INFO - phi = array([-0.05229296,  0.01378034, -0.00607951,  0.        ,  0.        ,
+        0.        ,  0.01217107, -0.00924168, -0.00918174, -0.33778465,
+        0.        , -0.01572818, -0.0072774 ,  0.        , -0.00399803])
+2026-01-27 15:21:25,526 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:25,527 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:25,527 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:25,612 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:25,831 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:25,831 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:25,841 - shap - INFO - phi = array([-0.10562912,  0.        ,  0.        ,  0.        , -0.00850685,
+        0.        , -0.00840642, -0.00772736, -0.01420107, -0.26385121,
+        0.        , -0.02041048, -0.02928961, -0.00445588, -0.00650974])
+2026-01-27 15:21:25,844 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:25,845 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:25,854 - shap - INFO - phi = array([0.10562912, 0.        , 0.        , 0.        , 0.00850685,
+       0.        , 0.00840642, 0.00772736, 0.01420107, 0.26385121,
+       0.        , 0.02041048, 0.02928961, 0.00445588, 0.00650974])
+2026-01-27 15:21:25,867 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:25,868 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:25,869 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:25,952 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:26,180 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:26,181 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:26,194 - shap - INFO - phi = array([ 0.06374163,  0.        , -0.03638716,  0.        ,  0.00699651,
+       -0.03560937,  0.02597543,  0.01305778,  0.00767202, -0.23491632,
+        0.        ,  0.01785008,  0.0147218 ,  0.        ,  0.        ])
+2026-01-27 15:21:26,197 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:26,197 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:26,201 - shap - INFO - phi = array([-0.06374163,  0.        ,  0.03638716,  0.        , -0.00699651,
+        0.03560937, -0.02597543, -0.01305778, -0.00767202,  0.23491632,
+        0.        , -0.01785008, -0.0147218 ,  0.        ,  0.        ])
+2026-01-27 15:21:26,226 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:26,227 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:26,229 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:26,305 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:26,565 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:26,565 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:26,573 - shap - INFO - phi = array([-0.10377096,  0.        ,  0.        ,  0.        , -0.00865855,
+       -0.00694383, -0.01196723, -0.0117242 , -0.01676507, -0.27330853,
+        0.        , -0.0260815 ,  0.        , -0.00790985, -0.0077624 ])
+2026-01-27 15:21:26,576 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:26,576 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:26,586 - shap - INFO - phi = array([0.10377096, 0.        , 0.        , 0.        , 0.00865855,
+       0.00694383, 0.01196723, 0.0117242 , 0.01676507, 0.27330853,
+       0.        , 0.0260815 , 0.        , 0.00790985, 0.0077624 ])
+2026-01-27 15:21:26,602 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:26,603 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:26,604 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:26,695 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:26,926 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:26,926 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:26,933 - shap - INFO - phi = array([ 0.04638811,  0.01157405, -0.02696759,  0.        ,  0.00366949,
+        0.        ,  0.01461318,  0.02513081,  0.00813043,  0.33507442,
+        0.        ,  0.01345988,  0.00528819,  0.        ,  0.        ])
+2026-01-27 15:21:26,935 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:26,936 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:26,946 - shap - INFO - phi = array([-0.04638811, -0.01157405,  0.02696759,  0.        , -0.00366949,
+        0.        , -0.01461318, -0.02513081, -0.00813043, -0.33507442,
+        0.        , -0.01345988, -0.00528819,  0.        ,  0.        ])
+2026-01-27 15:21:26,960 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:26,960 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:26,961 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:27,045 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:27,273 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:27,273 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:27,280 - shap - INFO - phi = array([ 0.04921947,  0.        , -0.02460239,  0.        ,  0.00491818,
+       -0.02497171,  0.01675906,  0.01376105,  0.00728538,  0.34935047,
+        0.        ,  0.01373835,  0.        ,  0.0041962 ,  0.        ])
+2026-01-27 15:21:27,281 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:27,282 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:27,293 - shap - INFO - phi = array([-0.04921947,  0.        ,  0.02460239,  0.        , -0.00491818,
+        0.02497171, -0.01675906, -0.01376105, -0.00728538, -0.34935047,
+        0.        , -0.01373835,  0.        , -0.0041962 ,  0.        ])
+2026-01-27 15:21:27,305 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:27,307 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:27,308 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:27,385 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:27,633 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:27,633 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:27,641 - shap - INFO - phi = array([-0.09532055,  0.08233907, -0.02589262,  0.        ,  0.        ,
+       -0.02487505,  0.02574899,  0.        , -0.01797624,  0.3588823 ,
+        0.        , -0.05288555,  0.        , -0.01283382, -0.011644  ])
+2026-01-27 15:21:27,643 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:27,643 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:27,652 - shap - INFO - phi = array([ 0.09532055, -0.08233907,  0.02589262,  0.        ,  0.        ,
+        0.02487505, -0.02574899,  0.        ,  0.01797624, -0.3588823 ,
+        0.        ,  0.05288555,  0.        ,  0.01283382,  0.011644  ])
+2026-01-27 15:21:27,670 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:27,671 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:27,671 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:27,760 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:28,004 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:28,004 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:28,011 - shap - INFO - phi = array([ 0.09515456, -0.07293661,  0.1282009 ,  0.01402835,  0.        ,
+        0.12497481,  0.        , -0.04121358,  0.01716744, -0.03861864,
+        0.        ,  0.01780673,  0.02033935,  0.        ,  0.        ])
+2026-01-27 15:21:28,014 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:28,014 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:28,023 - shap - INFO - phi = array([-0.09515456,  0.07293661, -0.1282009 , -0.01402835,  0.        ,
+       -0.12497481,  0.        ,  0.04121358, -0.01716744,  0.03861864,
+        0.        , -0.01780673, -0.02033935,  0.        ,  0.        ])
+2026-01-27 15:21:28,038 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:28,040 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:28,040 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:28,117 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:28,353 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:28,354 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:28,362 - shap - INFO - phi = array([ 0.06217797,  0.        , -0.03886336,  0.02917486,  0.        ,
+        0.01135054, -0.01706804,  0.00827095,  0.00909141, -0.26770969,
+       -0.01282174,  0.01249226,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:21:28,364 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:28,364 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:28,372 - shap - INFO - phi = array([-0.06217797,  0.        ,  0.03886336, -0.02917486,  0.        ,
+       -0.01135054,  0.01706804, -0.00827095, -0.00909141,  0.26770969,
+        0.01282174, -0.01249226,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:21:28,389 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:28,390 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:28,390 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:28,463 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:28,700 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:28,701 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:28,708 - shap - INFO - phi = array([-0.06141872, -0.01474095,  0.        , -0.00319104, -0.00049433,
+       -0.00691918, -0.01181097, -0.01525733, -0.00567137, -0.29647538,
+        0.        ,  0.        , -0.03143207,  0.        ,  0.        ])
+2026-01-27 15:21:28,710 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:28,711 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:28,719 - shap - INFO - phi = array([0.06141872, 0.01474095, 0.        , 0.00319104, 0.00049433,
+       0.00691918, 0.01181097, 0.01525733, 0.00567137, 0.29647538,
+       0.        , 0.        , 0.03143207, 0.        , 0.        ])
+2026-01-27 15:21:28,734 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:28,735 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:28,735 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:28,823 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:29,072 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:29,073 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:29,084 - shap - INFO - phi = array([ 0.05349587, -0.06852189,  0.        ,  0.01209539, -0.00729218,
+        0.        , -0.0175575 , -0.04749579,  0.        , -0.21395698,
+       -0.00238143,  0.        ,  0.        , -0.00740691, -0.00912825])
+2026-01-27 15:21:29,087 - shap - INFO - np.sum(w_aug) = np.float64(15.0)
+2026-01-27 15:21:29,087 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:29,097 - shap - INFO - phi = array([-0.05349587,  0.06852189,  0.        , -0.01209539,  0.00729218,
+        0.        ,  0.0175575 ,  0.04749579,  0.        ,  0.21395698,
+        0.00238143,  0.        ,  0.        ,  0.00740691,  0.00912825])
+2026-01-27 15:21:29,117 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:29,118 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:29,119 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:29,211 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:29,457 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:29,458 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:29,466 - shap - INFO - phi = array([-0.13147635,  0.06463491, -0.02375873,  0.        ,  0.        ,
+       -0.02300005,  0.        ,  0.        , -0.01632745, -0.24551096,
+       -0.00309234, -0.0278463 ,  0.        , -0.00806235, -0.0084841 ])
+2026-01-27 15:21:29,468 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:29,469 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:29,480 - shap - INFO - phi = array([ 0.13147635, -0.06463491,  0.02375873,  0.        ,  0.        ,
+        0.02300005,  0.        ,  0.        ,  0.01632745,  0.24551096,
+        0.00309234,  0.0278463 ,  0.        ,  0.00806235,  0.0084841 ])
+2026-01-27 15:21:29,500 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:29,501 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:29,501 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:29,581 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:29,803 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:29,803 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:29,808 - shap - INFO - phi = array([ 0.05354587,  0.        , -0.02543038,  0.        ,  0.        ,
+       -0.02361409,  0.01819114,  0.00973422,  0.01137798,  0.34555208,
+        0.        ,  0.01317159,  0.01171862,  0.00369705,  0.        ])
+2026-01-27 15:21:29,810 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:29,811 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:29,817 - shap - INFO - phi = array([-0.05354587,  0.        ,  0.02543038,  0.        ,  0.        ,
+        0.02361409, -0.01819114, -0.00973422, -0.01137798, -0.34555208,
+        0.        , -0.01317159, -0.01171862, -0.00369705,  0.        ])
+2026-01-27 15:21:29,842 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:29,855 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:29,877 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:30,000 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:30,231 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:30,232 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:30,246 - shap - INFO - phi = array([0.04426306, 0.01852528, 0.        , 0.04435899, 0.        ,
+       0.06345871, 0.        , 0.02863265, 0.01622631, 0.245836  ,
+       0.        , 0.01162947, 0.00807804, 0.00607413, 0.        ])
+2026-01-27 15:21:30,248 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:30,252 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:30,260 - shap - INFO - phi = array([-0.04426306, -0.01852528,  0.        , -0.04435899,  0.        ,
+       -0.06345871,  0.        , -0.02863265, -0.01622631, -0.245836  ,
+        0.        , -0.01162947, -0.00807804, -0.00607413,  0.        ])
+2026-01-27 15:21:30,273 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:30,275 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:30,275 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:30,363 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:30,593 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:30,594 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:30,603 - shap - INFO - phi = array([ 0.06297706, -0.02290355, -0.03392462,  0.        ,  0.        ,
+       -0.03101829,  0.02611376,  0.        ,  0.00942912, -0.23582481,
+        0.01096448,  0.0193419 ,  0.01580776,  0.        ,  0.        ])
+2026-01-27 15:21:30,605 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:30,606 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:30,613 - shap - INFO - phi = array([-0.06297706,  0.02290355,  0.03392462,  0.        ,  0.        ,
+        0.03101829, -0.02611376,  0.        , -0.00942912,  0.23582481,
+       -0.01096448, -0.0193419 , -0.01580776,  0.        ,  0.        ])
+2026-01-27 15:21:30,625 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:30,626 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:30,627 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:30,704 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:30,950 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:30,951 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:30,963 - shap - INFO - phi = array([-0.0748771 ,  0.06347257, -0.02761059, -0.00517034,  0.        ,
+       -0.02713632,  0.024898  ,  0.03266351, -0.01158076, -0.30561556,
+        0.        ,  0.01146596,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:21:30,966 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:30,967 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000002)
+2026-01-27 15:21:30,977 - shap - INFO - phi = array([ 0.0748771 , -0.06347257,  0.02761059,  0.00517034,  0.        ,
+        0.02713632, -0.024898  , -0.03266351,  0.01158076,  0.30561556,
+        0.        , -0.01146596,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:21:31,001 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:31,002 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:31,002 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:31,093 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:31,356 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:31,357 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:31,367 - shap - INFO - phi = array([ 0.09132165, -0.06869234,  0.15903158,  0.01337687,  0.01261158,
+        0.14439396,  0.        , -0.03867972,  0.01501101,  0.01337342,
+        0.        ,  0.01854807,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:21:31,369 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:31,369 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:31,379 - shap - INFO - phi = array([-0.09132165,  0.06869234, -0.15903158, -0.01337687, -0.01261158,
+       -0.14439396,  0.        ,  0.03867972, -0.01501101, -0.01337342,
+        0.        , -0.01854807,  0.        ,  0.        ,  0.        ])
+2026-01-27 15:21:31,394 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:31,395 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:31,396 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:31,486 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:31,769 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:31,769 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:31,779 - shap - INFO - phi = array([-0.02716643,  0.        , -0.02770628,  0.        ,  0.        ,
+       -0.02465786,  0.02017802,  0.00597173,  0.        ,  0.37504001,
+        0.        ,  0.01305032,  0.00770826,  0.00414333,  0.00512119])
+2026-01-27 15:21:31,782 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999998)
+2026-01-27 15:21:31,782 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:31,793 - shap - INFO - phi = array([ 0.02716643,  0.        ,  0.02770628,  0.        ,  0.        ,
+        0.02465786, -0.02017802, -0.00597173,  0.        , -0.37504001,
+        0.        , -0.01305032, -0.00770826, -0.00414333, -0.00512119])
+2026-01-27 15:21:31,812 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:31,813 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:31,814 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:31,909 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:32,136 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:32,137 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:32,142 - shap - INFO - phi = array([ 0.06434524,  0.00703093,  0.00873438,  0.        ,  0.        ,
+        0.        , -0.01979254,  0.03740752,  0.00679236, -0.27581092,
+        0.        ,  0.01911333,  0.00892097,  0.        ,  0.00477595])
+2026-01-27 15:21:32,145 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:32,145 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:32,153 - shap - INFO - phi = array([-0.06434524, -0.00703093, -0.00873438,  0.        ,  0.        ,
+        0.        ,  0.01979254, -0.03740752, -0.00679236,  0.27581092,
+        0.        , -0.01911333, -0.00892097,  0.        , -0.00477595])
+2026-01-27 15:21:32,168 - shap - INFO - num_full_subsets = 2
+2026-01-27 15:21:32,169 - shap - INFO - remaining_weight_vector = array([0.25989514, 0.21264148, 0.1871245 , 0.17326343, 0.16707545])
+2026-01-27 15:21:32,169 - shap - INFO - num_paired_subset_sizes = 7
+2026-01-27 15:21:32,240 - shap - INFO - weight_left = np.float64(0.4930585722173909)
+2026-01-27 15:21:32,483 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:32,484 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:32,489 - shap - INFO - phi = array([ 0.04806048,  0.        , -0.02845546, -0.0067364 ,  0.        ,
+       -0.03124567,  0.01988804,  0.01640898,  0.        , -0.30729028,
+       -0.01364823,  0.01245224, -0.0531265 ,  0.        ,  0.        ])
+2026-01-27 15:21:32,491 - shap - INFO - np.sum(w_aug) = np.float64(14.999999999999996)
+2026-01-27 15:21:32,492 - shap - INFO - np.sum(self.kernelWeights) = np.float64(1.0000000000000004)
+2026-01-27 15:21:32,501 - shap - INFO - phi = array([-0.04806048,  0.        ,  0.02845546,  0.0067364 ,  0.        ,
+        0.03124567, -0.01988804, -0.01640898,  0.        ,  0.30729028,
+        0.01364823, -0.01245224,  0.0531265 ,  0.        ,  0.        ])
+2026-01-27 15:21:33,834 - titanic_pipeline.core.reporting - INFO -    📊 SHAP plot generated for Ensemble_Voting: output\graficos\shap\shap_summary_Ensemble_Voting.png
+2026-01-27 15:21:36,297 - titanic_pipeline.core.reporting - INFO -    📊 SHAP plot generated for RidgeClassifier: output\graficos\shap\shap_summary_RidgeClassifier.png
+2026-01-27 15:21:36,298 - titanic_pipeline.core.reporting - INFO -    📊 SHAP plots generated successfully for 3 models
+2026-01-27 15:21:37,887 - titanic_pipeline.core.reporting - WARNING -    ⚠️  Feature names count (14) mismatch with X columns (15). Using generic names.
+2026-01-27 15:21:39,079 - titanic_pipeline.core.reporting - INFO -    📊 Permutation importance for Ensemble_Stacking generated
+2026-01-27 15:21:39,083 - titanic_pipeline.core.reporting - INFO - Model performance logged to output\relatorios\resultados_modelos.csv
+2026-01-27 15:21:39,087 - titanic_pipeline.core.reporting - INFO -    📝 Changelog and manifest generated
+2026-01-27 15:21:39,089 - titanic_pipeline.core.preprocessing - INFO - Categorical features: ['Pclass', 'SibSp', 'Parch', 'feat_Cabin_missing']
+2026-01-27 15:21:39,089 - titanic_pipeline.core.preprocessing - INFO - Numerical features: ['Age', 'Fare', 'FamilySize', 'IsAlone', 'AgeClass', 'FarePerPerson', 'feat_Title_te', 'feat_TicketPrefix_te', 'feat_Deck_te', 'feat_Embarked_te']
+2026-01-27 15:21:39,178 - titanic_pipeline.core.modeling - INFO - Pipeline saved to output/models/best_model_pipeline.pkl
+2026-01-27 15:21:39,193 - __main__ - INFO - Best model 'Ensemble_Voting' saved separately
+2026-01-27 15:21:39,195 - __main__ - INFO - Resumo: 5/6 arquivos gerados (Ver log para detalhes)

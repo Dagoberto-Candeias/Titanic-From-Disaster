@@ -361,9 +361,21 @@ class AdvancedFeatureEngineer:
         return df
 
     def select_features_via_model(self, X_train, y_train, feature_names):
-        """Seleciona features usando um modelo (placeholder)."""
-        logger.warning("   select_features_via_model não implementado, retornando todas as features.")
-        return feature_names, None
+        """Seleciona features usando um modelo (RandomForest)."""
+        from sklearn.feature_selection import SelectFromModel
+        
+        logger.info("   🎯 Executando seleção de features (SelectFromModel)...")
+        
+        # Usar um modelo leve para seleção
+        selector_model = RandomForestClassifier(n_estimators=50, max_depth=7, random_state=42, n_jobs=-1)
+        selector = SelectFromModel(selector_model, threshold="median")
+        selector.fit(X_train, y_train)
+        
+        selected_mask = selector.get_support()
+        selected_features = [f for f, s in zip(feature_names, selected_mask) if s]
+        
+        logger.info(f"   ✅ Features selecionadas: {len(selected_features)}/{len(feature_names)}")
+        return selected_features, selector
 
     def validate_imputation(self, df, original_df=None):
         """Valida a imputação (placeholder)."""
@@ -1673,3 +1685,4 @@ def run_unit_tests():
 if __name__ == "__main__":
     if not main():
         sys.exit(1)
+

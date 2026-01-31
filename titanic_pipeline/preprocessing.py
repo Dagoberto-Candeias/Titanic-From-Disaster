@@ -18,7 +18,7 @@ from typing import Callable, List, Optional, Tuple, Union
 
 from titanic_pipeline.utils import set_global_seeds
 
-from config import CONFIG
+from .config import CONFIG
 
 
 logger = logging.getLogger(__name__)
