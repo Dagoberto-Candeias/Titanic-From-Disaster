@@ -210,3 +210,117 @@ class TitanicPipeline:
 
         logger.info(f"Model loaded from {filepath}")
         return model
+
+    def run_pipeline(
+        self,
+        train_path: str,
+        test_path: str,
+        target_col: str = "Survived",
+    ) -> Dict[str, Any]:
+        """Run complete pipeline from data loading to model training.
+
+        Args:
+            train_path: Path to training CSV file
+            test_path: Path to test CSV file
+            target_col: Name of target column
+
+        Returns:
+            Dictionary with pipeline results including models and metrics
+        """
+        logger.info("Starting TitanicPipeline.run_pipeline()...")
+
+        try:
+            # 1. Load data
+            logger.info(f"Loading training data from {train_path}")
+            train_df = pd.read_csv(train_path)
+            test_df = pd.read_csv(test_path)
+
+            logger.info(
+                f"Loaded: {train_df.shape[0]} training samples, "
+                f"{test_df.shape[0]} test samples"
+            )
+
+            # 2. Separate target from features
+            if target_col not in train_df.columns:
+                raise ValueError(
+                    f"Target column '{target_col}' not found in training data"
+                )
+
+            y_train = train_df[target_col]
+            X_train = train_df.drop(columns=[target_col])
+
+            # Align test features with training features
+            X_test = test_df[[col for col in X_train.columns
+                             if col in test_df.columns]]
+
+            logger.info(
+                f"Features shape: X_train={X_train.shape}, "
+                f"X_test={X_test.shape}"
+            )
+
+            # 3. Preprocess data
+            logger.info("Preprocessing data...")
+            X_train_processed, X_test_processed, _, _ = (
+                modular_preprocess_data(
+                    train_df,
+                    test_df,
+                    X_train.columns.tolist(),
+                    apply_smote=self.config.get("enhanced_balance", False),
+                )
+            )
+
+            logger.info(
+                f"Preprocessed shapes: "
+                f"X_train={X_train_processed.shape}, "
+                f"X_test={X_test_processed.shape}"
+            )
+
+            # 4. Train models
+            logger.info("Training models...")
+            self.fit(X_train_processed, y_train)
+
+            # 5. Make predictions
+            logger.info("Making predictions on test set...")
+            y_pred = self.predict(X_test_processed)
+
+            # 6. Get performance metrics
+            performance = self.get_model_performance()
+
+            # 7. Compile results
+            results = {
+                "status": "success",
+                "train_shape": X_train.shape,
+                "test_shape": X_test.shape,
+                "predictions": y_pred,
+                "performance": performance,
+                "best_model": (
+                    "VotingEnsemble"
+                    if "VotingEnsemble" in self.ensemble_results
+                    else max(
+                        self.model_results.items(),
+                        key=lambda x: x[1].get("mean_score", 0),
+                    )[0]
+                ),
+                "model_results": self.model_results,
+                "ensemble_results": self.ensemble_results,
+            }
+
+            logger.info(
+                f"Pipeline completed successfully. "
+                f"Best model: {results['best_model']}"
+            )
+            return results
+
+        except Exception as e:
+            logger.error(f"Pipeline failed: {e}", exc_info=True)
+            return {
+                "status": "error",
+                "error": str(e),
+                "predictions": None,
+                "performance": {},
+            }
+            with open(filepath, 'rb') as f:
+                model = pickle.load(f)
+
+        logger.info(f"Model loaded from {filepath}")
+        return model
