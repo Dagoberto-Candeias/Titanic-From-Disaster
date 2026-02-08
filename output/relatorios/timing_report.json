@@ -1,5 +1,5 @@
 {
-  "total_time_seconds": 120.0,
-  "models_trained": 2,
-  "best_model": "RandomForest"
+  "total_time_seconds": 2879.258861,
+  "models_trained": 26,
+  "best_model": "Ensemble_Voting"
 }
