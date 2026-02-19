@@ -176,6 +176,16 @@ def optimize_memory_usage(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
     start_mem = df.memory_usage(deep=deep).sum() / 1024**2
     logger.info(f"Uso de memória do dataframe é {start_mem:.2f} MB")
 
+    # Normalize pandas 'string' dtype to plain object strings for
+    # consistent behavior across pandas versions (so low-cardinality
+    # detection converts to 'category').
+    try:
+        str_cols = df.select_dtypes(include=["string"]).columns.tolist()
+        for c in str_cols:
+            df[c] = df[c].astype(object)
+    except Exception:
+        pass
+
     for col in df.columns:
         col_series = df[col]
         try:
