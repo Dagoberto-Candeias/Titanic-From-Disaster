@@ -1,4 +1,5 @@
 import pandas as pd
+from pandas.api import types as pd_types
 import numpy as np
 import pytest
 import sys
@@ -52,9 +53,6 @@ def test_optimize_memory_usage_clean_numeric(clean_numeric_dataframe: pd.DataFra
     assert df_optimized['int_large'].dtype == 'int32'
     assert df_optimized['float_small'].dtype == 'float32'
     assert df_optimized['float_large'].dtype == 'float64' # Should remain float64 due to precision
-    import pandas as pd
-    from pandas.api import types as pd_types
-
     assert pd_types.is_categorical_dtype(df_optimized['object_low_card'])
     assert pd_types.is_object_dtype(df_optimized['object_high_card']) or pd_types.is_string_dtype(df_optimized['object_high_card'])
     assert df_optimized['bool_col'].dtype == 'int8' # Booleans are often converted to int8
@@ -74,9 +72,6 @@ def test_optimize_memory_usage_with_nans(dataframe_with_nans: pd.DataFrame):
     # Columns with NaNs will be float types, and should be downcasted to float32 if range allows
     assert df_optimized['int_with_nan'].dtype == 'float32'
     assert df_optimized['float_with_nan'].dtype == 'float32'
-    import pandas as pd
-    from pandas.api import types as pd_types
-
     assert pd_types.is_categorical_dtype(df_optimized['object_with_nan'])
 
 def test_optimize_memory_usage_no_change_if_not_optimizable():
@@ -87,8 +82,5 @@ def test_optimize_memory_usage_no_change_if_not_optimizable():
     optimized_memory = df_optimized.memory_usage(deep=True).sum()
     # Expect memory to be very close, or slightly less if 'id' was int64 and became int16/int32
     assert optimized_memory <= initial_memory
-    import pandas as pd
-    from pandas.api import types as pd_types
-
     assert pd_types.is_object_dtype(df_optimized['text']) or pd_types.is_string_dtype(df_optimized['text'])
     assert df_optimized['id'].dtype == 'int16' # Should be optimized from int64 to int16
