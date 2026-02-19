@@ -176,15 +176,9 @@ def optimize_memory_usage(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
     start_mem = df.memory_usage(deep=deep).sum() / 1024**2
     logger.info(f"Uso de memória do dataframe é {start_mem:.2f} MB")
 
-    # Normalize pandas 'string' dtype to plain object strings for
-    # consistent behavior across pandas versions (so low-cardinality
-    # detection converts to 'category').
-    try:
-        str_cols = df.select_dtypes(include=["string"]).columns.tolist()
-        for c in str_cols:
-            df[c] = df[c].astype(object)
-    except Exception:
-        pass
+    # Don't force-convert pandas 'string' dtype here — instead detect
+    # string-like columns robustly below so that both 'object' and
+    # pandas 'string' dtypes are handled consistently.
 
     for col in df.columns:
         col_series = df[col]
@@ -225,16 +219,17 @@ def optimize_memory_usage(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
 
         # Object / string-like columns
         else:
+            # Robust detection for string-like columns across pandas versions
             is_str_like = False
             if pd_types:
-                is_str_like = pd_types.is_object_dtype(col_series) or pd_types.is_string_dtype(col_series)
-            # Fallback for pandas versions where StringDtype detection is different
+                try:
+                    is_str_like = pd_types.is_object_dtype(col_series) or pd_types.is_string_dtype(col_series)
+                except Exception:
+                    is_str_like = pd_types.is_object_dtype(col_series)
             if not is_str_like:
                 dt_name = str(col_series.dtype).lower()
-                if 'string' in dt_name or 'stringdtype' in dt_name:
+                if 'string' in dt_name or 'stringdtype' in dt_name or 'object' in dt_name:
                     is_str_like = True
-            else:
-                is_str_like = (col_series.dtype == object)
 
             # For any non-numeric/non-datetime column, check cardinality and
             # convert to 'category' when it is low (saves memory).

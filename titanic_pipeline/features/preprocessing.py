@@ -63,7 +63,7 @@ def select_features_via_model(X, y, model_type: str = 'rf', k: int = 10):
         try:
             from xgboost import XGBClassifier
 
-            model = XGBClassifier(n_estimators=100, random_state=42, use_label_encoder=False, verbosity=0)
+            model = XGBClassifier(n_estimators=100, random_state=42, verbosity=0)
         except Exception:
             model = RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1)
     else:
@@ -79,6 +79,6 @@ def select_features_via_model(X, y, model_type: str = 'rf', k: int = 10):
     ranked_idx = importances.argsort()[::-1]
     top_idx = ranked_idx[:min(k, len(ranked_idx))]
     selected_features = [X_df.columns[i] for i in top_idx]
-    X_selected = X_df.iloc[:, top_idx].values
+    X_selected = X_df.iloc[:, top_idx].to_numpy(dtype=np.float64, na_value=np.nan)
 
     return X_selected, selected_features

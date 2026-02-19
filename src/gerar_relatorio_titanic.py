@@ -283,11 +283,12 @@ def gerar_graficos_eda(df, df_raw=None):
         missing = missing[missing > 0].sort_values(ascending=False)
         
         if not missing.empty:
-            ax = sns.barplot(x=missing.index, y=missing.values, palette='Reds_r')
+            missing_values = missing.to_numpy(dtype=np.int64)
+            ax = sns.barplot(x=missing.index, y=missing_values, palette='Reds_r')
             plt.title('Contagem de Valores Ausentes (Antes do Tratamento)')
             plt.ylabel('Quantidade de Nulos')
             # Adicionar rótulos de porcentagem
-            for i, v in enumerate(missing.values):
+            for i, v in enumerate(missing_values):
                 ax.text(i, v + 5, f"{v} ({v/len(df_raw):.1%})", ha='center', fontweight='bold')
         
         imgs['missing'] = os.path.join(GRAFICOS_DIR, 'valores_ausentes.png')

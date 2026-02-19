@@ -234,7 +234,7 @@ def test_standalone_functions():
     # Test generate_shap_comparison_plot (requires shap)
     try:
         top_models = [("RandomForest", model_results["RandomForest"])]
-        generate_shap_comparison_plot(top_models, X_train.values, feature_cols)
+        generate_shap_comparison_plot(top_models, X_train.to_numpy(dtype=np.float64, na_value=np.nan), feature_cols)
         logger.info("✓ generate_shap_comparison_plot completed successfully")
     except ImportError:
         logger.warning("⚠ generate_shap_comparison_plot skipped: shap not available")

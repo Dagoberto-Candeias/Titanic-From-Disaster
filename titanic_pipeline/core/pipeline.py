@@ -76,11 +76,11 @@ class TitanicPipeline:
         """
         logger.info("Fitting TitanicPipeline...")
 
-        # Convert to numpy arrays if needed
+        # Convert to numpy arrays if needed (use .to_numpy() instead of .values)
         if isinstance(X_train, pd.DataFrame):
-            X_train = X_train.values
+            X_train = X_train.to_numpy(dtype=np.float64, na_value=np.nan)
         if isinstance(y_train, pd.Series):
-            y_train = y_train.values
+            y_train = y_train.to_numpy(dtype=np.int64)
 
         # Train models
         self.model_results = self.modeling_manager.train_all_models(X_train, y_train)
@@ -107,9 +107,9 @@ class TitanicPipeline:
         if not self.is_fitted:
             raise ValueError("Pipeline must be fitted before making predictions")
 
-        # Convert to numpy if needed
+        # Convert to numpy if needed (use .to_numpy() instead of .values)
         if isinstance(X_test, pd.DataFrame):
-            X_test = X_test.values
+            X_test = X_test.to_numpy(dtype=np.float64, na_value=np.nan)
 
         # Use the best performing model (VotingEnsemble if available, else best individual)
         if 'VotingEnsemble' in self.ensemble_results:

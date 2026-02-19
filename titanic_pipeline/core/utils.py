@@ -109,7 +109,16 @@ def load_cached_result(key: str, cache_dir: str = "output/cache") -> Optional[An
 
 
 def data_hash_calc(df: pd.DataFrame) -> str:
-    return hashlib.md5(pd.util.hash_pandas_object(df).values.tobytes()).hexdigest()
+    """Calcula hash de um DataFrame usando CSV representation.
+    
+    Note: pd.util.hash_pandas_object foi deprecado em pandas 2.0+.
+    Usamos CSV string para consistência cross-platform.
+    """
+    import io
+    buffer = io.StringIO()
+    df.to_csv(buffer, index=False)
+    content = buffer.getvalue().encode('utf-8')
+    return hashlib.md5(content).hexdigest()
 
 
 class CacheManager:

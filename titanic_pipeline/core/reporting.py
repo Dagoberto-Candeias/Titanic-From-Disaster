@@ -160,7 +160,11 @@ class ReportingManager:
                         train_df = None
 
                 if train_df is not None and y_train is not None:
-                    y_vals = y_train.values if hasattr(y_train, "values") else y_train
+                    # Use to_numpy() instead of .values for better compatibility with pandas 2.0+
+                    if hasattr(y_train, "to_numpy"):
+                        y_vals = y_train.to_numpy(dtype=np.int64)
+                    else:
+                        y_vals = np.asarray(y_train, dtype=np.int64)
                     train_df["Survived"] = y_vals
                     generate_feature_correlation_heatmap(train_df, plot_feature_cols)
             except Exception as e:

@@ -89,7 +89,7 @@ def optimize_memory_usage(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
                 # intentionally store high-precision values (e.g., many
                 # decimal digits) which should remain float64.
                 has_limited_precision = np.allclose(
-                    non_na.values, np.round(non_na.values, 6), rtol=0, atol=1e-12
+                    non_na.to_numpy(dtype=np.float64), np.round(non_na.to_numpy(dtype=np.float64), 6), rtol=0, atol=1e-12
                 )
 
                 if not has_limited_precision:
@@ -98,7 +98,7 @@ def optimize_memory_usage(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
                 else:
                     as32 = non_na.astype(np.float32).astype(np.float64)
                     # Use a conservative tolerance to preserve precision
-                    if np.allclose(non_na.values, as32.values, rtol=1e-6, atol=1e-8):
+                    if np.allclose(non_na.to_numpy(dtype=np.float64), as32.to_numpy(dtype=np.float64), rtol=1e-6, atol=1e-8):
                         df[col] = df[col].astype(np.float32)
                     else:
                         df[col] = df[col].astype(np.float64)

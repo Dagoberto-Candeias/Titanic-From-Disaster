@@ -6,7 +6,6 @@ Contains functions for data preprocessing, feature engineering, and imputation.
 import logging
 import pandas as pd
 import numpy as np
-from sklearn.experimental import enable_iterative_imputer  # noqa
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer, KNNImputer, IterativeImputer
 from sklearn.pipeline import Pipeline

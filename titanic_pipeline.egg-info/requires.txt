@@ -1,0 +1,14 @@
+pandas<3,>=2.1
+numpy>=2
+scikit-learn
+matplotlib
+seaborn
+xgboost
+lightgbm
+scipy
+joblib
+imbalanced-learn
+pytest
+pytest-cov
+pytest-mock
+shap

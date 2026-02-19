@@ -1,0 +1,21 @@
+Metadata-Version: 2.1
+Name: titanic_pipeline
+Version: 1.0.0
+Summary: Titanic ML Pipeline
+Author: Dagoberto Candeias de Moraes
+Author-email: dagoberto@email.com
+Requires-Python: >=3.8
+Requires-Dist: pandas<3,>=2.1
+Requires-Dist: numpy>=2
+Requires-Dist: scikit-learn
+Requires-Dist: matplotlib
+Requires-Dist: seaborn
+Requires-Dist: xgboost
+Requires-Dist: lightgbm
+Requires-Dist: scipy
+Requires-Dist: joblib
+Requires-Dist: imbalanced-learn
+Requires-Dist: pytest
+Requires-Dist: pytest-cov
+Requires-Dist: pytest-mock
+Requires-Dist: shap

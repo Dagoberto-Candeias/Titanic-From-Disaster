@@ -4,7 +4,6 @@ import os
 
 import numpy as np
 import pandas as pd
-from sklearn.experimental import enable_iterative_imputer  # noqa: F401
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import IterativeImputer, KNNImputer, SimpleImputer
 from sklearn.model_selection import KFold, StratifiedKFold
@@ -744,7 +743,7 @@ def kfold_target_encode(
         mapped = val_fold[col_name].map(smoothed_means)
         mapped = pd.to_numeric(mapped, errors='coerce')
         mapped = mapped.fillna(global_mean)
-        encoded[val_idx] = mapped.values
+        encoded[val_idx] = mapped.to_numpy(dtype=np.float64)
 
     # Salvar mapa (usando o último smoothed_means para compatibilidade)
     te_map = {k: float(v) for k, v in smoothed_means.to_dict().items()}
