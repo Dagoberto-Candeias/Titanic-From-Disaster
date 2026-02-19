@@ -197,10 +197,19 @@ def optimize_memory_usage(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
                     df[col] = df[col].astype(np.float32)
                 else:
                     df[col] = df[col].astype(np.float64)
-        elif col_type == 'object':
-            # Convert to category only if cardinality is low enough
-            if len(df[col].unique()) / len(df[col]) < 0.5:
-                df[col] = df[col].astype('category')
+        else:
+            # Handle object/string-like columns (including pandas StringDtype)
+            try:
+                from pandas.api import types as pd_types
+
+                is_str_like = pd_types.is_object_dtype(df[col]) or pd_types.is_string_dtype(df[col])
+            except Exception:
+                is_str_like = (col_type == 'object')
+
+            if is_str_like:
+                # Convert to category only if cardinality is low enough
+                if len(df[col].unique()) / len(df[col]) < 0.5:
+                    df[col] = df[col].astype('category')
 
     end_mem = df.memory_usage(deep=deep).sum() / 1024**2
     logger.info(f"Uso de memória após otimização: {end_mem:.2f} MB")
