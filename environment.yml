@@ -1,0 +1,25 @@
+name: titanic_ml
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - pandas
+  - python=3.11
+  - numpy=2.2.6
+  - scikit-learn
+  - matplotlib
+  - seaborn
+  - scipy
+  - joblib
+  - xgboost
+  - lightgbm
+  - catboost
+  - imbalanced-learn
+  - optuna
+  - shap
+  - pytest
+  - pytest-cov
+  - pytest-mock
+  - python-docx
+  - fpdf

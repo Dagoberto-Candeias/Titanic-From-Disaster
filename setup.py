@@ -10,7 +10,7 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "pandas",
-        "numpy<2",
+        "numpy>=2",
         "scikit-learn",
         "matplotlib",
         "seaborn",
@@ -22,5 +22,6 @@ setup(
         "pytest",
         "pytest-cov",
         "pytest-mock",
+        "shap",
     ],
 )
