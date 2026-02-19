@@ -14,7 +14,6 @@ setup(
         "scikit-learn",
         "matplotlib",
         "seaborn",
-        "shap",
         "xgboost",
         "lightgbm",
         "scipy",
