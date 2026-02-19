@@ -9,7 +9,7 @@ setup(
     packages=find_packages(),
     python_requires=">=3.8",
     install_requires=[
-        "pandas",
+        "pandas<3,>=2.1",
         "numpy>=2",
         "scikit-learn",
         "matplotlib",
