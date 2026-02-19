@@ -1,0 +1,58 @@
+# Titanic ML Pipeline Environment
+# Designed to work reliably with NumPy 2.x + SciPy compiled with conda-forge
+# Creation: conda env create -f environment.yml
+# Update:   conda env update -f environment.yml --name titanic_ml
+
+name: titanic_ml
+channels:
+  - conda-forge # Use conda-forge for binary compatibility with NumPy 2.x
+  - defaults
+
+dependencies:
+  # Core Python and NumPy/Pandas (must be compatible versions from conda-forge)
+  - python=3.11
+  - numpy>=2.0,<3 # Use NumPy 2.x (conda-forge packages built for this)
+  - pandas>=2.1,<3 # Pandas 2.1+ fully supports NumPy 2.x
+
+  # Data processing and scientific computing
+  - scipy
+  - scikit-learn
+  - joblib
+
+  # Visualization
+  - matplotlib
+  - seaborn
+
+  # Advanced ML models
+  - xgboost
+  - lightgbm
+  - catboost
+
+  # Feature engineering and preprocessing
+  - imbalanced-learn
+
+  # Hyperparameter optimization
+  - optuna
+
+  # Model interpretability
+  - shap
+
+  # Testing and development
+  - pytest
+  - pytest-cov
+  - pytest-mock
+
+  # Documentation generation
+  - python-docx
+
+  # PDF generation
+  - fpdf2 # Use fpdf2 instead of deprecated fpdf
+
+  # Optional but useful for development
+  - black # Code formatting
+  - flake8 # Linting
+  - mypy # Type checking
+
+# pip dependencies (after conda installs)
+pip:
+  - markdownify # For markdown generation (if needed)

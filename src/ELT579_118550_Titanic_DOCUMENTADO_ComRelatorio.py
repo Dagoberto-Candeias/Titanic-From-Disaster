@@ -590,9 +590,12 @@ def main():
         print(f"   📂 Carregando teste de: {test_path}")
         test = pd.read_csv(test_path)
 
-        data_hash = hashlib.md5(
-            pd.util.hash_pandas_object(train).values.tobytes()
-        ).hexdigest()
+        # Use CSV representation for consistent hashing (pd.util.hash_pandas_object deprecated in pandas 2.0+)
+        import io
+        buffer = io.StringIO()
+        train.to_csv(buffer, index=False)
+        content = buffer.getvalue().encode('utf-8')
+        data_hash = hashlib.md5(content).hexdigest()
 
         os.makedirs("output/relatorios", exist_ok=True)
         config_with_meta = CONFIG.copy()
@@ -1386,7 +1389,7 @@ def main():
             X_shap_sample_df = X_train_shap_df.sample(
                 shap_sample_size, random_state=CONFIG["random_state"]
             )
-            X_shap_sample_values = X_shap_sample_df.values.astype(float)
+            X_shap_sample_values = X_shap_sample_df.to_numpy(dtype=np.float64, na_value=np.nan)
 
             iter_shap = top_3_models
             if TQDM_AVAILABLE:

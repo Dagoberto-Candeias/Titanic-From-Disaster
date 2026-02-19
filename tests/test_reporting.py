@@ -84,7 +84,7 @@ def test_generate_shap_comparison_plot_handles_missing_shap():
     top_models = [("rf", {"trained_model": model})]
 
     # Call should not raise even if shap is not available
-    generate_shap_comparison_plot(top_models, X.values, feature_names_out=["Age", "Fare", "SibSp", "Parch"])
+    generate_shap_comparison_plot(top_models, X.to_numpy(dtype=np.float64, na_value=np.nan), feature_names_out=["Age", "Fare", "SibSp", "Parch"])
     # SHAP output optional; test passes if no exception is raised
 import os
 import sys

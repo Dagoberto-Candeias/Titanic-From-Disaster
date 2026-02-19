@@ -4,7 +4,6 @@ import os
 
 import numpy as np
 import pandas as pd
-from sklearn.experimental import enable_iterative_imputer  # noqa: F401
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import IterativeImputer, KNNImputer, SimpleImputer
 from sklearn.model_selection import KFold, StratifiedKFold
@@ -23,9 +22,8 @@ from .config import CONFIG
 
 logger = logging.getLogger(__name__)
 
-# Ensure output directories exist
-os.makedirs("output/reports", exist_ok=True)
-os.makedirs("output/cache", exist_ok=True)
+# Note: do NOT create output directories at import time to avoid side-effects.
+# Directory creation is handled by the pipeline initializer when needed.
 
 def create_feature_pipeline(
     df: pd.DataFrame,
@@ -745,7 +743,7 @@ def kfold_target_encode(
         mapped = val_fold[col_name].map(smoothed_means)
         mapped = pd.to_numeric(mapped, errors='coerce')
         mapped = mapped.fillna(global_mean)
-        encoded[val_idx] = mapped.values
+        encoded[val_idx] = mapped.to_numpy(dtype=np.float64)
 
     # Salvar mapa (usando o último smoothed_means para compatibilidade)
     te_map = {k: float(v) for k, v in smoothed_means.to_dict().items()}

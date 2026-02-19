@@ -17,38 +17,16 @@ from sklearn.ensemble import (
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 
-# Optional imports for optimization
-try:
-    from xgboost import XGBClassifier
-
-    XGB_AVAILABLE = True
-except ImportError:
-    XGBClassifier = None
-    XGB_AVAILABLE = False
-
-try:
-    from lightgbm import LGBMClassifier
-
-    LGBM_AVAILABLE = True
-except ImportError:
-    LGBMClassifier = None
-    LGBM_AVAILABLE = False
-
-try:
-    from catboost import CatBoostClassifier
-
-    CATBOOST_AVAILABLE = True
-except ImportError:
-    CatBoostClassifier = None
-    CATBOOST_AVAILABLE = False
-
-try:
-    import optuna
-    import optuna.visualization
-
-    OPTUNA_AVAILABLE = True
-except ImportError:
-    OPTUNA_AVAILABLE = False
+# Defer heavy/optional imports (xgboost, lightgbm, catboost, optuna)
+# to runtime to avoid import-time binary issues in CI or when
+# optional packages are not installed.
+XGBClassifier = None
+XGB_AVAILABLE = False
+LGBMClassifier = None
+LGBM_AVAILABLE = False
+CatBoostClassifier = None
+CATBOOST_AVAILABLE = False
+OPTUNA_AVAILABLE = False
 
 from sklearn.ensemble import (
     AdaBoostClassifier,
@@ -467,21 +445,27 @@ class ModelingManager:
             ),
         }
 
-        # Check for optional libraries
-        if XGB_AVAILABLE:
-            models["XGBoost"] = XGBClassifier
-        else:
-            logger.warning("   ⚠️  XGBoost not available")
+        # Check for optional libraries at runtime to avoid hard failures
+        try:
+            from xgboost import XGBClassifier as _XGB
 
-        if LGBM_AVAILABLE:
-            models["LightGBM"] = LGBMClassifier
-        else:
-            logger.warning("   ⚠️  LightGBM not available")
+            models["XGBoost"] = _XGB
+        except Exception:
+            logger.warning("   ⚠️  XGBoost not available or failed to import")
 
-        if CATBOOST_AVAILABLE:
-            models["CatBoost"] = CatBoostClassifier
-        else:
-            logger.warning("   ⚠️  CatBoost not available")
+        try:
+            from lightgbm import LGBMClassifier as _LGBM
+
+            models["LightGBM"] = _LGBM
+        except Exception:
+            logger.warning("   ⚠️  LightGBM not available or failed to import")
+
+        try:
+            from catboost import CatBoostClassifier as _CAT
+
+            models["CatBoost"] = _CAT
+        except Exception:
+            logger.warning("   ⚠️  CatBoost not available or failed to import")
 
         # Convert string paths to actual classes
         available_models = {}

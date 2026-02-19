@@ -43,7 +43,7 @@ class FeatureEngineer:
             # Extract target if training
             y = None
             if is_training and "Survived" in data.columns:
-                y = data["Survived"].values
+                y = data["Survived"].to_numpy(dtype=np.int64)
                 data = data.drop("Survived", axis=1)
 
             # Basic feature engineering
@@ -66,7 +66,7 @@ class FeatureEngineer:
 
             # Select final features
             feature_cols = [col for col in data.columns if col != "PassengerId"]
-            X = data[feature_cols].values
+            X = data[feature_cols].to_numpy(dtype=np.float64, na_value=np.nan)
 
             logger.info(
                 f"   ✅ Features engineered: {len(feature_cols)} features, {X.shape[0]} samples"

@@ -176,35 +176,88 @@ def optimize_memory_usage(df: pd.DataFrame, deep: bool = True) -> pd.DataFrame:
     start_mem = df.memory_usage(deep=deep).sum() / 1024**2
     logger.info(f"Uso de memória do dataframe é {start_mem:.2f} MB")
 
-    for col in df.columns:
-        col_type = df[col].dtype
+    # Don't force-convert pandas 'string' dtype here — instead detect
+    # string-like columns robustly below so that both 'object' and
+    # pandas 'string' dtypes are handled consistently.
 
-        if col_type != object and col_type.name != 'category' and 'datetime' not in str(col_type):
-            c_min = df[col].min()
-            c_max = df[col].max()
-            if str(col_type)[:3] == 'int':
-                if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
-                    df[col] = df[col].astype(np.int8)
-                elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:
-                    df[col] = df[col].astype(np.int16)
-                elif c_min > np.iinfo(np.int32).min and c_max < np.iinfo(np.int32).max:
-                    df[col] = df[col].astype(np.int32)
-                elif c_min > np.iinfo(np.int64).min and c_max < np.iinfo(np.int64).max:
-                    df[col] = df[col].astype(np.int64)
-            else:  # Handles float types, including those that were int but became
-                   # float due to NaNs
-                if c_min > np.finfo(np.float32).min and c_max < np.finfo(np.float32).max:
-                    df[col] = df[col].astype(np.float32)
-                else:
-                    df[col] = df[col].astype(np.float64)
-        elif col_type == 'object':
-            # Convert to category only if cardinality is low enough
-            if len(df[col].unique()) / len(df[col]) < 0.5:
-                df[col] = df[col].astype('category')
+    for col in df.columns:
+        col_series = df[col]
+        try:
+            from pandas.api import types as pd_types
+        except Exception:
+            pd_types = None
+
+        # Datetime should remain unchanged
+        if (pd_types and pd_types.is_datetime64_any_dtype(col_series)) or 'datetime' in str(col_series.dtype):
+            continue
+
+        # Integer types
+        if pd_types and pd_types.is_integer_dtype(col_series):
+            c_min = col_series.min()
+            c_max = col_series.max()
+            if c_min > np.iinfo(np.int8).min and c_max < np.iinfo(np.int8).max:
+                df[col] = col_series.astype(np.int8)
+            elif c_min > np.iinfo(np.int16).min and c_max < np.iinfo(np.int16).max:
+                df[col] = col_series.astype(np.int16)
+            elif c_min > np.iinfo(np.int32).min and c_max < np.iinfo(np.int32).max:
+                df[col] = col_series.astype(np.int32)
+            else:
+                df[col] = col_series.astype(np.int64)
+
+        # Float types (including ints converted to float due to NaNs)
+        elif pd_types and pd_types.is_float_dtype(col_series):
+            c_min = col_series.min()
+            c_max = col_series.max()
+            if c_min > np.finfo(np.float32).min and c_max < np.finfo(np.float32).max:
+                df[col] = col_series.astype(np.float32)
+            else:
+                df[col] = col_series.astype(np.float64)
+
+        # Boolean types -> convert to int8 for compactness
+        elif pd_types and pd_types.is_bool_dtype(col_series):
+            df[col] = col_series.astype(np.int8)
+
+        # Object / string-like columns
+        else:
+            # Robust detection for string-like columns across pandas versions
+            is_str_like = False
+            if pd_types:
+                try:
+                    is_str_like = pd_types.is_object_dtype(col_series) or pd_types.is_string_dtype(col_series)
+                except Exception:
+                    is_str_like = pd_types.is_object_dtype(col_series)
+            if not is_str_like:
+                dt_name = str(col_series.dtype).lower()
+                if 'string' in dt_name or 'stringdtype' in dt_name or 'object' in dt_name:
+                    is_str_like = True
+
+            # For any non-numeric/non-datetime column, check cardinality and
+            # convert to 'category' when it is low (saves memory).
+            try:
+                unique_ratio = len(col_series.dropna().unique()) / len(col_series)
+            except Exception:
+                unique_ratio = len(col_series.unique()) / len(col_series)
+
+            if unique_ratio < 0.5:
+                df[col] = col_series.astype('category')
 
     end_mem = df.memory_usage(deep=deep).sum() / 1024**2
     logger.info(f"Uso de memória após otimização: {end_mem:.2f} MB")
     logger.info(
         f"Redução de {100 * (start_mem - end_mem) / start_mem:.1f}%"
     )
+    # Ensure pandas 'string' dtype is converted to 'category' when low-cardinality
+    try:
+        from pandas.api import types as pd_types
+        for col in df.columns:
+            dt_name = str(df[col].dtype).lower()
+            if 'string' in dt_name and not pd_types.is_categorical_dtype(df[col]):
+                try:
+                    unique_ratio = len(df[col].dropna().unique()) / len(df[col])
+                except Exception:
+                    unique_ratio = len(df[col].unique()) / len(df[col])
+                if unique_ratio < 0.5:
+                    df[col] = df[col].astype('category')
+    except Exception:
+        pass
     return df

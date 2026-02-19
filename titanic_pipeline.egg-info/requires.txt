@@ -8,7 +8,7 @@ lightgbm
 scipy
 joblib
 imbalanced-learn
-shap
 pytest
 pytest-cov
 pytest-mock
+shap
