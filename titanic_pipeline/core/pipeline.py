@@ -1,4 +1,5 @@
 import logging
+import os
 from typing import Dict, Any, Optional, Tuple
 import pandas as pd
 import numpy as np
@@ -56,6 +57,9 @@ class TitanicPipeline:
         if config_override:
             self.config.update(config_override)
         self.modeling_manager = ModelingManager(self.config)
+        # Ensure output directories exist (do not create them at import time)
+        os.makedirs("output/reports", exist_ok=True)
+        os.makedirs("output/cache", exist_ok=True)
         self.is_fitted = False
         logger.info("TitanicPipeline initialized")
 

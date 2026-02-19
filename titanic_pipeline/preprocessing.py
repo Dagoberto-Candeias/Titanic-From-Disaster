@@ -23,9 +23,8 @@ from .config import CONFIG
 
 logger = logging.getLogger(__name__)
 
-# Ensure output directories exist
-os.makedirs("output/reports", exist_ok=True)
-os.makedirs("output/cache", exist_ok=True)
+# Note: do NOT create output directories at import time to avoid side-effects.
+# Directory creation is handled by the pipeline initializer when needed.
 
 def create_feature_pipeline(
     df: pd.DataFrame,
