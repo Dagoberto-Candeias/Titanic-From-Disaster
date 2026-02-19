@@ -25,6 +25,15 @@ Para garantir que todos os artefatos sejam gerados corretamente, siga a ordem ab
     python scripts/prever_passageiro.py
     ```
 
+Recomenda-se criar e ativar um ambiente Conda com `conda-forge` para garantir compatibilidade binária entre `numpy`, `scipy`, `scikit-learn` e pacotes que dependem de extensões compiladas (ex.: `shap`). Use o arquivo `environment.yml` para reproduzir o ambiente completo:
+
+```bash
+conda env create -f environment.yml
+conda activate titanic_ml
+pip install -r requirements.txt
+pytest -q
+```
+
 ## Estrutura de Pastas
 
 *   `src/`: Código fonte principal (relatórios, utilitários, configurações).
