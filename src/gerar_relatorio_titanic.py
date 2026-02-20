@@ -13,6 +13,7 @@ def check_dependencies(dependencies):
 
 import pandas as pd
 import pickle
+import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import seaborn as sns
@@ -53,8 +54,13 @@ GRAFICOS_DIR = os.path.join(OUTPUT_DIR, 'graficos')
 MODELS_DIR = os.path.join(OUTPUT_DIR, 'models')
 RELATORIOS_DIR = os.path.join(OUTPUT_DIR, 'relatorios')
 
-def carregar_dados(clean=True):
-    """Carrega os dados. Se clean=True, realiza limpeza e imputação."""
+# --- Constantes para imagens do Kaggle ---
+KAGGLE_SCREENSHOTS_DIR = os.path.join(PROJECT_ROOT, 'data', 'kaggle_screenshots')
+KAGGLE_IMG_1 = os.path.join(KAGGLE_SCREENSHOTS_DIR, 'print_kaggle_submission.png')
+KAGGLE_IMG_2 = os.path.join(KAGGLE_SCREENSHOTS_DIR, 'print_kaggle_submission_posicao.png')
+
+def carregar_dados():
+    """Carrega os dados do arquivo train.csv."""
     try:
         # Busca robusta pelo arquivo (diretório atual ou relativo ao script)
         possible_paths = [
@@ -76,21 +82,46 @@ def carregar_dados(clean=True):
         print("   Certifique-se de que o arquivo está na pasta raiz ou em 'data/raw/'.")
         exit(1)
 
-    if clean:
-        # Tratamento básico
-        # Extração de Título para imputação de idade mais inteligente
-        df['Title'] = df['Name'].str.extract(' ([A-Za-z]+)\\.', expand=False)
-        rare_titles = ['Lady', 'Countess','Capt', 'Col', 'Don', 'Dr', 'Major', 'Rev', 'Sir', 'Jonkheer', 'Dona']
-        df['Title'] = df['Title'].replace(rare_titles, 'Rare')
-        df['Title'] = df['Title'].replace(['Mlle', 'Ms'], 'Miss')
-        df['Title'] = df['Title'].replace('Mme', 'Mrs')
-
-        # Preencher idade com a mediana do grupo de título
-        df['Age'] = df['Age'].fillna(df.groupby('Title')['Age'].transform('median'))
-        df['Age'] = df['Age'].fillna(df['Age'].median()) # Fallback
-
-        df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
     return df
+
+def prepare_data(df):
+    """Realiza a limpeza, imputação e engenharia de atributos."""
+    print("Iniciando preparação dos dados (limpeza e engenharia de atributos)...")
+    
+    # 1. Engenharia de Atributos que precede a limpeza
+    # Extração de Título para imputação de idade mais inteligente
+    df['Title'] = df['Name'].str.extract(' ([A-Za-z]+)\\.', expand=False)
+    rare_titles = ['Lady', 'Countess','Capt', 'Col', 'Don', 'Dr', 'Major', 'Rev', 'Sir', 'Jonkheer', 'Dona']
+    df['Title'] = df['Title'].replace(rare_titles, 'Rare')
+    df['Title'] = df['Title'].replace(['Mlle', 'Ms'], 'Miss')
+    df['Title'] = df['Title'].replace('Mme', 'Mrs')
+
+    # 2. Limpeza e Imputação
+    # Preencher idade com a mediana do grupo de título
+    df['Age'] = df['Age'].fillna(df.groupby('Title')['Age'].transform('median'))
+    df['Age'] = df['Age'].fillna(df['Age'].median()) # Fallback
+    df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
+
+    # 3. Engenharia de Atributos que depende de dados limpos
+    df['FamilySize'] = df['SibSp'] + df['Parch'] + 1
+    df['IsAlone'] = (df['FamilySize'] == 1).astype(int)
+    df['Deck'] = df['Cabin'].str[0].fillna('U')
+    df['AgeGroup'] = pd.cut(df['Age'], bins=[0, 12, 60, 100], labels=['Criança', 'Adulto', 'Idoso'])
+    df['NameLength'] = df['Name'].apply(len)
+    df['TicketPrefix'] = df['Ticket'].apply(lambda x: x.split()[0] if not x.isdigit() else 'None')
+    
+    print("✅ Dados preparados.")
+    return df
+
+def encode_features(df):
+    """Codifica variáveis categóricas usando LabelEncoder para o modelo baseline."""
+    le = LabelEncoder()
+    df_encoded = df.copy()
+    cols_to_encode = ['Sex', 'Embarked', 'Title', 'Deck', 'AgeGroup']
+    
+    for col in cols_to_encode:
+        df_encoded[col] = le.fit_transform(df_encoded[col].astype(str))
+    return df_encoded
 
 def gerar_graficos_eda(df, df_raw=None):
     """Gera os gráficos de Análise Exploratória de Dados."""
@@ -163,7 +194,6 @@ def gerar_graficos_eda(df, df_raw=None):
     plt.close()
 
     # Gráfico 8: Family
-    df['FamilySize'] = df['SibSp'] + df['Parch'] + 1
     plt.figure(figsize=(10, 5))
     sns.barplot(data=df, x='FamilySize', y='Survived', hue='FamilySize', palette='Spectral', errorbar=None, legend=False)
     plt.title('Taxa de Sobrevivência por Tamanho da Família')
@@ -190,7 +220,6 @@ def gerar_graficos_eda(df, df_raw=None):
     plt.close()
 
     # Gráfico 10: AgeGroup
-    df['AgeGroup'] = pd.cut(df['Age'], bins=[0, 12, 60, 100], labels=['Criança', 'Adulto', 'Idoso'])
     plt.figure(figsize=(8, 5))
     sns.barplot(data=df, x='AgeGroup', y='Survived', hue='AgeGroup', palette='muted', errorbar=None, legend=False)
     plt.title('Taxa de Sobrevivência por Faixa Etária')
@@ -199,7 +228,6 @@ def gerar_graficos_eda(df, df_raw=None):
     plt.close()
 
     # Gráfico 11: NameLength
-    df['NameLength'] = df['Name'].apply(len)
     plt.figure(figsize=(10, 5))
     sns.histplot(data=df, x='NameLength', hue='Survived', kde=True, element="step", palette='coolwarm')
     plt.title('Distribuição do Comprimento do Nome')
@@ -216,7 +244,6 @@ def gerar_graficos_eda(df, df_raw=None):
     plt.close()
 
     # Gráfico 13: Deck
-    df['Deck'] = df['Cabin'].str[0].fillna('U')
     plt.figure(figsize=(10, 5))
     sns.barplot(data=df, x='Deck', y='Survived', hue='Deck', palette='magma', errorbar=None, order=sorted(df['Deck'].unique()), legend=False)
     plt.title('Sobrevivência por Deck')
@@ -225,7 +252,6 @@ def gerar_graficos_eda(df, df_raw=None):
     plt.close()
 
     # Gráfico 14: Ticket
-    df['TicketPrefix'] = df['Ticket'].apply(lambda x: x.split()[0] if not x.isdigit() else 'None')
     top_prefixes = df['TicketPrefix'].value_counts().nlargest(10).index
     df_ticket = df[df['TicketPrefix'].isin(top_prefixes)]
     plt.figure(figsize=(12, 6))
@@ -237,7 +263,6 @@ def gerar_graficos_eda(df, df_raw=None):
     plt.close()
 
     # Gráfico 15: IsAlone (Viajando Sozinho)
-    df['IsAlone'] = (df['FamilySize'] == 1).astype(int)
     plt.figure(figsize=(8, 5))
     sns.barplot(data=df, x='IsAlone', y='Survived', hue='IsAlone', palette='coolwarm', errorbar=None, legend=False)
     plt.title('Sobrevivência: Viajando Sozinho vs Acompanhado')
@@ -303,13 +328,7 @@ def treinar_modelo_baseline(df):
     
     # Preparação de Features (Simplificada para Baseline)
     # As features já foram criadas em gerar_graficos_eda e estão no dataframe `df`.
-    le = LabelEncoder()
-    df_ml = df.copy()
-    df_ml['Sex'] = le.fit_transform(df_ml['Sex'])
-    df_ml['Embarked'] = le.fit_transform(df_ml['Embarked'])
-    df_ml['Title'] = le.fit_transform(df_ml['Title'])
-    df_ml['Deck'] = le.fit_transform(df_ml['Deck'])
-    df_ml['AgeGroup'] = le.fit_transform(df_ml['AgeGroup'])
+    df_ml = encode_features(df)
     
     X = df_ml[['Pclass', 'Sex', 'Age', 'Fare', 'FamilySize', 'Deck', 'Title', 'Embarked', 'NameLength', 'IsAlone', 'AgeGroup']]
     y = df_ml['Survived']
@@ -586,9 +605,9 @@ def consolidar_relatorios_existentes(builder):
 
 def gerar_relatorio_completo():
     print("Iniciando análise de dados...")
-    # Carrega dados crus para análise de nulos e dados limpos para o restante
-    df_raw = carregar_dados(clean=False)
-    df = carregar_dados(clean=True)
+    # Carrega dados crus para análise de nulos e para preparação
+    df_raw = carregar_dados()
+    df = prepare_data(df_raw.copy())
     
     imgs_eda = gerar_graficos_eda(df, df_raw)
     # Treina modelo baseline para comparação
@@ -832,6 +851,23 @@ def gerar_relatorio_completo():
 
     # --- CONSOLIDAÇÃO ---
     consolidar_relatorios_existentes(builder)
+
+    # --- RESULTADOS KAGGLE ---
+    builder.adicionar_titulo("8. Resultados do Kaggle", 1)
+    builder.adicionar_texto(
+        "Abaixo seguem os prints da submissão no Kaggle, demonstrando o desempenho do modelo "
+        "no conjunto de dados de teste oficial."
+    )
+    
+    # Adicionar imagens do Kaggle se existirem
+    kaggle_img_1 = os.path.join(GRAFICOS_DIR, 'print kaggle submission.png')
+    kaggle_img_2 = os.path.join(GRAFICOS_DIR, 'print kaggle submission - posicao.png')
+    
+    if os.path.exists(kaggle_img_1):
+        builder.adicionar_imagem(kaggle_img_1, "Submissão no Kaggle - Score")
+    
+    if os.path.exists(kaggle_img_2):
+        builder.adicionar_imagem(kaggle_img_2, "Posição no Ranking Kaggle")
 
     # --- RECOMENDAÇÕES FUTURAS ---
     builder.adicionar_titulo("6. Recomendações Futuras", 1)

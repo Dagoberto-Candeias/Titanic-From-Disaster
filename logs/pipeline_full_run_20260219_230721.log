@@ -1,0 +1,22 @@
+2026-02-19 23:07:21,573 - __main__ - INFO - ================================================================================
+2026-02-19 23:07:21,573 - __main__ - INFO - INICIANDO PIPELINE COMPLETO DO TITANIC
+2026-02-19 23:07:21,573 - __main__ - INFO - Timestamp: 20260219_230721
+2026-02-19 23:07:21,573 - __main__ - INFO - ================================================================================
+2026-02-19 23:07:25,423 - __main__ - ERROR - ================================================================================
+2026-02-19 23:07:25,423 - __main__ - ERROR - ERRO DURANTE EXECUÇÃO DO PIPELINE: cannot import name 'RelatorioBuilder' from 'relatorio_utils' (C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\relatorio_utils.py)
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\src\gerar_relatorio_titanic.py", line 40, in <module>
+    from .relatorio_utils import RelatorioBuilder
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\src\relatorio_utils.py", line 17, in <module>
+    from fpdf import FPDF
+ModuleNotFoundError: No module named 'fpdf'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\run_full_pipeline.py", line 40, in <module>
+    from src.gerar_relatorio_titanic import gerar_relatorio_completo as main
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\src\gerar_relatorio_titanic.py", line 43, in <module>
+    from relatorio_utils import RelatorioBuilder
+ImportError: cannot import name 'RelatorioBuilder' from 'relatorio_utils' (C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\relatorio_utils.py)
+2026-02-19 23:07:25,426 - __main__ - ERROR - ================================================================================

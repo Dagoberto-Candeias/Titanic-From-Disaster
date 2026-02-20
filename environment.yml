@@ -41,6 +41,7 @@ dependencies:
   - pytest
   - pytest-cov
   - pytest-mock
+  - pytest-xdist # For parallel test execution
 
   # Documentation generation
   - python-docx
@@ -51,7 +52,9 @@ dependencies:
   # Optional but useful for development
   - black # Code formatting
   - flake8 # Linting
+  - pre-commit # Git hooks
   - mypy # Type checking
+  - flake8-pyproject # Support for pyproject.toml configuration
 
 # pip dependencies (after conda installs)
 pip:

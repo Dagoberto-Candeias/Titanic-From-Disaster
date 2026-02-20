@@ -12,3 +12,4 @@ shap
 pytest
 pytest-cov
 pytest-mock
+tabulate

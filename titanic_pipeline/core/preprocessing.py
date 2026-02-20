@@ -7,13 +7,21 @@ import logging
 import pandas as pd
 import numpy as np
 from sklearn.compose import ColumnTransformer
-from sklearn.impute import SimpleImputer, KNNImputer, IterativeImputer
+from sklearn.impute import SimpleImputer, KNNImputer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder, StandardScaler, PolynomialFeatures, OrdinalEncoder
 from sklearn.model_selection import StratifiedKFold, KFold
 from typing import List, Union, Tuple, Optional, Callable
 import multiprocessing
 from concurrent.futures import ProcessPoolExecutor
+
+# IterativeImputer is experimental in sklearn < 1.5, stable in 1.5+
+try:
+    from sklearn.impute import IterativeImputer
+except ImportError:
+    # sklearn < 1.5: need to enable experimental API
+    from sklearn.experimental import enable_iterative_imputer  # noqa: F401
+    from sklearn.impute import IterativeImputer
 
 # Tenta importar configuração padrão do pacote
 try:

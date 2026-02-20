@@ -123,3 +123,35 @@ def test_kfold_target_encode_handles_categorical_dtype():
     # Deve retornar série numérica sem NaNs e com valores float
     assert encoded.dtype.kind == 'f'
     assert not encoded.isnull().any()
+
+def test_encode_features_function(sample_dataframe):
+    """
+    Testa a função encode_features extraída para o script gerar_relatorio_titanic.py.
+    Valida se as colunas categóricas são corretamente convertidas para numéricas.
+    """
+    # Tenta importar a função do script localizado em src/
+    import sys
+    import os
+    # Adiciona o diretório src ao path para permitir importação direta
+    sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+    from gerar_relatorio_titanic import encode_features
+
+    # Prepara o DataFrame com as colunas esperadas pela função
+    df = sample_dataframe.copy()
+    
+    # Adiciona colunas que são criadas durante o prepare_data, mas necessárias para encode_features
+    df['Title'] = ['Mr', 'Mrs', 'Miss', 'Mr', 'Master']
+    df['Deck'] = ['U', 'C', 'E', 'U', 'G']
+    df['AgeGroup'] = ['Young', 'Adult', 'Young', 'Adult', 'Child']
+    
+    # Executa a codificação
+    df_encoded = encode_features(df)
+    
+    # Colunas que devem ser codificadas
+    expected_cols = ['Sex', 'Embarked', 'Title', 'Deck', 'AgeGroup']
+    
+    for col in expected_cols:
+        assert col in df_encoded.columns
+        # Verifica se o tipo de dado agora é numérico (LabelEncoder gera inteiros)
+        assert pd.api.types.is_integer_dtype(df_encoded[col])
+        assert df_encoded[col].nunique() == df[col].nunique()

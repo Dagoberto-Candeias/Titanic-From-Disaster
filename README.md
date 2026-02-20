@@ -1,51 +1,74 @@
 # Projeto Titanic - Análise e Predição
 
+[![CI Pipeline](https://github.com/dagoberto-moraes/titanic-ml-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/dagoberto-moraes/titanic-ml-pipeline/actions)
+
 Este projeto contém um pipeline completo de Machine Learning para o dataset do Titanic, incluindo análise exploratória, treinamento de modelos, otimização e geração de relatórios automáticos.
 
-## Ordem de Execução
+## Visão Geral
 
-Para garantir que todos os artefatos sejam gerados corretamente, siga a ordem abaixo:
+O objetivo é analisar os fatores que influenciaram a sobrevivência dos passageiros e construir um modelo preditivo. O projeto está estruturado para ser robusto, reprodutível e fácil de manter, utilizando as melhores práticas de engenharia de software em um contexto de ciência de dados.
 
-1.  **Geração do Relatório Executivo (Obrigatório)**
-    Gera a análise exploratória, treina um modelo baseline e consolida os resultados em um relatório executivo em PDF/DOCX.
-    **Este passo é obrigatório para criar o arquivo que o `ler_relatorio_gerado.py` procura.**
-    ```bash
-    python src/gerar_relatorio_titanic.py
+## Documentação do Projeto
+
+*   **[Guia de Contribuição (`CONTRIBUTING.md`)](CONTRIBUTING.md):** Instruções para novos desenvolvedores sobre como configurar o ambiente, padrões de código e fluxo de trabalho.
+*   **Histórico de Mudanças (`CHANGELOG.md`):** Registro de todas as alterações, correções e novas funcionalidades em cada versão.
+*   **Código de Conduta (`CODE_OF_CONDUCT.md`):** Diretrizes para garantir um ambiente de colaboração respeitoso e inclusivo.
+
+## Começando (Getting Started)
+
+### Pré-requisitos
+
+*   Anaconda ou Miniconda
+*   Git
+
+### Instalação
+
+1.  **Clone o repositório:**
+    ```sh
+    git clone <URL_DO_REPOSITORIO>
+    cd titanic-ml-pipeline
     ```
 
-2.  **Verificação do Conteúdo (Opcional)**
-    Lê o relatório Markdown gerado no terminal.
-    ```bash
-    python src/ler_relatorio_gerado.py
+2.  **Crie e ative o ambiente (Windows):**
+    Use o script de automação para criar o ambiente Conda e instalar todas as dependências.
+    ```bat
+    setup_environment.bat
     ```
 
-3.  **Predição de Novos Passageiros (Opcional)**
-    Usa o modelo treinado para prever a sobrevivência de passageiros específicos.
-    ```bash
-    python scripts/prever_passageiro.py
+3.  **Instale o projeto e os hooks de pré-commit:**
+    Após a criação do ambiente, ative-o e finalize a configuração.
+    ```bat
+    conda activate titanic_ml
+    pip install -e .
+    pre-commit install
     ```
 
-Recomenda-se criar e ativar um ambiente Conda com `conda-forge` para garantir compatibilidade binária entre `numpy`, `scipy`, `scikit-learn` e pacotes que dependem de extensões compiladas (ex.: `shap`). Use o arquivo `environment.yml` para reproduzir o ambiente completo:
+Para instruções detalhadas ou setup manual, consulte o `CONTRIBUTING.md`.
 
-```bash
-conda env create -f environment.yml
-conda activate titanic_ml
-pip install -r requirements.txt
-pytest -q
+## Uso (Usage)
+
+### Execução Completa (Recomendado)
+Para executar todo o pipeline (limpeza, validação, testes e geração de relatórios), use o script principal:
+```bat
+run_all.bat
 ```
+Os resultados (relatórios, modelos, gráficos) serão salvos na pasta `output/`.
+
+### Execução de Passos Individuais
+*   **Gerar o relatório principal:** `python src/gerar_relatorio_titanic.py`
+*   **Rodar os testes:** `run_tests.bat`
+*   **Formatar o código:** `format_code.bat`
+*   **Atualizar o ambiente:** `update_environment.bat`
 
 ## Estrutura de Pastas
 
 *   `src/`: Código fonte principal (relatórios, utilitários, configurações).
 *   `scripts/`: Scripts auxiliares (predição, treinamento, limpeza).
 *   `tests/`: Testes unitários e de integração.
-*   `notebooks/`: Notebooks Jupyter para exploração.
-*   `docs/`: Documentação e relatórios finais (PDF, DOCX).
-*   `templates/`: Templates para relatórios.
-*   `batch_scripts/`: Scripts de automação (bat, sh).
-*   `misc/`: Arquivos diversos (logs, dados de exemplo).
+*   `.github/`: Workflows de Integração Contínua (CI).
+*   `data/`: Dados do projeto (raw, processed).
+*   `output/`: Artefatos gerados (modelos, gráficos, relatórios).
 *   `output/graficos`: Gráficos gerados (PNG).
 *   `output/relatorios`: Relatórios finais (PDF, DOCX, MD) e logs.
 *   `output/models`: Modelos treinados (.pkl).
-*   `data/`: Dados do projeto (raw, processed).
 *   `titanic_pipeline/`: Pipeline modular avançado.

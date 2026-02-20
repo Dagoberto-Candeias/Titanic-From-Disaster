@@ -33,19 +33,15 @@ logger.info(f"Timestamp: {timestamp}")
 logger.info("="*80)
 
 try:
-    # Adicionar diretório raiz ao path
-    project_root = os.path.dirname(os.path.abspath(__file__))
-    if project_root not in sys.path:
-        sys.path.insert(0, project_root)
-    
-    logger.info(f"Projeto root: {project_root}")
-    
-    # Importar e executar o main do script documentado
-    from src.ELT579_118550_Titanic_DOCUMENTADO_ComRelatorio import main
+    # Com o projeto instalado em modo editável (`pip install -e .`),
+    # o 'src' é adicionado ao PYTHONPATH, e a manipulação de sys.path não é necessária.
+
+    # Importar e executar a função principal do pipeline de geração de relatório.
+    from src.gerar_relatorio_titanic import gerar_relatorio_completo as main
     
     logger.info("Chamando função main()...")
     main()
-    
+
     logger.info("="*80)
     logger.info("PIPELINE COMPLETO FINALIZADO COM SUCESSO!")
     logger.info("="*80)

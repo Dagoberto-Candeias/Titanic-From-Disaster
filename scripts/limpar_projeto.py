@@ -17,7 +17,8 @@ def limpar_projeto():
         "graficos",  # A saída correta agora é 'output/graficos'
     ]
 
-    base_dir = os.path.dirname(os.path.abspath(__file__))
+    # Aponta para a raiz do projeto (um nível acima da pasta 'scripts')
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
     print("🧹 Iniciando limpeza do projeto...")
 

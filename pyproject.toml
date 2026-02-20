@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+# --- Configuração do Black ---
+[tool.black]
+line-length = 88
+target-version = ['py310']
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+# --- Configuração do Pytest ---
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q --cov=src --cov=titanic_pipeline --cov-report=xml --cov-report=term-missing"
+testpaths = [
+    "tests",
+]
+python_files = ["test_*.py", "*_test.py"]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::FutureWarning",
+    "ignore::UserWarning",
+]
+
+# --- Configuração do Flake8 ---
+# Nota: O Flake8 padrão não lê pyproject.toml nativamente sem plugins (como flake8-pyproject).
+# No entanto, mantemos a configuração aqui para centralização e compatibilidade futura.
+[tool.flake8]
+max-line-length = 88
+extend-ignore = ["E203", "W503"]
+exclude = [
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".venv",
+    "docs",
+    "notebooks"
+]
+count = true
+statistics = true

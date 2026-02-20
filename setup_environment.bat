@@ -21,11 +21,14 @@ echo 1. Criando ambiente conda...
 conda env create -f environment.yml
 
 if %ERRORLEVEL% NEQ 0 (
-    echo ERRO ao criar ambiente. Tentando alternativa...
-    conda create -n titanic_ml python=3.11 -y
+    echo ERRO ao criar ambiente com environment.yml. Tentando alternativa com conda-forge...
+    REM Instala pacotes criticos via conda para garantir binarios compativeis
+    conda create -n titanic_ml python=3.11 numpy pandas scipy scikit-learn matplotlib seaborn -c conda-forge -y
     call conda activate titanic_ml
+    echo Instalando dependencias restantes com pip...
     pip install -r requirements.txt
-    pip install python-docx fpdf
+    echo Instalando bibliotecas adicionais para relatorios...
+    pip install python-docx fpdf2
 )
 
 echo.
@@ -33,8 +36,18 @@ echo 2. Ativando ambiente...
 call conda activate titanic_ml
 
 echo.
-echo 3. Verificando instalação...
-python -c "import pandas, numpy, sklearn, matplotlib, seaborn, xgboost, lightgbm, catboost, optuna, pytest; print('Todas as bibliotecas instaladas com sucesso!')"
+echo 3. Validando o ambiente com o script de verificação...
+python scripts\validate_environment.py
+
+if %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo ----------------------------------------------------------------------
+    echo AVISO: A validação do ambiente falhou.
+    echo Algumas bibliotecas podem estar com versões incorretas ou faltando.
+    echo Verifique o log acima para mais detalhes.
+    echo ----------------------------------------------------------------------
+    echo.
+)
 
 echo.
 echo ========================================

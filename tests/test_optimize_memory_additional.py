@@ -40,8 +40,7 @@ def test_object_with_nan_becomes_category():
         'obj': ['A', 'B', np.nan, 'A', 'B']
     })
     out = optimize_memory_usage(df.copy())
-    from pandas.api import types as pd_types
-    assert pd_types.is_categorical_dtype(out['obj']) or pd_types.is_string_dtype(out['obj'])
+    assert isinstance(out['obj'].dtype, pd.CategoricalDtype) or pd.api.types.is_string_dtype(out['obj'])
 
 
 def test_bool_converted_to_int8():

@@ -1,0 +1,29 @@
+2026-02-19 22:52:47,985 - __main__ - INFO - ================================================================================
+2026-02-19 22:52:47,986 - __main__ - INFO - INICIANDO PIPELINE COMPLETO DO TITANIC
+2026-02-19 22:52:47,986 - __main__ - INFO - Timestamp: 20260219_225247
+2026-02-19 22:52:47,988 - __main__ - INFO - ================================================================================
+2026-02-19 22:52:52,408 - __main__ - ERROR - ================================================================================
+2026-02-19 22:52:52,410 - __main__ - ERROR - ERRO DURANTE EXECUÇÃO DO PIPELINE: initialization failed
+ImportError: numpy.core.multiarray failed to import
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\run_full_pipeline.py", line 40, in <module>
+    from src.gerar_relatorio_titanic import gerar_relatorio_completo as main
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\src\gerar_relatorio_titanic.py", line 16, in <module>
+    import matplotlib
+  File "C:\Users\dagoc\anaconda3\Lib\site-packages\matplotlib\__init__.py", line 159, in <module>
+    from . import _api, _version, cbook, _docstring, rcsetup
+  File "C:\Users\dagoc\anaconda3\Lib\site-packages\matplotlib\rcsetup.py", line 28, in <module>
+    from matplotlib.colors import Colormap, is_color_like
+  File "C:\Users\dagoc\anaconda3\Lib\site-packages\matplotlib\colors.py", line 57, in <module>
+    from matplotlib import _api, _cm, cbook, scale
+  File "C:\Users\dagoc\anaconda3\Lib\site-packages\matplotlib\scale.py", line 22, in <module>
+    from matplotlib.ticker import (
+  File "C:\Users\dagoc\anaconda3\Lib\site-packages\matplotlib\ticker.py", line 144, in <module>
+    from matplotlib import transforms as mtransforms
+  File "C:\Users\dagoc\anaconda3\Lib\site-packages\matplotlib\transforms.py", line 49, in <module>
+    from matplotlib._path import (
+ImportError: initialization failed
+2026-02-19 22:52:52,412 - __main__ - ERROR - ================================================================================

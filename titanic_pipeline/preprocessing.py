@@ -5,7 +5,7 @@ import os
 import numpy as np
 import pandas as pd
 from sklearn.compose import ColumnTransformer
-from sklearn.impute import IterativeImputer, KNNImputer, SimpleImputer
+from sklearn.impute import KNNImputer, SimpleImputer
 from sklearn.model_selection import KFold, StratifiedKFold
 from sklearn.preprocessing import (
     OneHotEncoder,
@@ -14,6 +14,14 @@ from sklearn.preprocessing import (
 )
 from sklearn.pipeline import Pipeline
 from typing import Callable, List, Optional, Tuple, Union
+
+# IterativeImputer is experimental in sklearn < 1.5, stable in 1.5+
+try:
+    from sklearn.impute import IterativeImputer
+except ImportError:
+    # sklearn < 1.5: need to enable experimental API
+    from sklearn.experimental import enable_iterative_imputer  # noqa: F401
+    from sklearn.impute import IterativeImputer
 
 from titanic_pipeline.utils import set_global_seeds
 
@@ -726,7 +734,7 @@ def kfold_target_encode(
         val_fold = df.iloc[val_idx]
 
         # Mean por categoria no fold de treino
-        fold_means = train_fold.groupby(col_name)[target].agg(
+        fold_means = train_fold.groupby(col_name, observed=False)[target].agg(
             ["mean", "count"]
         )
 

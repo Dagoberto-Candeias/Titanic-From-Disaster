@@ -1,0 +1,46 @@
+2026-02-20 04:37:09,152 - __main__ - INFO - ================================================================================
+2026-02-20 04:37:09,152 - __main__ - INFO - INICIANDO PIPELINE COMPLETO DO TITANIC
+2026-02-20 04:37:09,152 - __main__ - INFO - Timestamp: 20260220_043709
+2026-02-20 04:37:09,154 - __main__ - INFO - ================================================================================
+2026-02-20 04:37:14,659 - __main__ - INFO - Chamando função main()...
+2026-02-20 04:37:15,239 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-02-20 04:37:15,252 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-02-20 04:37:16,807 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-02-20 04:37:16,827 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-02-20 04:37:17,339 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-02-20 04:37:17,339 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-02-20 04:37:19,313 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-02-20 04:37:19,322 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-02-20 04:37:19,491 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-02-20 04:37:19,497 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2026-02-20 04:38:23,785 - __main__ - ERROR - ================================================================================
+2026-02-20 04:38:23,786 - __main__ - ERROR - ERRO DURANTE EXECUÇÃO DO PIPELINE: Missing optional dependency 'tabulate'.  Use pip or conda to install tabulate.
+Traceback (most recent call last):
+  File "C:\Users\dagoc\anaconda3\envs\titanic_ml\Lib\site-packages\pandas\compat\_optional.py", line 132, in import_optional_dependency
+    module = importlib.import_module(name)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dagoc\anaconda3\envs\titanic_ml\Lib\importlib\__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+  File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1140, in _find_and_load_unlocked
+ModuleNotFoundError: No module named 'tabulate'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\run_full_pipeline.py", line 43, in <module>
+    main()
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\src\gerar_relatorio_titanic.py", line 927, in gerar_relatorio_completo
+    builder.salvar_md(os.path.join(RELATORIOS_DIR, "Relatorio_Executivo_Titanic.md"))
+  File "C:\Projetos\UFV\ELT 579\Scripts e Datasets\Titanic From Disaster\src\relatorio_utils.py", line 58, in salvar_md
+    f.write(item['valor'].to_markdown(index=False))
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dagoc\anaconda3\envs\titanic_ml\Lib\site-packages\pandas\core\frame.py", line 2836, in to_markdown
+    tabulate = import_optional_dependency("tabulate")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\dagoc\anaconda3\envs\titanic_ml\Lib\site-packages\pandas\compat\_optional.py", line 135, in import_optional_dependency
+    raise ImportError(msg)
+ImportError: Missing optional dependency 'tabulate'.  Use pip or conda to install tabulate.
+2026-02-20 04:38:23,806 - __main__ - ERROR - ================================================================================

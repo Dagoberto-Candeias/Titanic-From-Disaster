@@ -53,7 +53,7 @@ def test_optimize_memory_usage_clean_numeric(clean_numeric_dataframe: pd.DataFra
     assert df_optimized['int_large'].dtype == 'int32'
     assert df_optimized['float_small'].dtype == 'float32'
     assert df_optimized['float_large'].dtype == 'float64' # Should remain float64 due to precision
-    assert pd_types.is_categorical_dtype(df_optimized['object_low_card'])
+    assert isinstance(df_optimized['object_low_card'].dtype, pd.CategoricalDtype)
     assert pd_types.is_object_dtype(df_optimized['object_high_card']) or pd_types.is_string_dtype(df_optimized['object_high_card'])
     assert df_optimized['bool_col'].dtype == 'int8' # Booleans are often converted to int8
     assert df_optimized['datetime_col'].dtype == 'datetime64[ns]' # Datetime should remain unchanged
@@ -72,7 +72,7 @@ def test_optimize_memory_usage_with_nans(dataframe_with_nans: pd.DataFrame):
     # Columns with NaNs will be float types, and should be downcasted to float32 if range allows
     assert df_optimized['int_with_nan'].dtype == 'float32'
     assert df_optimized['float_with_nan'].dtype == 'float32'
-    assert pd_types.is_categorical_dtype(df_optimized['object_with_nan'])
+    assert isinstance(df_optimized['object_with_nan'].dtype, pd.CategoricalDtype)
 
 def test_optimize_memory_usage_no_change_if_not_optimizable():
     """Tests that memory usage doesn't change if no optimization is possible."""
